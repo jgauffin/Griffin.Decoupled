@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5E4DEE9A-3B45-4F5B-8C8D-A04AD1EF0D36}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Griffin.Decoupled</RootNamespace>
+    <AssemblyName>Griffin.Decoupled</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Commands\CommandBase.cs" />
+    <Compile Include="Commands\CommandDispatcher.cs" />
+    <Compile Include="Commands\ContainerCommandDispatcher.cs" />
+    <Compile Include="Commands\ICommandStorage.cs" />
+    <Compile Include="Commands\RetryingDispatcher.cs" />
+    <Compile Include="Commands\ICommand.cs" />
+    <Compile Include="Commands\ICommandDispatcher.cs" />
+    <Compile Include="Commands\IHandleCommand.cs" />
+    <Compile Include="Commands\NamespaceDoc.cs" />
+    <Compile Include="Commands\StoredAndQueuedDispatcher.cs" />
+    <Compile Include="DomainEvents\ContainerDispatcher.cs" />
+    <Compile Include="DomainEvents\DefaultDispatcher.cs" />
+    <Compile Include="DomainEvents\DispatcherFailedEventArgs.cs" />
+    <Compile Include="DomainEvents\DomainEvent.cs" />
+    <Compile Include="DomainEvents\DomainEventBase.cs" />
+    <Compile Include="DomainEvents\IDomainEvent.cs" />
+    <Compile Include="DomainEvents\IDomainEventDispatcher.cs" />
+    <Compile Include="DomainEvents\IDomainEventStorage.cs" />
+    <Compile Include="DomainEvents\ISubscribeOn.cs" />
+    <Compile Include="DomainEvents\IUnitOfWorkAdapter.cs" />
+    <Compile Include="DomainEvents\IUnitOfWorkObserver.cs" />
+    <Compile Include="DomainEvents\MemoryStorage.cs" />
+    <Compile Include="DomainEvents\NamespaceDoc.cs" />
+    <Compile Include="DomainEvents\NoUnitOfWorkManagement.cs" />
+    <Compile Include="DomainEvents\ThreadedUowMapper.cs" />
+    <Compile Include="IRootContainer.cs" />
+    <Compile Include="IScopedContainer.cs" />
+    <Compile Include="IServiceLocator.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServiceNotDefinedException.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

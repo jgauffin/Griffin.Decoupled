@@ -4,3 +4,8 @@ obj
 
 # mstest test results
 TestResults
+*/_NCrunch_Griffin.Decoupled/*
+*/_ReSharper.*
+*.ncrunchsolution*
+src/packages/*
+src/*.suo
