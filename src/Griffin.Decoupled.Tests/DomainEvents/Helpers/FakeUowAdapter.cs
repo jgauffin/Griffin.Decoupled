@@ -4,6 +4,10 @@ namespace Griffin.Decoupled.Tests.DomainEvents
 {
     public class FakeUowAdapter : IUnitOfWorkAdapter
     {
+        public IUnitOfWorkObserver Observer { get; private set; }
+
+        #region IUnitOfWorkAdapter Members
+
         /// <summary>
         /// Register our own observer which is used to control when the domain events are dispatched.
         /// </summary>
@@ -13,6 +17,6 @@ namespace Griffin.Decoupled.Tests.DomainEvents
             Observer = observer;
         }
 
-        public IUnitOfWorkObserver Observer { get; private set; }
+        #endregion
     }
 }

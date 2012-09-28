@@ -15,9 +15,13 @@ namespace Griffin.Decoupled.DomainEvents
             Id = Guid.NewGuid();
         }
 
+        #region IDomainEvent Members
+
         /// <summary>
         /// Gets domain event ID
         /// </summary>
         public Guid Id { get; private set; }
+
+        #endregion
     }
 }

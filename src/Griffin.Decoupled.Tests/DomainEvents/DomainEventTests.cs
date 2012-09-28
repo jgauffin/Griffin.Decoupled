@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Griffin.Decoupled.DomainEvents;
 using NSubstitute;
 using Xunit;
@@ -32,5 +28,4 @@ namespace Griffin.Decoupled.Tests.DomainEvents
             Assert.Throws<InvalidOperationException>(() => DomainEvent.Dispatch(domainEvent));
         }
     }
-
 }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.CompilerServices;
 
 namespace Griffin.Decoupled.Commands
 {
@@ -26,7 +21,7 @@ namespace Griffin.Decoupled.Commands
     /// <para>Commands are invoked though the <see cref="CommandDispatcher"/>. Read it's class documentation to figure out how to configure it.</para>
     /// </remarks>
     [CompilerGenerated]
-    class NamespaceDoc
+    internal class NamespaceDoc
     {
     }
 }

@@ -7,14 +7,14 @@ namespace Griffin.Decoupled.Tests.DomainEvents
 {
     public class TestDispatcher : IDomainEventDispatcher
     {
+        private readonly List<IDomainEvent> _domainEvents = new List<IDomainEvent>();
+        private readonly ManualResetEvent _theEvent = new ManualResetEvent(false);
         private readonly bool _throwException;
-        private ManualResetEvent _theEvent = new ManualResetEvent(false);
-        private List<IDomainEvent> _domainEvents = new List<IDomainEvent>();
 
         public TestDispatcher()
         {
-            
         }
+
         public TestDispatcher(bool throwException)
         {
             _throwException = throwException;
@@ -26,11 +26,7 @@ namespace Griffin.Decoupled.Tests.DomainEvents
             get { return _domainEvents; }
         }
 
-        public void Wait(TimeSpan timeSpan)
-        {
-            if (!_theEvent.WaitOne(timeSpan))
-                throw new InvalidOperationException("Timeout expired.");
-        }
+        #region IDomainEventDispatcher Members
 
         /// <summary>
         /// Dispatch domain event.
@@ -44,6 +40,23 @@ namespace Griffin.Decoupled.Tests.DomainEvents
 
             if (_throwException)
                 throw new Exception("The exception");
+        }
+
+        /// <summary>
+        /// Close the dispatcher gracefully.
+        /// </summary>
+        /// <remarks>Should make sure that all events are propagated before returning.</remarks>
+        public void Close()
+        {
+            
+        }
+
+        #endregion
+
+        public void Wait(TimeSpan timeSpan)
+        {
+            if (!_theEvent.WaitOne(timeSpan))
+                throw new InvalidOperationException("Timeout expired.");
         }
     }
 }

@@ -19,6 +19,6 @@ namespace Griffin.Decoupled
         /// </summary>
         /// <typeparam name="T">Service to find</typeparam>
         /// <returns>Implementation</returns>
-        T Resolve<T>() where T :class ;
+        T Resolve<T>() where T : class;
     }
 }

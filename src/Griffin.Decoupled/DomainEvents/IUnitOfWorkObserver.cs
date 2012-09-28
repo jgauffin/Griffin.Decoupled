@@ -21,6 +21,5 @@ namespace Griffin.Decoupled.DomainEvents
         /// <param name="unitOfWork">UoW which was released. Must be same as in <see cref="Create"/>.</param>
         /// <param name="successful"><c>true</c> if the UoW was saved successfully; otherwise <c>false</c>.</param>
         void Released(object unitOfWork, bool successful);
-
     }
 }

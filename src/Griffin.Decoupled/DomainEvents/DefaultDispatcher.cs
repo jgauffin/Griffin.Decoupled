@@ -23,6 +23,8 @@ namespace Griffin.Decoupled.DomainEvents
         private readonly IDomainEventStorage _storage;
         private readonly ThreadedUowMapper _threadedUowMapper = new ThreadedUowMapper();
         private long _currentWorkers;
+        private bool _shutDown;
+        private ManualResetEventSlim _shutdownEvent;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultDispatcher" /> class.
@@ -96,6 +98,17 @@ namespace Griffin.Decoupled.DomainEvents
             }
         }
 
+        /// <summary>
+        /// Close the dispatcher gracefully.
+        /// </summary>
+        /// <remarks>Should make sure that all events are propagated before returning.</remarks>
+        public void Close()
+        {
+            _shutDown = true;
+            if (!_shutdownEvent.Wait(TimeSpan.FromSeconds(30)))
+                throw new InvalidOperationException("Failed to wait on all events before shutting down.");
+        }
+
         #endregion
 
         #region IUnitOfWorkObserver Members
@@ -146,6 +159,8 @@ namespace Griffin.Decoupled.DomainEvents
             finally
             {
                 Interlocked.Decrement(ref _currentWorkers);
+                if (_currentWorkers == 0 && _shutDown)
+                    _shutdownEvent.Set();
             }
         }
 

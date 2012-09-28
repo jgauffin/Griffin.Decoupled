@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 namespace Griffin.Decoupled.DomainEvents
 {
@@ -23,6 +22,8 @@ namespace Griffin.Decoupled.DomainEvents
             _container = container;
         }
 
+        #region IDomainEventDispatcher Members
+
         /// <summary>
         /// Dispatch domain event.
         /// </summary>
@@ -41,5 +42,15 @@ namespace Griffin.Decoupled.DomainEvents
                 }
             }
         }
+
+        /// <summary>
+        /// Close the dispatcher gracefully.
+        /// </summary>
+        /// <remarks>Should make sure that all events are propagated before returning.</remarks>
+        public void Close()
+        {
+        }
+
+        #endregion
     }
 }

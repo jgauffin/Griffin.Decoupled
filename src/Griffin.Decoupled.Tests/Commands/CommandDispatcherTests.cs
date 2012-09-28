@@ -1,6 +1,5 @@
 ﻿using System;
 using Griffin.Decoupled.Commands;
-using Griffin.Decoupled.DomainEvents;
 using NSubstitute;
 using Xunit;
 
@@ -29,5 +28,4 @@ namespace Griffin.Decoupled.Tests.Commands
             Assert.Throws<InvalidOperationException>(() => CommandDispatcher.Dispatch(command));
         }
     }
-
 }

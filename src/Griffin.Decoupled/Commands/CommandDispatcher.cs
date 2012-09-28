@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Griffin.Decoupled.Commands
 {
@@ -36,7 +32,8 @@ namespace Griffin.Decoupled.Commands
         public static void Dispatch<T>(T domainEvent) where T : class, ICommand
         {
             if (_dispatcher == null)
-                throw new InvalidOperationException("A command dispatcher have not been specified. Read the class documentation for the CommandDispatcher class.");
+                throw new InvalidOperationException(
+                    "A command dispatcher have not been specified. Read the class documentation for the CommandDispatcher class.");
 
             _dispatcher.Dispatch(domainEvent);
         }

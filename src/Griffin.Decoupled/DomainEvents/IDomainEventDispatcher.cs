@@ -1,5 +1,3 @@
-using System;
-
 namespace Griffin.Decoupled.DomainEvents
 {
     /// <summary>
@@ -23,5 +21,4 @@ namespace Griffin.Decoupled.DomainEvents
         /// <remarks>Should make sure that all events are propagated before returning.</remarks>
         void Close();
     }
-
 }

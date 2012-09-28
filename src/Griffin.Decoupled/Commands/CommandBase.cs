@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Griffin.Decoupled.Commands
 {
@@ -19,9 +15,13 @@ namespace Griffin.Decoupled.Commands
             Id = Guid.NewGuid();
         }
 
+        #region ICommand Members
+
         /// <summary>
         /// Get command id
         /// </summary>
         public Guid Id { get; private set; }
+
+        #endregion
     }
 }

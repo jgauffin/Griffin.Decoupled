@@ -9,13 +9,13 @@ namespace Griffin.Decoupled.Commands
     /// </summary>
     public class StoredAndQueuedDispatcher : ICommandDispatcher
     {
+        private readonly ManualResetEventSlim _closingEvent = new ManualResetEventSlim(false);
         private readonly ICommandDispatcher _inner;
-        private readonly ICommandStorage _storage;
+        private readonly MethodInfo _invokeMethod;
         private readonly int _maxConcurrentTasks;
+        private readonly ICommandStorage _storage;
+        private bool _closing;
         private long _currentWorkers;
-        private bool _closing = false;
-        private ManualResetEventSlim _closingEvent = new ManualResetEventSlim(false);
-        private MethodInfo _invokeMethod;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StoredAndQueuedDispatcher" /> class.
@@ -34,6 +34,8 @@ namespace Griffin.Decoupled.Commands
             _invokeMethod = GetType().GetMethod("DispatchToInner", BindingFlags.NonPublic | BindingFlags.Instance);
         }
 
+        #region ICommandDispatcher Members
+
         /// <summary>
         /// Dispatch the command to the handler
         /// </summary>
@@ -42,7 +44,7 @@ namespace Griffin.Decoupled.Commands
         /// <remarks>Implementations should throw exceptions unless they are asynchronous or will attempt to retry later.</remarks>
         public void Dispatch<T>(T command) where T : class, ICommand
         {
-            _storage.Enqueue(new StoredCommand{Command = command});
+            _storage.Enqueue(new StoredCommand {Command = command});
 
             if (_closing)
                 return;
@@ -53,7 +55,6 @@ namespace Griffin.Decoupled.Commands
                 Interlocked.Increment(ref _currentWorkers);
                 ThreadPool.QueueUserWorkItem(DispatchCommandNow);
             }
-
         }
 
         /// <summary>
@@ -66,6 +67,8 @@ namespace Griffin.Decoupled.Commands
             _closingEvent.Wait(TimeSpan.FromSeconds(10));
         }
 
+        #endregion
+
         private void DispatchCommandNow(object state)
         {
             var command = _storage.Dequeue();
@@ -73,7 +76,6 @@ namespace Griffin.Decoupled.Commands
             {
                 _invokeMethod.MakeGenericMethod(command.GetType()).Invoke(this, new object[] {command});
             }
-            
         }
 
         /// <summary>

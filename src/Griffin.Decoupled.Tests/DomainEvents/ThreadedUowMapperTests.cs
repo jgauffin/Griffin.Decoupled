@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Griffin.Decoupled.DomainEvents;
 using Xunit;
 
@@ -16,7 +12,6 @@ namespace Griffin.Decoupled.Tests.DomainEvents
             var mapper = new ThreadedUowMapper();
 
             mapper.Create(mapper);
-
         }
 
         [Fact]

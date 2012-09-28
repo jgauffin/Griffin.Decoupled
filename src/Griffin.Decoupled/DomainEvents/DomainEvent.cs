@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Griffin.Decoupled.DomainEvents
 {
@@ -34,7 +31,8 @@ namespace Griffin.Decoupled.DomainEvents
         public static void Dispatch<T>(T domainEvent) where T : class, IDomainEvent
         {
             if (_domainEventDispatcher == null)
-                throw new InvalidOperationException("A domain event dispatcher has not been specified. Read the class documentation for the DomainEvent class.");
+                throw new InvalidOperationException(
+                    "A domain event dispatcher has not been specified. Read the class documentation for the DomainEvent class.");
 
             _domainEventDispatcher.Dispatch(domainEvent);
         }

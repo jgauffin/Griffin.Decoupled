@@ -1,6 +1,5 @@
 ﻿using Griffin.Decoupled.Commands;
 using Griffin.Decoupled.Tests.Commands.Helpers;
-using Griffin.Decoupled.Tests.DomainEvents.Helpers;
 using NSubstitute;
 using Xunit;
 
@@ -15,7 +14,7 @@ namespace Griffin.Decoupled.Tests.Commands
             var child = Substitute.For<IScopedContainer>();
             var handler = Substitute.For<IHandleCommand<FakeCommand>>();
             root.CreateScope().Returns(child);
-            child.ResolveAll<IHandleCommand<FakeCommand>>().Returns(new []{handler});
+            child.ResolveAll<IHandleCommand<FakeCommand>>().Returns(new[] {handler});
             var command = new FakeCommand();
 
             var dispatcher = new ContainerCommandDispatcher(root);

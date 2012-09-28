@@ -8,6 +8,5 @@ namespace Griffin.Decoupled
     /// <remarks>It's purpose is to be able to store and return scoped services.</remarks>
     public interface IScopedContainer : IDisposable, IServiceLocator
     {
-        
     }
 }

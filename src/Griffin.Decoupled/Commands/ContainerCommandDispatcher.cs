@@ -21,7 +21,6 @@ namespace Griffin.Decoupled.Commands
             _container = container;
         }
 
-
         #region ICommandDispatcher Members
 
         /// <summary>
@@ -48,7 +47,6 @@ namespace Griffin.Decoupled.Commands
         /// <remarks>Should make sure that all non-persitent commands are executed or stored before exeting.</remarks>
         public void Close()
         {
-            throw new NotImplementedException();
         }
 
         #endregion

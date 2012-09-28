@@ -1,10 +1,12 @@
 using System;
 using Griffin.Decoupled.DomainEvents;
 
-namespace Griffin.Decoupled.Tests.DomainEvents
+namespace Griffin.Decoupled.Tests.DomainEvents.Helpers
 {
     public class FailingHandler<T> : ISubscribeOn<T> where T : class, IDomainEvent
     {
+        #region ISubscribeOn<T> Members
+
         /// <summary>
         /// Will be invoked when the domain event is triggered.
         /// </summary>
@@ -13,5 +15,7 @@ namespace Griffin.Decoupled.Tests.DomainEvents
         {
             throw new NotImplementedException();
         }
+
+        #endregion
     }
 }

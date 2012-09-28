@@ -17,6 +17,5 @@ namespace Griffin.Decoupled.Commands
         /// </summary>
         /// <returns>Command if any; otherwise <c>null</c>.</returns>
         StoredCommand Dequeue();
-
     }
 }
