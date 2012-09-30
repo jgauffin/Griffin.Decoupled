@@ -48,7 +48,7 @@
     <Compile Include="Commands\ICommandDispatcher.cs" />
     <Compile Include="Commands\IHandleCommand.cs" />
     <Compile Include="Commands\NamespaceDoc.cs" />
-    <Compile Include="Commands\StoredAndQueuedDispatcher.cs" />
+    <Compile Include="Commands\AsyncDispatcher.cs" />
     <Compile Include="Commands\StoredCommand.cs" />
     <Compile Include="DomainEvents\ContainerDispatcher.cs" />
     <Compile Include="DomainEvents\DefaultDispatcher.cs" />

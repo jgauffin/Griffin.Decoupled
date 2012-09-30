@@ -7,7 +7,7 @@ namespace Griffin.Decoupled.Commands
     /// <summary>
     /// Will queue & store all commands and then invoke them in turn.
     /// </summary>
-    public class StoredAndQueuedDispatcher : ICommandDispatcher
+    public class AsyncDispatcher : ICommandDispatcher
     {
         private readonly ManualResetEventSlim _closingEvent = new ManualResetEventSlim(false);
         private readonly ICommandDispatcher _inner;
@@ -18,12 +18,12 @@ namespace Griffin.Decoupled.Commands
         private long _currentWorkers;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StoredAndQueuedDispatcher" /> class.
+        /// Initializes a new instance of the <see cref="AsyncDispatcher" /> class.
         /// </summary>
         /// <param name="inner">Inner dispatcher.</param>
         /// <param name="storage">Where we should store commands.</param>
         /// <param name="maxConcurrentTasks">Maximum number of concurrent tasks.</param>
-        public StoredAndQueuedDispatcher(ICommandDispatcher inner, ICommandStorage storage, int maxConcurrentTasks)
+        public AsyncDispatcher(ICommandDispatcher inner, ICommandStorage storage, int maxConcurrentTasks)
         {
             if (inner == null) throw new ArgumentNullException("inner");
             if (storage == null) throw new ArgumentNullException("storage");

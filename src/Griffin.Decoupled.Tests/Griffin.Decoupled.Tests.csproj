@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
+    <Compile Include="Commands\AsyncDispatcherTests.cs" />
     <Compile Include="Commands\ContainerDispatcherTests.cs" />
     <Compile Include="Commands\CommandDispatcherTests.cs" />
     <Compile Include="Commands\Helpers\FakeCommand.cs" />
