@@ -6,7 +6,7 @@ namespace Griffin.Decoupled.Commands
     /// <summary>
     /// Will queue & store all commands and then invoke them in turn.
     /// </summary>
-    public class AsyncDispatcher : ICommandDispatcher
+    public class AsyncCommandDispatcher : ICommandDispatcher
     {
         private readonly ManualResetEventSlim _closingEvent = new ManualResetEventSlim(false);
         private readonly ICommandDispatcher _inner;
@@ -16,12 +16,12 @@ namespace Griffin.Decoupled.Commands
         private long _currentWorkers;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AsyncDispatcher" /> class.
+        /// Initializes a new instance of the <see cref="AsyncCommandDispatcher" /> class.
         /// </summary>
         /// <param name="inner">Inner dispatcher.</param>
         /// <param name="storage">Where we should store commands.</param>
         /// <param name="maxConcurrentTasks">Maximum number of concurrent tasks.</param>
-        public AsyncDispatcher(ICommandDispatcher inner, ICommandStorage storage, int maxConcurrentTasks)
+        public AsyncCommandDispatcher(ICommandDispatcher inner, ICommandStorage storage, int maxConcurrentTasks)
         {
             if (inner == null) throw new ArgumentNullException("inner");
             if (storage == null) throw new ArgumentNullException("storage");
@@ -34,12 +34,12 @@ namespace Griffin.Decoupled.Commands
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AsyncDispatcher" /> class.
+        /// Initializes a new instance of the <see cref="AsyncCommandDispatcher" /> class.
         /// </summary>
         /// <param name="inner">Inner dispatcher.</param>
         /// <param name="maxConcurrentTasks">Maximum number of concurrent tasks.</param>
         /// <remarks>Uses the memory for storage</remarks>
-        public AsyncDispatcher(ICommandDispatcher inner, int maxConcurrentTasks)
+        public AsyncCommandDispatcher(ICommandDispatcher inner, int maxConcurrentTasks)
         {
             if (inner == null) throw new ArgumentNullException("inner");
             if (maxConcurrentTasks < 1 || maxConcurrentTasks > 100)

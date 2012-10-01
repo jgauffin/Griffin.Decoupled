@@ -7,7 +7,7 @@
     <ProjectGuid>{45917952-6814-4706-A428-F5C9E8B3FD3A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Griffin.Decoupled.RavenDb.Embedded</RootNamespace>
+    <RootNamespace>Griffin.Decoupled.RavenDb</RootNamespace>
     <AssemblyName>Griffin.Decoupled.RavenDb.Embedded</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

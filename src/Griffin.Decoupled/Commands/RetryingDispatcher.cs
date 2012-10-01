@@ -41,32 +41,32 @@ namespace Griffin.Decoupled.Commands
         /// </summary>
         /// <param name="command">Command to execute</param>
         /// <remarks>Implementations should throw exceptions unless they are asynchronous or will attempt to retry later.</remarks>
-        public void Dispatch(CommandState command) 
+        public void Dispatch(CommandState command)
         {
             if (command == null) throw new ArgumentNullException("command");
 
-            while (true)
+            try
             {
-                try
+                _inner.Dispatch(command);
+            }
+            catch (Exception err)
+            {
+                command.Attempts++;
+                command.LastException = err.ToString();
+                if (command.Attempts >= _numberOfAttempts)
                 {
-                    _inner.Dispatch(command);
+                    CommandFailed(this, new FailedCommandEventArgs(command, err, _storage));
                 }
-                catch (Exception err)
+                else
                 {
-                    command.Attempts++;
-                    command.LastException = err.ToString();
-                    if (command.Attempts <= _numberOfAttempts)
-                    {
-                        CommandFailed(this, new FailedCommandEventArgs(command, err, _storage));
-                    }
-                    else
-                    {
-                        _storage.Enqueue(command);
-                    }
+                    _storage.Enqueue(command);
                 }
             }
         }
 
+        /// <summary>
+        /// Invoked when we've tried a command several times and it's still failing
+        /// </summary>
         public event EventHandler<FailedCommandEventArgs> CommandFailed = delegate { };
 
         /// <summary>

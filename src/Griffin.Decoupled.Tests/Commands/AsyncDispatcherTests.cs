@@ -19,10 +19,10 @@ namespace Griffin.Decoupled.Tests.Commands
             var storage = Substitute.For<ICommandStorage>();
             var inner = Substitute.For<ICommandDispatcher>();
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => new AsyncDispatcher(inner, storage, 0));
-            Assert.Throws<ArgumentOutOfRangeException>(() => new AsyncDispatcher(inner, storage, -1));
-            Assert.Throws<ArgumentOutOfRangeException>(() => new AsyncDispatcher(inner, storage, 1000));
-            new AsyncDispatcher(inner, storage, 10);
+            Assert.Throws<ArgumentOutOfRangeException>(() => new AsyncCommandDispatcher(inner, storage, 0));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new AsyncCommandDispatcher(inner, storage, -1));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new AsyncCommandDispatcher(inner, storage, 1000));
+            new AsyncCommandDispatcher(inner, storage, 10);
         }
 
         [Fact]
@@ -31,8 +31,8 @@ namespace Griffin.Decoupled.Tests.Commands
             var storage = Substitute.For<ICommandStorage>();
             var inner = Substitute.For<ICommandDispatcher>();
 
-            Assert.Throws<ArgumentNullException>(() => new AsyncDispatcher(null, storage, 0));
-            new AsyncDispatcher(inner, storage, 10);
+            Assert.Throws<ArgumentNullException>(() => new AsyncCommandDispatcher(null, storage, 0));
+            new AsyncCommandDispatcher(inner, storage, 10);
         }
         [Fact]
         public void MustHaveStorage()
@@ -40,8 +40,8 @@ namespace Griffin.Decoupled.Tests.Commands
             var storage = Substitute.For<ICommandStorage>();
             var inner = Substitute.For<ICommandDispatcher>();
 
-            Assert.Throws<ArgumentNullException>(() => new AsyncDispatcher(inner, null, 0));
-            new AsyncDispatcher(inner, storage, 10);
+            Assert.Throws<ArgumentNullException>(() => new AsyncCommandDispatcher(inner, null, 0));
+            new AsyncCommandDispatcher(inner, storage, 10);
         }
 
         [Fact]
@@ -49,7 +49,7 @@ namespace Griffin.Decoupled.Tests.Commands
         {
             var storage = Substitute.For<ICommandStorage>();
             var inner = new BlockingDispatcher();
-            var dispatcher = new AsyncDispatcher(inner, storage, 1);
+            var dispatcher = new AsyncCommandDispatcher(inner, storage, 1);
             var command = new FakeCommand();
             var state = new CommandState(command);
             storage.Dequeue().Returns(state);
@@ -66,7 +66,7 @@ namespace Griffin.Decoupled.Tests.Commands
         {
             var storage = new TestStorage();
             var inner = new BlockingDispatcher(2);
-            var dispatcher = new AsyncDispatcher(inner, storage, 1);
+            var dispatcher = new AsyncCommandDispatcher(inner, storage, 1);
             var state1 = new CommandState(new FakeCommand());
             var state2 = new CommandState(new FakeCommand());
 
@@ -84,7 +84,7 @@ namespace Griffin.Decoupled.Tests.Commands
         {
             var storage = new TestStorage();
             var inner = new BlockingDispatcher();
-            var dispatcher = new AsyncDispatcher(inner, storage, 2);
+            var dispatcher = new AsyncCommandDispatcher(inner, storage, 2);
             var command = new FakeCommand();
             var state = new CommandState(command);
             var state2 = new CommandState(new FakeCommand());
@@ -108,7 +108,7 @@ namespace Griffin.Decoupled.Tests.Commands
         {
             var storage = new TestStorage();
             var inner = new BlockingDispatcher();
-            var dispatcher = new AsyncDispatcher(inner, storage, 1);
+            var dispatcher = new AsyncCommandDispatcher(inner, storage, 1);
             var state1 = new CommandState(new FakeCommand());
             var state2 = new CommandState(new FakeCommand());
 
@@ -129,7 +129,7 @@ namespace Griffin.Decoupled.Tests.Commands
         {
             var storage = new TestStorage();
             var inner = new BlockingDispatcher();
-            var dispatcher = new AsyncDispatcher(inner, storage, 2);
+            var dispatcher = new AsyncCommandDispatcher(inner, storage, 2);
             var state1 = new CommandState(new FakeCommand());
             var state2 = new CommandState(new FakeCommand());
 
@@ -148,7 +148,7 @@ namespace Griffin.Decoupled.Tests.Commands
             var sync = new ManualResetEvent(false);
             var expected = new Exception("Work not made");
             var inner = new BlockingDispatcher(x => { throw expected; });
-            var dispatcher = new AsyncDispatcher(inner, 2);
+            var dispatcher = new AsyncCommandDispatcher(inner, 2);
             Exception actual = null;
             dispatcher.UncaughtException += (sender, args) =>
                 {

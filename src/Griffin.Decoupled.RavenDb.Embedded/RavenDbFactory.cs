@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Griffin.Decoupled.Commands;
 using Raven.Client.Embedded;
 
-namespace Griffin.Decoupled.RavenDb.Embedded
+namespace Griffin.Decoupled.RavenDb
 {
     /// <summary>
     /// Will create a session factory for ravenDb using the embedded engine
@@ -29,6 +30,17 @@ namespace Griffin.Decoupled.RavenDb.Embedded
         public RavenSessionFactory CreateSessionFactory()
         {
             return new RavenSessionFactory(_documentStore);
+        }
+    }
+
+
+
+    public static class CommandDispatcherBuilderExtensions
+    {
+        public static CommandDispatcherBuilder StoreInRavenDbEmbedded(this CommandDispatcherBuilder instance)
+        {
+            //instance.StoreCommands(new RavenCommandStorage())
+            return null;
         }
     }
 }

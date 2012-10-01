@@ -52,13 +52,14 @@
     <Compile Include="Commands\ICommandDispatcher.cs" />
     <Compile Include="Commands\IHandleCommand.cs" />
     <Compile Include="Commands\NamespaceDoc.cs" />
-    <Compile Include="Commands\AsyncDispatcher.cs" />
+    <Compile Include="Commands\AsyncCommandDispatcher.cs" />
     <Compile Include="Commands\CommandState.cs" />
     <Compile Include="DomainEvents\ContainerDispatcher.cs" />
     <Compile Include="DomainEvents\DefaultDispatcher.cs" />
     <Compile Include="DomainEvents\DispatcherFailedEventArgs.cs" />
     <Compile Include="DomainEvents\DomainEvent.cs" />
     <Compile Include="DomainEvents\DomainEventBase.cs" />
+    <Compile Include="DomainEvents\EventDispatcherBuilder.cs" />
     <Compile Include="DomainEvents\IDomainEvent.cs" />
     <Compile Include="DomainEvents\IDomainEventDispatcher.cs" />
     <Compile Include="DomainEvents\IDomainEventStorage.cs" />

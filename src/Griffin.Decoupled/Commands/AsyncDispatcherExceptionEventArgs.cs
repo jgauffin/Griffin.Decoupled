@@ -3,7 +3,7 @@ using System;
 namespace Griffin.Decoupled.Commands
 {
     /// <summary>
-    /// Args for <see cref="AsyncDispatcher.UncaughtException"/>.
+    /// Args for <see cref="AsyncCommandDispatcher.UncaughtException"/>.
     /// </summary>
     public class AsyncDispatcherExceptionEventArgs : EventArgs
     {
