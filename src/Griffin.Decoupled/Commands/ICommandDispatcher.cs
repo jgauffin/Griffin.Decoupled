@@ -11,12 +11,12 @@ namespace Griffin.Decoupled.Commands
         /// <typeparam name="T">Type of command</typeparam>
         /// <param name="command">Command to execute</param>
         /// <remarks>Implementations should throw exceptions unless they are asynchronous or will attempt to retry later.</remarks>
-        void Dispatch<T>(T command) where T : class, ICommand;
+        void Dispatch(CommandState command);
 
         /// <summary>
         /// Close the dispatcher gracefully.
         /// </summary>
-        /// <remarks>Should make sure that all non-persitent commands are executed or stored before exeting.</remarks>
+        /// <remarks>Should make sure that all non-persitent commands are executed or stored before exiting.</remarks>
         void Close();
     }
 }

@@ -1,5 +1,4 @@
 using System;
-using System.Reflection;
 using System.Threading;
 
 namespace Griffin.Decoupled.Commands
@@ -11,7 +10,6 @@ namespace Griffin.Decoupled.Commands
     {
         private readonly ManualResetEventSlim _closingEvent = new ManualResetEventSlim(false);
         private readonly ICommandDispatcher _inner;
-        private readonly MethodInfo _invokeMethod;
         private readonly int _maxConcurrentTasks;
         private readonly ICommandStorage _storage;
         private bool _closing;
@@ -27,24 +25,42 @@ namespace Griffin.Decoupled.Commands
         {
             if (inner == null) throw new ArgumentNullException("inner");
             if (storage == null) throw new ArgumentNullException("storage");
+            if (maxConcurrentTasks < 1 || maxConcurrentTasks > 100)
+                throw new ArgumentOutOfRangeException("maxConcurrentTasks", maxConcurrentTasks, "1 to 100 is somewhat reasonable.");
 
             _inner = inner;
             _storage = storage;
             _maxConcurrentTasks = maxConcurrentTasks;
-            _invokeMethod = GetType().GetMethod("DispatchToInner", BindingFlags.NonPublic | BindingFlags.Instance);
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AsyncDispatcher" /> class.
+        /// </summary>
+        /// <param name="inner">Inner dispatcher.</param>
+        /// <param name="maxConcurrentTasks">Maximum number of concurrent tasks.</param>
+        /// <remarks>Uses the memory for storage</remarks>
+        public AsyncDispatcher(ICommandDispatcher inner, int maxConcurrentTasks)
+        {
+            if (inner == null) throw new ArgumentNullException("inner");
+            if (maxConcurrentTasks < 1 || maxConcurrentTasks > 100)
+                throw new ArgumentOutOfRangeException("maxConcurrentTasks", maxConcurrentTasks, "1 to 100 is somewhat reasonable.");
+
+            _inner = inner;
+            _storage = new MemoryStorage();
+            _maxConcurrentTasks = maxConcurrentTasks;
+        }
+
 
         #region ICommandDispatcher Members
 
         /// <summary>
         /// Dispatch the command to the handler
         /// </summary>
-        /// <typeparam name="T">Type of command</typeparam>
         /// <param name="command">Command to execute</param>
         /// <remarks>Implementations should throw exceptions unless they are asynchronous or will attempt to retry later.</remarks>
-        public void Dispatch<T>(T command) where T : class, ICommand
+        public void Dispatch(CommandState command)
         {
-            _storage.Enqueue(new StoredCommand {Command = command});
+            _storage.Enqueue(command);
 
             if (_closing)
                 return;
@@ -69,24 +85,43 @@ namespace Griffin.Decoupled.Commands
 
         #endregion
 
+        /// <summary>
+        /// We should start dispatching commands.
+        /// </summary>
+        /// <param name="state"></param>
         private void DispatchCommandNow(object state)
         {
-            var command = _storage.Dequeue();
-            if (command != null)
+            try
             {
-                _invokeMethod.MakeGenericMethod(command.GetType()).Invoke(this, new object[] {command});
+                DispatchCommands();
+            }
+            catch(Exception err)
+            {
+                UncaughtException(this, new AsyncDispatcherExceptionEventArgs(err));
+            }
+            finally
+            {
+                Interlocked.Decrement(ref _currentWorkers);
             }
         }
 
         /// <summary>
-        /// Invoked through reflection
+        /// Dispatch as many commands as possible.
         /// </summary>
-        /// <typeparam name="T">Type of command</typeparam>
-        /// <param name="command">Command to execute</param>
-        private void DispatchToInner<T>(T command) where T : class, ICommand
+        private void DispatchCommands()
         {
-            if (command == null) throw new ArgumentNullException("command");
-            _inner.Dispatch(command);
+            var command = _storage.Dequeue();
+            while (command != null)
+            {
+                _inner.Dispatch(command);
+                command = _storage.Dequeue();
+            }
         }
+
+        /// <summary>
+        /// One of the worker tasks caught an exception.
+        /// </summary>
+        /// <remarks>Shouldn't really be possible since it only happens if the inner dispatcher screws up.</remarks>
+        public event EventHandler<AsyncDispatcherExceptionEventArgs> UncaughtException = delegate { };
     }
 }

@@ -12,6 +12,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{246CB8
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Griffin.Decoupled.RavenDb", "Griffin.Decoupled.RavenDb\Griffin.Decoupled.RavenDb.csproj", "{973254E2-ECFD-4CFC-A370-870183EC7BCB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Griffin.Decoupled.RavenDb.Embedded", "Griffin.Decoupled.RavenDb.Embedded\Griffin.Decoupled.RavenDb.Embedded.csproj", "{45917952-6814-4706-A428-F5C9E8B3FD3A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +30,14 @@ Global
 		{6970B3D4-0B85-489C-B96D-6EA79B77DFAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6970B3D4-0B85-489C-B96D-6EA79B77DFAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6970B3D4-0B85-489C-B96D-6EA79B77DFAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{973254E2-ECFD-4CFC-A370-870183EC7BCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{973254E2-ECFD-4CFC-A370-870183EC7BCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{973254E2-ECFD-4CFC-A370-870183EC7BCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{973254E2-ECFD-4CFC-A370-870183EC7BCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45917952-6814-4706-A428-F5C9E8B3FD3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45917952-6814-4706-A428-F5C9E8B3FD3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45917952-6814-4706-A428-F5C9E8B3FD3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45917952-6814-4706-A428-F5C9E8B3FD3A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

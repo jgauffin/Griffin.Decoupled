@@ -6,18 +6,23 @@ namespace Griffin.Decoupled.Commands
     /// <summary>
     /// A dispatcher that will retry a command if it fails.
     /// </summary>
-    /// <remarks>The dispatcher will pause the thread a tiny bit before retrying.</remarks>
+    /// <remarks>This dispatcher will store all failed commands for later attempts. It will however not trigger those attempts.
+    /// You have to do that. Keep in mind that all commands that have failed all times will be thrown away unless
+    /// you have subscribed on the <see cref="CommandFailed"/> event.</remarks>
     public class RetryingDispatcher : ICommandDispatcher
     {
         private readonly ICommandDispatcher _inner;
         private readonly int _numberOfAttempts;
+        private readonly ICommandStorage _storage;
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RetryingDispatcher" /> class.
         /// </summary>
         /// <param name="inner">The inner.</param>
         /// <param name="numberOfAttempts">The number of attempts.</param>
-        public RetryingDispatcher(ICommandDispatcher inner, int numberOfAttempts)
+        /// <param name="storage">Used to store failed commands (to retry later)</param>
+        public RetryingDispatcher(ICommandDispatcher inner, int numberOfAttempts, ICommandStorage storage)
         {
             if (inner == null) throw new ArgumentNullException("inner");
             if (numberOfAttempts <= 0 || numberOfAttempts > 10)
@@ -26,6 +31,7 @@ namespace Griffin.Decoupled.Commands
 
             _inner = inner;
             _numberOfAttempts = numberOfAttempts;
+            _storage = storage;
         }
 
         #region ICommandDispatcher Members
@@ -33,31 +39,35 @@ namespace Griffin.Decoupled.Commands
         /// <summary>
         /// Dispatch the command to the handler
         /// </summary>
-        /// <typeparam name="T">Type of command</typeparam>
         /// <param name="command">Command to execute</param>
         /// <remarks>Implementations should throw exceptions unless they are asynchronous or will attempt to retry later.</remarks>
-        public void Dispatch<T>(T command) where T : class, ICommand
+        public void Dispatch(CommandState command) 
         {
             if (command == null) throw new ArgumentNullException("command");
 
-            var attempts = 0;
             while (true)
             {
                 try
                 {
                     _inner.Dispatch(command);
                 }
-                catch (Exception)
+                catch (Exception err)
                 {
-                    attempts++;
-                    if (attempts <= _numberOfAttempts)
-                        throw;
-
-                    // Just wait a tiny bit before retrying
-                    Thread.Sleep(10);
+                    command.Attempts++;
+                    command.LastException = err.ToString();
+                    if (command.Attempts <= _numberOfAttempts)
+                    {
+                        CommandFailed(this, new FailedCommandEventArgs(command, err, _storage));
+                    }
+                    else
+                    {
+                        _storage.Enqueue(command);
+                    }
                 }
             }
         }
+
+        public event EventHandler<FailedCommandEventArgs> CommandFailed = delegate { };
 
         /// <summary>
         /// Close the dispatcher gracefully.

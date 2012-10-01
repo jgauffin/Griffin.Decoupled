@@ -18,7 +18,7 @@ namespace Griffin.Decoupled.Tests.Commands
             var command = new FakeCommand();
 
             var dispatcher = new ContainerCommandDispatcher(root);
-            dispatcher.Dispatch(command);
+            dispatcher.Dispatch(new CommandState(command));
 
             handler.Received().Invoke(command);
         }

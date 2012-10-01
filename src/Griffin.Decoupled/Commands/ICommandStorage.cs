@@ -10,12 +10,12 @@ namespace Griffin.Decoupled.Commands
         /// Enqueue a command
         /// </summary>
         /// <param name="command">Get the command which was </param>
-        void Enqueue(StoredCommand command);
+        void Enqueue(CommandState command);
 
         /// <summary>
         /// Get command which was stored first.
         /// </summary>
         /// <returns>Command if any; otherwise <c>null</c>.</returns>
-        StoredCommand Dequeue();
+        CommandState Dequeue();
     }
 }

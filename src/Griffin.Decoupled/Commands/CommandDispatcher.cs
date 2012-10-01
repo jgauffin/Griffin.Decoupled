@@ -35,7 +35,7 @@ namespace Griffin.Decoupled.Commands
                 throw new InvalidOperationException(
                     "A command dispatcher have not been specified. Read the class documentation for the CommandDispatcher class.");
 
-            _dispatcher.Dispatch(domainEvent);
+            _dispatcher.Dispatch(new CommandState(domainEvent));
         }
     }
 }

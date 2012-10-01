@@ -16,7 +16,7 @@ namespace Griffin.Decoupled.Tests.Commands
 
             CommandDispatcher.Dispatch(command);
 
-            innerDispatcher.Received().Dispatch(command);
+            innerDispatcher.Received().Dispatch(Arg.Is<CommandState>(x => ReferenceEquals(x.Command, command)));
         }
 
         [Fact]
