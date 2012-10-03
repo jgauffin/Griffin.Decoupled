@@ -9,7 +9,7 @@ using Raven.Client;
 namespace Griffin.Decoupled.RavenDb
 {
     /// <summary>
-    /// Creates sessions
+    /// Implements the required interfaces for allowing the 
     /// </summary>
     /// <remarks>
     /// </remarks>

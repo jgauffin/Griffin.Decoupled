@@ -18,6 +18,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Griffin.Decoupled.RavenDb.E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Griffin.Decoupled.Container", "Griffin.Decoupled.Container\Griffin.Decoupled.Container.csproj", "{C0C624D4-CB13-4916-9359-F117492054A4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{181EF8F4-1431-4732-8C82-F64FDD50CED8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample 1 - Hello domain event", "samples\Sample 1 - Hello domain event\Sample 1 - Hello domain event.csproj", "{031453AE-083E-4E9A-A7EE-2BDD7389B111}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,8 +48,15 @@ Global
 		{C0C624D4-CB13-4916-9359-F117492054A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0C624D4-CB13-4916-9359-F117492054A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0C624D4-CB13-4916-9359-F117492054A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{031453AE-083E-4E9A-A7EE-2BDD7389B111}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{031453AE-083E-4E9A-A7EE-2BDD7389B111}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{031453AE-083E-4E9A-A7EE-2BDD7389B111}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{031453AE-083E-4E9A-A7EE-2BDD7389B111}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{031453AE-083E-4E9A-A7EE-2BDD7389B111} = {181EF8F4-1431-4732-8C82-F64FDD50CED8}
 	EndGlobalSection
 EndGlobal

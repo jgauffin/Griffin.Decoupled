@@ -6,12 +6,10 @@ namespace Griffin.Decoupled.Commands
     /// <summary>
     /// Will queue & store all commands and then invoke them in turn.
     /// </summary>
-    public class AsyncCommandDispatcher : ICommandDispatcher
+    public class AsyncCommandDispatcher : DefaultCommandDispatcher
     {
         private readonly ManualResetEventSlim _closingEvent = new ManualResetEventSlim(false);
-        private readonly ICommandDispatcher _inner;
         private readonly int _maxConcurrentTasks;
-        private readonly ICommandStorage _storage;
         private bool _closing;
         private long _currentWorkers;
 
@@ -31,6 +29,10 @@ namespace Griffin.Decoupled.Commands
             _inner = inner;
             _storage = storage;
             _maxConcurrentTasks = maxConcurrentTasks;
+            if (storage is ITransactionalCommandStorage)
+                _dispatcherLoop = DispatchCommands;
+            else
+                _dispatcherLoop = DispatchCommandsWithTransaction;
         }
 
         /// <summary>
@@ -40,14 +42,8 @@ namespace Griffin.Decoupled.Commands
         /// <param name="maxConcurrentTasks">Maximum number of concurrent tasks.</param>
         /// <remarks>Uses the memory for storage</remarks>
         public AsyncCommandDispatcher(ICommandDispatcher inner, int maxConcurrentTasks)
+            : this(inner, new MemoryStorage(), maxConcurrentTasks)
         {
-            if (inner == null) throw new ArgumentNullException("inner");
-            if (maxConcurrentTasks < 1 || maxConcurrentTasks > 100)
-                throw new ArgumentOutOfRangeException("maxConcurrentTasks", maxConcurrentTasks, "1 to 100 is somewhat reasonable.");
-
-            _inner = inner;
-            _storage = new MemoryStorage();
-            _maxConcurrentTasks = maxConcurrentTasks;
         }
 
 
@@ -58,7 +54,7 @@ namespace Griffin.Decoupled.Commands
         /// </summary>
         /// <param name="command">Command to execute</param>
         /// <remarks>Implementations should throw exceptions unless they are asynchronous or will attempt to retry later.</remarks>
-        public void Dispatch(CommandState command)
+        public override void Dispatch(CommandState command)
         {
             _storage.Enqueue(command);
 
@@ -77,7 +73,7 @@ namespace Griffin.Decoupled.Commands
         /// Close the dispatcher gracefully.
         /// </summary>
         /// <remarks>Should make sure that all non-persitent commands are executed or stored before exeting.</remarks>
-        public void Close()
+        public override void Close()
         {
             _closing = true;
             _closingEvent.Wait(TimeSpan.FromSeconds(10));
@@ -105,18 +101,6 @@ namespace Griffin.Decoupled.Commands
             }
         }
 
-        /// <summary>
-        /// Dispatch as many commands as possible.
-        /// </summary>
-        private void DispatchCommands()
-        {
-            var command = _storage.Dequeue();
-            while (command != null)
-            {
-                _inner.Dispatch(command);
-                command = _storage.Dequeue();
-            }
-        }
 
         /// <summary>
         /// One of the worker tasks caught an exception.

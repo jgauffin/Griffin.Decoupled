@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,39 +9,23 @@ using Raven.Client.Embedded;
 
 namespace Griffin.Decoupled.RavenDb
 {
-    /// <summary>
-    /// Will create a session factory for ravenDb using the embedded engine
-    /// </summary>
-    public class RavenDbFactory
-    {
-        private EmbeddableDocumentStore _documentStore;
-
-        public RavenDbFactory()
-        {
-            _documentStore = new EmbeddableDocumentStore { ConnectionStringName = "GriffinDecoupled" };
-            _documentStore.Conventions.IdentityPartsSeparator = "-";
-            _documentStore.Initialize();
-
-        }
-
-        /// <summary>
-        /// Create a new session factory.
-        /// </summary>
-        /// <returns></returns>
-        public RavenSessionFactory CreateSessionFactory()
-        {
-            return new RavenSessionFactory(_documentStore);
-        }
-    }
-
 
 
     public static class CommandDispatcherBuilderExtensions
     {
-        public static CommandDispatcherBuilder StoreInRavenDbEmbedded(this CommandDispatcherBuilder instance)
+        public static CommandDispatcherBuilder StoreCommandsInRavenDbEmbedded(this CommandDispatcherBuilder instance, bool useTransactions = true)
         {
-            //instance.StoreCommands(new RavenCommandStorage())
-            return null;
+            var documentStore = new EmbeddableDocumentStore
+                {
+                    Conventions = { IdentityPartsSeparator = "-" },
+                    DefaultDatabase = "GriffinDecoupled"
+                };
+            if (ConfigurationManager.ConnectionStrings["GriffinDecoupled"] != null)
+                documentStore.ConnectionStringName = "GriffinDecoupled";
+            documentStore.Initialize();
+
+            instance.StoreCommands(new RavenCommandStorage(documentStore.OpenSession()));
+            return instance;
         }
     }
 }

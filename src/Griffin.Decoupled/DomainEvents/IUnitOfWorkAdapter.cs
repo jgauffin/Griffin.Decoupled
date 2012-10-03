@@ -1,8 +1,10 @@
 namespace Griffin.Decoupled.DomainEvents
 {
     /// <summary>
-    /// Implement this interface 
+    /// Allows Griffin.Decoupled to monitor YOUR transactions to be able to release the domain events when they commit successfully.
     /// </summary>
+    /// <remarks>This interface has nothing to do with the <see cref="IDomainEventStorage"/>.
+    /// </remarks>
     public interface IUnitOfWorkAdapter
     {
         /// <summary>

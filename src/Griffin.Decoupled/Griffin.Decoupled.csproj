@@ -44,8 +44,10 @@
     <Compile Include="Commands\CommandDispatcher.cs" />
     <Compile Include="Commands\CommandDispatcherBuilder.cs" />
     <Compile Include="Commands\ContainerCommandDispatcher.cs" />
+    <Compile Include="Commands\DefaultCommandDispatcher.cs" />
     <Compile Include="Commands\FailedCommandEventArgs.cs" />
     <Compile Include="Commands\ICommandStorage.cs" />
+    <Compile Include="Commands\IDispatcherFeature.cs" />
     <Compile Include="Commands\MemoryStorage.cs" />
     <Compile Include="Commands\RetryingDispatcher.cs" />
     <Compile Include="Commands\ICommand.cs" />
@@ -54,6 +56,7 @@
     <Compile Include="Commands\NamespaceDoc.cs" />
     <Compile Include="Commands\AsyncCommandDispatcher.cs" />
     <Compile Include="Commands\CommandState.cs" />
+    <Compile Include="Commands\TransactionalDispatcher.cs" />
     <Compile Include="DomainEvents\ContainerDispatcher.cs" />
     <Compile Include="DomainEvents\DefaultDispatcher.cs" />
     <Compile Include="DomainEvents\DispatcherFailedEventArgs.cs" />

@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Griffin.Decoupled.Container
+namespace Griffin.Decoupled.Commands
 {
-    public class Class1
+    interface IDispatcherFeature
     {
+        void Dispatch(CommandState command);
     }
+
 }

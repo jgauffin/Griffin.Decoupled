@@ -72,6 +72,21 @@ namespace Griffin.Decoupled.DomainEvents
             unitOfWorkAdapter.Register(this);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DefaultDispatcher" /> class.
+        /// </summary>
+        /// <param name="dispatcher">The real dispatcher to use, for instance <see cref="ContainerDispatcher" />.</param>
+        /// <param name="storage">Where to store events while we wait on execution.</param>
+        public DefaultDispatcher(IDomainEventDispatcher dispatcher, IDomainEventStorage storage)
+        {
+            if (dispatcher == null) throw new ArgumentNullException("dispatcher");
+            if (storage == null) throw new ArgumentNullException("storage");
+
+            _dispatcher = dispatcher;
+            _storage = storage;
+        }
+
+
         #region IDomainEventDispatcher Members
 
         /// <summary>

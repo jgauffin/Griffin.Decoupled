@@ -7,7 +7,11 @@ namespace Griffin.Decoupled.DomainEvents
     /// Used to store domain events in a temporary storage
     /// </summary>
     /// <remarks>
-    /// Storage is used to be able to dispatch events at a later point.
+    /// <para>
+    /// Storage is used to be able to dispatch events at a later point. Each implementation should be thread safe
+    /// since it will be invoked from all dispatcher threads. You are also reponsible of keeping the connection
+    /// to the database open.
+    /// </para>
     /// </remarks>
     public interface IDomainEventStorage
     {
