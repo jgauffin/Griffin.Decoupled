@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Griffin.Decoupled.Commands;
+using Griffin.Decoupled.Commands.Pipeline.Messages;
 
 namespace Griffin.Decoupled.Tests.Commands.Helpers
 {
@@ -13,14 +14,14 @@ namespace Griffin.Decoupled.Tests.Commands.Helpers
     /// </summary>
     public class TestStorage : ICommandStorage
     {
-        private readonly ConcurrentQueue<CommandState> _queue = new ConcurrentQueue<CommandState>();
-        private readonly List<CommandState> _dequeued = new List<CommandState>();
-        public IEnumerable<CommandState> StoredItems
+        private readonly ConcurrentQueue<SendCommand> _queue = new ConcurrentQueue<SendCommand>();
+        private readonly List<SendCommand> _dequeued = new List<SendCommand>();
+        public IEnumerable<SendCommand> StoredItems
         {
             get { return _queue; }
         }
 
-        public List<CommandState> Dequeued
+        public List<SendCommand> Dequeued
         {
             get { return _dequeued; }
         }
@@ -31,7 +32,7 @@ namespace Griffin.Decoupled.Tests.Commands.Helpers
         /// Enqueue a command
         /// </summary>
         /// <param name="command">Get the command which was </param>
-        public void Enqueue(CommandState command)
+        public void Enqueue(SendCommand command)
         {
             if (command == null) throw new ArgumentNullException("command");
             _queue.Enqueue(command);
@@ -41,9 +42,9 @@ namespace Griffin.Decoupled.Tests.Commands.Helpers
         /// Get command which was stored first.
         /// </summary>
         /// <returns>Command if any; otherwise <c>null</c>.</returns>
-        public CommandState Dequeue()
+        public SendCommand Dequeue()
         {
-            CommandState state;
+            SendCommand state;
             if (!_queue.TryDequeue(out state))
             return null;
             Dequeued.Add(state);

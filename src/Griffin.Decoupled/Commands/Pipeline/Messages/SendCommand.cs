@@ -1,19 +1,19 @@
 using System;
 
-namespace Griffin.Decoupled.Commands
+namespace Griffin.Decoupled.Commands.Pipeline.Messages
 {
     /// <summary>
     /// Command which is stored
     /// </summary>
-    public class CommandState
+    public class SendCommand
     {
-        public CommandState(ICommand command)
+        public SendCommand(ICommand command)
         {
             if (command == null) throw new ArgumentNullException("command");
             Command = command;
         }
 
-        protected CommandState()
+        protected SendCommand()
         {
             
         }

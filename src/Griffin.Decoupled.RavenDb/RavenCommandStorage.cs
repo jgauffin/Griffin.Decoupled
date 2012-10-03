@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Griffin.Decoupled.Commands;
+using Griffin.Decoupled.Commands.Pipeline.Messages;
 using Raven.Client;
 
 namespace Griffin.Decoupled.RavenDb
@@ -25,7 +26,7 @@ namespace Griffin.Decoupled.RavenDb
         /// Enqueue a command
         /// </summary>
         /// <param name="command">Get the command which was </param>
-        public void Enqueue(CommandState command)
+        public void Enqueue(SendCommand command)
         {
             _session.Store(command);
             _session.SaveChanges();
@@ -35,9 +36,9 @@ namespace Griffin.Decoupled.RavenDb
         /// Get command which was stored first.
         /// </summary>
         /// <returns>Command if any; otherwise <c>null</c>.</returns>
-        public CommandState Dequeue()
+        public SendCommand Dequeue()
         {
-            return _session.Query<CommandState>().FirstOrDefault();
+            return _session.Query<SendCommand>().FirstOrDefault();
         }
     }
 }

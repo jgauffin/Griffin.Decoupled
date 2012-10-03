@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Griffin.Decoupled.Commands;
+using Griffin.Decoupled.Commands.Pipeline.Messages;
 
 namespace Griffin.Decoupled.Tests.Commands.Helpers
 {
@@ -14,14 +15,14 @@ namespace Griffin.Decoupled.Tests.Commands.Helpers
         private ManualResetEventSlim _event = new ManualResetEventSlim(false);
         private ManualResetEventSlim _dispatcherBlockEvent = new ManualResetEventSlim(true);
         private int _commands;
-        private Action<CommandState> _action;
-        public BlockingDispatcher(Action<CommandState> action = null)
+        private Action<SendCommand> _action;
+        public BlockingDispatcher(Action<SendCommand> action = null)
         {
             _numberOfCommandsToWait = 1;
             _action = action ?? (state => {});
         }
 
-        public BlockingDispatcher(int numberOfCommandsToWait, Action<CommandState> action = null)
+        public BlockingDispatcher(int numberOfCommandsToWait, Action<SendCommand> action = null)
         {
             _numberOfCommandsToWait = numberOfCommandsToWait;
             _action = action ?? (state => { });
@@ -33,7 +34,7 @@ namespace Griffin.Decoupled.Tests.Commands.Helpers
         /// <typeparam name="T">Type of command</typeparam>
         /// <param name="command">Command to execute</param>
         /// <remarks>Implementations should throw exceptions unless they are asynchronous or will attempt to retry later.</remarks>
-        public void Dispatch(CommandState command)
+        public void Dispatch(SendCommand command)
         {
             Command = command;
             ++_commands;
@@ -66,7 +67,7 @@ namespace Griffin.Decoupled.Tests.Commands.Helpers
             return _event.Wait(span);
         }
 
-        public CommandState Command { get; set; }
+        public SendCommand Command { get; set; }
 
         /// <summary>
         /// Close the dispatcher gracefully.

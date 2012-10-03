@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Griffin.Container;
 using Griffin.Decoupled;
 using Griffin.Decoupled.Commands;
+using Griffin.Decoupled.Commands.Pipeline.Messages;
 using Griffin.Decoupled.RavenDb;
 
 namespace Sample_1___Hello_domain_event
@@ -47,7 +48,7 @@ namespace Sample_1___Hello_domain_event
         }
 
 
-        private static void HandleFailedCommands(FailedCommandEventArgs e)
+        private static void HandleFailedCommands(CommandFailed e)
         {
             Console.WriteLine("The following command failed three times: " + e.Command);
         }

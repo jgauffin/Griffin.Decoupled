@@ -1,3 +1,5 @@
+using Griffin.Decoupled.Commands.Pipeline.Messages;
+
 namespace Griffin.Decoupled.Commands
 {
     /// <summary>
@@ -11,12 +13,6 @@ namespace Griffin.Decoupled.Commands
         /// <typeparam name="T">Type of command</typeparam>
         /// <param name="command">Command to execute</param>
         /// <remarks>Implementations should throw exceptions unless they are asynchronous or will attempt to retry later.</remarks>
-        void Dispatch(CommandState command);
-
-        /// <summary>
-        /// Close the dispatcher gracefully.
-        /// </summary>
-        /// <remarks>Should make sure that all non-persitent commands are executed or stored before exiting.</remarks>
-        void Close();
+        void Dispatch<T>(T command) where T : class, ICommand;
     }
 }

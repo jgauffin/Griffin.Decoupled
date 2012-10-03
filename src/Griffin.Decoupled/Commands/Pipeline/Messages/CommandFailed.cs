@@ -1,25 +1,22 @@
 using System;
 
-namespace Griffin.Decoupled.Commands
+namespace Griffin.Decoupled.Commands.Pipeline.Messages
 {
     /// <summary>
     /// Event arguments for <see cref="RetryingDispatcher.CommandFailed"/>.
     /// </summary>
-    public class FailedCommandEventArgs : EventArgs
+    public class CommandFailed
     {
-        private readonly CommandState _state;
+        private readonly SendCommand _state;
         private readonly Exception _exception;
-        private readonly ICommandStorage _storage;
 
-        public FailedCommandEventArgs(CommandState state, Exception exception, ICommandStorage storage)
+        public CommandFailed(SendCommand state, Exception exception)
         {
             if (state == null) throw new ArgumentNullException("state");
             if (exception == null) throw new ArgumentNullException("exception");
-            if (storage == null) throw new ArgumentNullException("storage");
 
             _state = state;
             _exception = exception;
-            _storage = storage;
         }
 
         /// <summary>
@@ -33,7 +30,7 @@ namespace Griffin.Decoupled.Commands
         /// <summary>
         /// Gets failed command
         /// </summary>
-        public ICommand Command{get { return _state.Command; }}
+        public ICommand Command { get { return _state.Command; } }
 
         /// <summary>
         /// Gets failed exception
@@ -41,14 +38,6 @@ namespace Griffin.Decoupled.Commands
         public Exception Exception
         {
             get { return _exception; }
-        }
-
-        /// <summary>
-        /// Store command for another attempt.
-        /// </summary>
-        public void TryAgain()
-        {
-            _storage.Enqueue(_state);
         }
     }
 }

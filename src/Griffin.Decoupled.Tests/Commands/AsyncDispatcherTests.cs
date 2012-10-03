@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Griffin.Decoupled.Commands;
+using Griffin.Decoupled.Commands.Pipeline.Messages;
 using Griffin.Decoupled.Tests.Commands.Helpers;
 using NSubstitute;
 using Xunit;
@@ -51,7 +52,7 @@ namespace Griffin.Decoupled.Tests.Commands
             var inner = new BlockingDispatcher();
             var dispatcher = new AsyncCommandDispatcher(inner, storage, 1);
             var command = new FakeCommand();
-            var state = new CommandState(command);
+            var state = new SendCommand(command);
             storage.Dequeue().Returns(state);
 
             dispatcher.Dispatch(state);
@@ -67,8 +68,8 @@ namespace Griffin.Decoupled.Tests.Commands
             var storage = new TestStorage();
             var inner = new BlockingDispatcher(2);
             var dispatcher = new AsyncCommandDispatcher(inner, storage, 1);
-            var state1 = new CommandState(new FakeCommand());
-            var state2 = new CommandState(new FakeCommand());
+            var state1 = new SendCommand(new FakeCommand());
+            var state2 = new SendCommand(new FakeCommand());
 
             dispatcher.Dispatch(state1);
             dispatcher.Dispatch(state2);
@@ -86,8 +87,8 @@ namespace Griffin.Decoupled.Tests.Commands
             var inner = new BlockingDispatcher();
             var dispatcher = new AsyncCommandDispatcher(inner, storage, 2);
             var command = new FakeCommand();
-            var state = new CommandState(command);
-            var state2 = new CommandState(new FakeCommand());
+            var state = new SendCommand(command);
+            var state2 = new SendCommand(new FakeCommand());
 
             // dispatch first and check that it's passed by properly
             dispatcher.Dispatch(state);
@@ -109,8 +110,8 @@ namespace Griffin.Decoupled.Tests.Commands
             var storage = new TestStorage();
             var inner = new BlockingDispatcher();
             var dispatcher = new AsyncCommandDispatcher(inner, storage, 1);
-            var state1 = new CommandState(new FakeCommand());
-            var state2 = new CommandState(new FakeCommand());
+            var state1 = new SendCommand(new FakeCommand());
+            var state2 = new SendCommand(new FakeCommand());
 
             inner.BlockDispatchInvocation();
             dispatcher.Dispatch(state1);
@@ -130,8 +131,8 @@ namespace Griffin.Decoupled.Tests.Commands
             var storage = new TestStorage();
             var inner = new BlockingDispatcher();
             var dispatcher = new AsyncCommandDispatcher(inner, storage, 2);
-            var state1 = new CommandState(new FakeCommand());
-            var state2 = new CommandState(new FakeCommand());
+            var state1 = new SendCommand(new FakeCommand());
+            var state2 = new SendCommand(new FakeCommand());
 
             inner.BlockDispatchInvocation();
             dispatcher.Dispatch(state1);
@@ -155,7 +156,7 @@ namespace Griffin.Decoupled.Tests.Commands
                     actual = args.Exception;
                     sync.Set();
                 };
-            var state1 = new CommandState(new FakeCommand());
+            var state1 = new SendCommand(new FakeCommand());
 
             dispatcher.Dispatch(state1);
 

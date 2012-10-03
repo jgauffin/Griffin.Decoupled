@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Griffin.Decoupled.Commands;
+using Griffin.Decoupled.Commands.Pipeline.Messages;
 using Griffin.Decoupled.Tests.Commands.Helpers;
 using NSubstitute;
 using Xunit;
@@ -33,7 +34,7 @@ namespace Griffin.Decoupled.Tests.Commands
             var storage = new TestStorage();
             var dispatcher = new RetryingDispatcher(inner, 3, storage);
             dispatcher.CommandFailed += (sender, args) => evt.Set();
-            var state = new CommandState(new FakeCommand()) {Attempts = 2};
+            var state = new SendCommand(new FakeCommand()) {Attempts = 2};
 
             dispatcher.Dispatch(state);
 
@@ -47,7 +48,7 @@ namespace Griffin.Decoupled.Tests.Commands
         {
             bool failed = false;
             int counter = 0;
-            var state = new CommandState(new FakeCommand());
+            var state = new SendCommand(new FakeCommand());
             var storage = new TestStorage();
             var inner = new BlockingDispatcher(x =>
                 {
@@ -57,7 +58,7 @@ namespace Griffin.Decoupled.Tests.Commands
             var dispatcher = new RetryingDispatcher(inner, 3, storage);
             dispatcher.CommandFailed += (sender, args) => failed = true;
 
-            dispatcher.Dispatch(new CommandState(new FakeCommand()));
+            dispatcher.Dispatch(new SendCommand(new FakeCommand()));
             
             Assert.Equal(1, storage.StoredItems.Count());
         }

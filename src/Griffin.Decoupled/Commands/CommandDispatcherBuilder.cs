@@ -1,4 +1,6 @@
 ﻿using System;
+using Griffin.Decoupled.Commands.Pipeline;
+using Griffin.Decoupled.Commands.Pipeline.Messages;
 
 namespace Griffin.Decoupled.Commands
 {
@@ -10,11 +12,10 @@ namespace Griffin.Decoupled.Commands
     /// </remarks>
     public class CommandDispatcherBuilder
     {
-        private ICommandDispatcher _actualDispatcher;
-        private Action<FailedCommandEventArgs> _failedCommands;
+        private PipelineBuilder _pipelineBuilder = new PipelineBuilder();
+        private Action<CommandFailed> _failedCommands;
         private int _maxAttempts;
         private ICommandStorage _storage = new MemoryStorage();
-        private Action<AsyncDispatcherExceptionEventArgs> _uncaughtExceptionsHandler;
         private int _workers;
 
         /// <summary>
@@ -56,7 +57,7 @@ namespace Griffin.Decoupled.Commands
         /// <param name="maxAttempts">Number of attempts for failing commands</param>
         /// <param name="failedCommands">Will be invoked when a command have failed all times</param>
         /// <returns>this</returns>
-        public CommandDispatcherBuilder RetryCommands(int maxAttempts, Action<FailedCommandEventArgs> failedCommands)
+        public CommandDispatcherBuilder RetryCommands(int maxAttempts, Action<CommandFailed> failedCommands)
         {
             if (failedCommands == null) throw new ArgumentNullException("failedCommands");
             if (maxAttempts < 0 || maxAttempts > 10)

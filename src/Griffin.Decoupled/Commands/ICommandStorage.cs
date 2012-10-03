@@ -1,30 +1,25 @@
 using System;
+using Griffin.Decoupled.Commands.Pipeline.Messages;
 
 namespace Griffin.Decoupled.Commands
 {
     /// <summary>
     /// Contract for command storage
     /// </summary>
-    /// <remarks>Storage must be thread safe.
-    /// <para>
-    /// Storage is used to be able to dispatch commands at a later point and/or to continue later if the application shuts down/crashes. Each implementation should be thread safe
-    /// since it will be invoked from all dispatcher threads. You are also reponsible of keeping the connection
-    /// to the database open.
-    /// </para>
-    /// </remarks>
+    /// <remarks>Storage must be thread safe.</remarks>
     public interface ICommandStorage
     {
         /// <summary>
         /// Enqueue a command
         /// </summary>
         /// <param name="command">Get the command which was </param>
-        void Enqueue(CommandState command);
+        void Enqueue(SendCommand command);
 
         /// <summary>
         /// Get command which was stored first.
         /// </summary>
         /// <returns>Command if any; otherwise <c>null</c>.</returns>
-        CommandState Dequeue();
+        SendCommand Dequeue();
     }
 
     public interface ITransactionalCommandStorage : ICommandStorage

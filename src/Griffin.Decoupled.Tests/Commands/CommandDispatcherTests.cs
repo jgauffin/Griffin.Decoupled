@@ -1,5 +1,6 @@
 ﻿using System;
 using Griffin.Decoupled.Commands;
+using Griffin.Decoupled.Commands.Pipeline.Messages;
 using NSubstitute;
 using Xunit;
 
@@ -16,7 +17,7 @@ namespace Griffin.Decoupled.Tests.Commands
 
             CommandDispatcher.Dispatch(command);
 
-            innerDispatcher.Received().Dispatch(Arg.Is<CommandState>(x => ReferenceEquals(x.Command, command)));
+            innerDispatcher.Received().Dispatch(Arg.Is<SendCommand>(x => ReferenceEquals(x.Command, command)));
         }
 
         [Fact]

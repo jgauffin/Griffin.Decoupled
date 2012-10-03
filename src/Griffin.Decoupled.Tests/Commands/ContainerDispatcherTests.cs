@@ -1,4 +1,5 @@
 ﻿using Griffin.Decoupled.Commands;
+using Griffin.Decoupled.Commands.Pipeline.Messages;
 using Griffin.Decoupled.Tests.Commands.Helpers;
 using NSubstitute;
 using Xunit;
@@ -18,7 +19,7 @@ namespace Griffin.Decoupled.Tests.Commands
             var command = new FakeCommand();
 
             var dispatcher = new ContainerCommandDispatcher(root);
-            dispatcher.Dispatch(new CommandState(command));
+            dispatcher.Dispatch(new SendCommand(command));
 
             handler.Received().Invoke(command);
         }
