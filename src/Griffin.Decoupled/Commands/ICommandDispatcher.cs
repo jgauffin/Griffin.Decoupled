@@ -1,5 +1,3 @@
-using Griffin.Decoupled.Commands.Pipeline.Messages;
-
 namespace Griffin.Decoupled.Commands
 {
     /// <summary>

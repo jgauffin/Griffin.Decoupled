@@ -17,7 +17,7 @@ namespace Griffin.Decoupled
         /// <param name="builder">this</param>
         /// <param name="griffinContainer">Your created container, look at the Griffin.Container HP for instructions on how to build it.</param>
         /// <returns>this</returns>
-        public static CommandDispatcherBuilder DispatchUsingGriffinContainer(this CommandDispatcherBuilder builder, IParentContainer griffinContainer)
+        public static PipelineBuilder DispatchUsingGriffinContainer(this PipelineBuilder builder, IParentContainer griffinContainer)
         {
             if (builder == null) throw new ArgumentNullException("builder");
             if (griffinContainer == null) throw new ArgumentNullException("griffinContainer");

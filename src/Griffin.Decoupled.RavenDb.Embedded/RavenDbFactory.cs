@@ -13,7 +13,7 @@ namespace Griffin.Decoupled.RavenDb
 
     public static class CommandDispatcherBuilderExtensions
     {
-        public static CommandDispatcherBuilder StoreCommandsInRavenDbEmbedded(this CommandDispatcherBuilder instance, bool useTransactions = true)
+        public static PipelineBuilder StoreCommandsInRavenDbEmbedded(this PipelineBuilder instance, bool useTransactions = true)
         {
             var documentStore = new EmbeddableDocumentStore
                 {

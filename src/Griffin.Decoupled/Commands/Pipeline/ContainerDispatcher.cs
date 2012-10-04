@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Reflection;
 using Griffin.Decoupled.Commands.Pipeline.Messages;
 
 namespace Griffin.Decoupled.Commands.Pipeline
@@ -16,8 +11,8 @@ namespace Griffin.Decoupled.Commands.Pipeline
     /// </remarks>
     public class ContainerDispatcher : IDownstreamHandler
     {
-        private readonly IRootContainer _rootContainer;
         private readonly MethodInfo _method;
+        private readonly IRootContainer _rootContainer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ContainerDispatcher" /> class.
@@ -29,6 +24,8 @@ namespace Griffin.Decoupled.Commands.Pipeline
             _method = GetType().GetMethod("Dispatch", BindingFlags.Instance | BindingFlags.NonPublic);
         }
 
+        #region IDownstreamHandler Members
+
         /// <summary>
         /// Send a message to the command handler
         /// </summary>
@@ -39,23 +36,27 @@ namespace Griffin.Decoupled.Commands.Pipeline
             var cmd = message as SendCommand;
             if (cmd != null)
             {
-                _method.Invoke(this, new object[] {cmd});
+                _method.MakeGenericMethod(cmd.Command.GetType()).Invoke(this, new object[] {cmd.Command});
                 return;
             }
 
-            context.SendUpstream(new PipelineError("We, ContainerDispatcher, should be the last downstream handler. Received: " + message, null));
+            context.SendUpstream(
+                new PipelineFailure(this,
+                    "We, ContainerDispatcher, should be the last downstream handler. Received: " + message, null));
         }
+
+        #endregion
 
         /// <summary>
         /// Invoked through reflection
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="command"></param>
-        private void Dispatch<T>(T command)  where T : class, ICommand
+        private void Dispatch<T>(T command) where T : class, ICommand
         {
-            using(var scope = _rootContainer.CreateScope())
+            using (var scope = _rootContainer.CreateScope())
             {
-                _rootContainer.Resolve<IHandleCommand<T>>().Invoke(command);
+                scope.Resolve<IHandleCommand<T>>().Invoke(command);
             }
         }
     }

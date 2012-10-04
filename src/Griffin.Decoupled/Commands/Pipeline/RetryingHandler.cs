@@ -1,24 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Griffin.Decoupled.Commands.Pipeline.Messages;
 
 namespace Griffin.Decoupled.Commands.Pipeline
 {
-    class RetryingHandler : IDownstreamHandler
+    /// <summary>
+    /// Will try commands the configured amount of times before giving up.
+    /// </summary>
+    /// <remarks>
+    /// The <see cref="CommandFailed"/> message will be sent upstream each time a command failes and finally the <see cref="CommandAborted"/> message
+    /// when we give up on a command.
+    /// </remarks>
+    public class RetryingHandler : IDownstreamHandler
     {
-
-        private readonly ICommandDispatcher _inner;
         private readonly int _numberOfAttempts;
         private readonly ICommandStorage _storage;
 
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RetryingDispatcher" /> class.
+        /// Initializes a new instance of the <see cref="RetryingHandler" /> class.
         /// </summary>
-        /// <param name="inner">The inner.</param>
         /// <param name="numberOfAttempts">The number of attempts.</param>
         /// <param name="storage">Used to store failed commands (to retry later)</param>
         public RetryingHandler(int numberOfAttempts, ICommandStorage storage)
@@ -31,6 +31,7 @@ namespace Griffin.Decoupled.Commands.Pipeline
             _storage = storage;
         }
 
+        #region IDownstreamHandler Members
 
         public void HandleDownstream(IDownstreamContext context, object message)
         {
@@ -39,7 +40,7 @@ namespace Griffin.Decoupled.Commands.Pipeline
             {
                 try
                 {
-                    _inner.Dispatch(command);
+                    context.SendDownstream(command);
                 }
                 catch (Exception err)
                 {
@@ -47,15 +48,18 @@ namespace Griffin.Decoupled.Commands.Pipeline
                     command.LastException = err.ToString();
                     if (command.Attempts >= _numberOfAttempts)
                     {
-                        context.SendUpstream(new CommandFailed(command, err));
+                        context.SendUpstream(new CommandAborted(command, err));
                     }
                     else
                     {
+                        context.SendUpstream(new CommandFailed(command, err));
                         _storage.Enqueue(command);
                     }
                 }
             }
         }
+
+        #endregion
 
         /// <summary>
         /// Close the dispatcher gracefully.
@@ -64,6 +68,5 @@ namespace Griffin.Decoupled.Commands.Pipeline
         public void Close()
         {
         }
-
     }
 }

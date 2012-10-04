@@ -1,6 +1,6 @@
 ﻿using System;
 using Griffin.Decoupled.Commands;
-using Griffin.Decoupled.Commands.Pipeline.Messages;
+using Griffin.Decoupled.Tests.Commands.Helpers;
 using NSubstitute;
 using Xunit;
 
@@ -13,11 +13,11 @@ namespace Griffin.Decoupled.Tests.Commands
         {
             var innerDispatcher = Substitute.For<ICommandDispatcher>();
             CommandDispatcher.Assign(innerDispatcher);
-            var command = Substitute.For<ICommand>();
+            var command = new FakeCommand();
 
             CommandDispatcher.Dispatch(command);
 
-            innerDispatcher.Received().Dispatch(Arg.Is<SendCommand>(x => ReferenceEquals(x.Command, command)));
+            innerDispatcher.Received().Dispatch(Arg.Is<FakeCommand>(x => ReferenceEquals(x, command)));
         }
 
         [Fact]

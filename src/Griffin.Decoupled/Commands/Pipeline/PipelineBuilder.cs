@@ -8,8 +8,8 @@ namespace Griffin.Decoupled.Commands.Pipeline
     /// </summary>
     public class PipelineBuilder
     {
-        readonly List<IUpstreamHandler> _upstreamHandlers = new List<IUpstreamHandler>();
-        readonly List<IDownstreamHandler> _downstreamHandlers = new List<IDownstreamHandler>();
+        private readonly List<IDownstreamHandler> _downstreamHandlers = new List<IDownstreamHandler>();
+        private readonly List<IUpstreamHandler> _upstreamHandlers = new List<IUpstreamHandler>();
 
         /// <summary>
         /// Register a upstream handler. 
@@ -57,7 +57,7 @@ namespace Griffin.Decoupled.Commands.Pipeline
         {
             var lastDown = firstDown;
             pipeline.Add(lastDown);
-            for (int i = 1; i < _downstreamHandlers.Count; i++)
+            for (var i = 1; i < _downstreamHandlers.Count; i++)
             {
                 var ctx = new DownstreamContext(_downstreamHandlers[i]);
                 ctx.SetUpstream(firstUp);
@@ -71,7 +71,7 @@ namespace Griffin.Decoupled.Commands.Pipeline
         {
             var lastUp = firstUp;
             pipeline.Add(firstDown);
-            for (int i = 1; i < _upstreamHandlers.Count; i++)
+            for (var i = 1; i < _upstreamHandlers.Count; i++)
             {
                 var ctx = new UpstreamContext(_upstreamHandlers[i]);
                 ctx.SetDownstream(firstDown);

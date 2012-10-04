@@ -1,8 +1,4 @@
-﻿using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Griffin.Decoupled.Commands.Pipeline
+﻿namespace Griffin.Decoupled.Commands.Pipeline
 {
     /// <summary>
     /// Used to send messages upstream

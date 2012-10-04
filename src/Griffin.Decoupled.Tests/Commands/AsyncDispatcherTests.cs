@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Griffin.Decoupled.Commands;
+using Griffin.Decoupled.Commands.Pipeline;
 using Griffin.Decoupled.Commands.Pipeline.Messages;
 using Griffin.Decoupled.Tests.Commands.Helpers;
 using NSubstitute;
@@ -20,45 +21,35 @@ namespace Griffin.Decoupled.Tests.Commands
             var storage = Substitute.For<ICommandStorage>();
             var inner = Substitute.For<ICommandDispatcher>();
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => new AsyncCommandDispatcher(inner, storage, 0));
-            Assert.Throws<ArgumentOutOfRangeException>(() => new AsyncCommandDispatcher(inner, storage, -1));
-            Assert.Throws<ArgumentOutOfRangeException>(() => new AsyncCommandDispatcher(inner, storage, 1000));
-            new AsyncCommandDispatcher(inner, storage, 10);
+            Assert.Throws<ArgumentOutOfRangeException>(() => new AsyncHandler(storage, 0));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new AsyncHandler(storage, -1));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new AsyncHandler(storage, 1000));
+            new AsyncHandler(storage, 10);
         }
 
-        [Fact]
-        public void MustHaveDispatcher()
-        {
-            var storage = Substitute.For<ICommandStorage>();
-            var inner = Substitute.For<ICommandDispatcher>();
-
-            Assert.Throws<ArgumentNullException>(() => new AsyncCommandDispatcher(null, storage, 0));
-            new AsyncCommandDispatcher(inner, storage, 10);
-        }
         [Fact]
         public void MustHaveStorage()
         {
             var storage = Substitute.For<ICommandStorage>();
             var inner = Substitute.For<ICommandDispatcher>();
 
-            Assert.Throws<ArgumentNullException>(() => new AsyncCommandDispatcher(inner, null, 0));
-            new AsyncCommandDispatcher(inner, storage, 10);
+            Assert.Throws<ArgumentNullException>(() => new AsyncHandler(null, 0));
+            new AsyncHandler(storage, 10);
         }
 
         [Fact]
         public void Enqueue()
         {
             var storage = Substitute.For<ICommandStorage>();
-            var inner = new BlockingDispatcher();
-            var dispatcher = new AsyncCommandDispatcher(inner, storage, 1);
-            var command = new FakeCommand();
-            var state = new SendCommand(command);
-            storage.Dequeue().Returns(state);
+            var dispatcher = new AsyncHandler(storage, 1);
+            var context = new DownContext(null, null);
+            var state = new SendCommand(new FakeCommand());
+            storage.Dequeue().Returns( state);
 
-            dispatcher.Dispatch(state);
+            dispatcher.HandleDownstream(context, state);
 
-            storage.Received().Enqueue(state);
-            Assert.True(inner.Wait(TimeSpan.FromSeconds(1)));
+            storage.Received().Enqueue( state);
+            Assert.True(context.WaitDown(TimeSpan.FromSeconds(1)));
             storage.Received().Dequeue();
         }
 
@@ -66,16 +57,16 @@ namespace Griffin.Decoupled.Tests.Commands
         public void DispatchTwoSingleWorker()
         {
             var storage = new TestStorage();
-            var inner = new BlockingDispatcher(2);
-            var dispatcher = new AsyncCommandDispatcher(inner, storage, 1);
+            var dispatcher = new AsyncHandler(storage, 1);
             var state1 = new SendCommand(new FakeCommand());
             var state2 = new SendCommand(new FakeCommand());
+            var context = new DownContext(null, null);
 
-            dispatcher.Dispatch(state1);
-            dispatcher.Dispatch(state2);
+            dispatcher.HandleDownstream(context, state1);
+            dispatcher.HandleDownstream(context, state2);
 
-            Assert.True(inner.Wait(TimeSpan.FromSeconds(1)));
-            Assert.Same(state2, storage.Dequeued.Last());
+            Assert.True(context.WaitDown(TimeSpan.FromSeconds(1)));
+            Assert.Same( state2, storage.Dequeued.Last());
         }
 
 
@@ -84,23 +75,21 @@ namespace Griffin.Decoupled.Tests.Commands
         public void ShutDown_NoMoreDispatching()
         {
             var storage = new TestStorage();
-            var inner = new BlockingDispatcher();
-            var dispatcher = new AsyncCommandDispatcher(inner, storage, 2);
+            var dispatcher = new AsyncHandler(storage, 2);
             var command = new FakeCommand();
             var state = new SendCommand(command);
             var state2 = new SendCommand(new FakeCommand());
+            var context = new DownContext(null, null);
 
             // dispatch first and check that it's passed by properly
-            dispatcher.Dispatch(state);
-            Assert.True(inner.Wait(TimeSpan.FromMilliseconds(200)));
-            inner.Reset();
+            dispatcher.HandleDownstream(context, state);
+            Assert.True(context.WaitDown(TimeSpan.FromMilliseconds(200)));
+            context.ResetDown();
 
             dispatcher.Close();
 
-            dispatcher.Dispatch(state2);
-            Assert.False(inner.Wait(TimeSpan.FromMilliseconds(200)));
-
-
+            dispatcher.HandleDownstream(context, state2);
+            Assert.False(context.WaitDown(TimeSpan.FromMilliseconds(200)));
         }
 
 
@@ -108,39 +97,39 @@ namespace Griffin.Decoupled.Tests.Commands
         public void OnlyOneWorker_TriggerThroughQueue()
         {
             var storage = new TestStorage();
-            var inner = new BlockingDispatcher();
-            var dispatcher = new AsyncCommandDispatcher(inner, storage, 1);
+            var dispatcher = new AsyncHandler(storage, 1);
             var state1 = new SendCommand(new FakeCommand());
             var state2 = new SendCommand(new FakeCommand());
+            var evt = new ManualResetEvent(false);
+            var context = new DownContext(x=>evt.WaitOne(), null);
 
-            inner.BlockDispatchInvocation();
-            dispatcher.Dispatch(state1);
-            Assert.True(inner.Wait(TimeSpan.FromMilliseconds(100)));
-            inner.Reset();
+            dispatcher.HandleDownstream(context, state1);
+            Assert.True(context.WaitDown(TimeSpan.FromMilliseconds(100)));
+            context.ResetDown();
 
-            dispatcher.Dispatch(state2);
-            Assert.False(inner.Wait(TimeSpan.FromMilliseconds(100)));
-            inner.UnblockDispatchInvocation();
+            dispatcher.HandleDownstream(context, state2);
+            Assert.False(context.WaitDown(TimeSpan.FromMilliseconds(100)));
+            evt.Set();
 
-            Assert.True(inner.Wait(TimeSpan.FromMilliseconds(100)));
+            Assert.True(context.WaitDown(TimeSpan.FromMilliseconds(100)));
         }
 
         [Fact]
         public void TwoWorkers_DispatchTwoThreads()
         {
             var storage = new TestStorage();
-            var inner = new BlockingDispatcher();
-            var dispatcher = new AsyncCommandDispatcher(inner, storage, 2);
+            var dispatcher = new AsyncHandler(storage, 2);
             var state1 = new SendCommand(new FakeCommand());
             var state2 = new SendCommand(new FakeCommand());
+            var evt = new ManualResetEvent(false);
+            var context = new DownContext(null, x => evt.WaitOne());
 
-            inner.BlockDispatchInvocation();
-            dispatcher.Dispatch(state1);
-            Assert.True(inner.Wait(TimeSpan.FromMilliseconds(100)));
-            inner.Reset();
+            dispatcher.HandleDownstream(context, state1);
+            Assert.True(context.WaitDown(TimeSpan.FromMilliseconds(100)));
+            context.ResetDown();
 
-            dispatcher.Dispatch(state2);
-            Assert.True(inner.Wait(TimeSpan.FromMilliseconds(100)));
+            dispatcher.HandleDownstream(context, state2);
+            Assert.True(context.WaitDown(TimeSpan.FromMilliseconds(100)));
         }
 
         [Fact]
@@ -148,20 +137,22 @@ namespace Griffin.Decoupled.Tests.Commands
         {
             var sync = new ManualResetEvent(false);
             var expected = new Exception("Work not made");
-            var inner = new BlockingDispatcher(x => { throw expected; });
-            var dispatcher = new AsyncCommandDispatcher(inner, 2);
-            Exception actual = null;
-            dispatcher.UncaughtException += (sender, args) =>
+            var dispatcher = new AsyncHandler(new MemoryStorage(), 2);
+            object msg = null;
+            var context = new DownContext(y => { throw expected; }, x =>
                 {
-                    actual = args.Exception;
+                    msg = x;
                     sync.Set();
-                };
+                });
+
             var state1 = new SendCommand(new FakeCommand());
 
-            dispatcher.Dispatch(state1);
+            dispatcher.HandleDownstream(context, state1);
 
             Assert.True(sync.WaitOne(TimeSpan.FromMilliseconds(100)));
-            Assert.Same(expected, actual);
+            Assert.NotNull(msg);
+            Assert.IsType<PipelineFailure>(msg);
+            Assert.Same(expected, ((PipelineFailure)msg).Exception);
         }
 
 

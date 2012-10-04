@@ -1,4 +1,5 @@
 ﻿using Griffin.Decoupled.Commands;
+using Griffin.Decoupled.Commands.Pipeline;
 using Griffin.Decoupled.Commands.Pipeline.Messages;
 using Griffin.Decoupled.Tests.Commands.Helpers;
 using NSubstitute;
@@ -15,11 +16,12 @@ namespace Griffin.Decoupled.Tests.Commands
             var child = Substitute.For<IScopedContainer>();
             var handler = Substitute.For<IHandleCommand<FakeCommand>>();
             root.CreateScope().Returns(child);
-            child.ResolveAll<IHandleCommand<FakeCommand>>().Returns(new[] {handler});
+            child.Resolve<IHandleCommand<FakeCommand>>().Returns(handler);
             var command = new FakeCommand();
+            var context = new DownContext(null, null);
+            var dispatcher = new ContainerDispatcher(root);
 
-            var dispatcher = new ContainerCommandDispatcher(root);
-            dispatcher.Dispatch(new SendCommand(command));
+            dispatcher.HandleDownstream(context, new SendCommand(command));
 
             handler.Received().Invoke(command);
         }

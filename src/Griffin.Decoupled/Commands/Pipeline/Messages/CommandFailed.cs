@@ -3,12 +3,12 @@ using System;
 namespace Griffin.Decoupled.Commands.Pipeline.Messages
 {
     /// <summary>
-    /// Event arguments for <see cref="RetryingDispatcher.CommandFailed"/>.
+    /// We failed to deliver a command once, will however retry a few times more. So don't do anything rash just yet.
     /// </summary>
     public class CommandFailed
     {
-        private readonly SendCommand _state;
         private readonly Exception _exception;
+        private readonly SendCommand _state;
 
         public CommandFailed(SendCommand state, Exception exception)
         {
@@ -30,7 +30,10 @@ namespace Griffin.Decoupled.Commands.Pipeline.Messages
         /// <summary>
         /// Gets failed command
         /// </summary>
-        public ICommand Command { get { return _state.Command; } }
+        public ICommand Command
+        {
+            get { return _state.Command; }
+        }
 
         /// <summary>
         /// Gets failed exception

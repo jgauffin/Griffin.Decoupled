@@ -3,7 +3,7 @@ using System;
 namespace Griffin.Decoupled.Commands.Pipeline.Messages
 {
     /// <summary>
-    /// Command which is stored
+    /// Want to dispatch a command
     /// </summary>
     public class SendCommand
     {
@@ -15,7 +15,6 @@ namespace Griffin.Decoupled.Commands.Pipeline.Messages
 
         protected SendCommand()
         {
-            
         }
 
         /// <summary>

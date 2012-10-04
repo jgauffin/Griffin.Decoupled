@@ -41,7 +41,8 @@
   <ItemGroup>
     <Compile Include="Commands\CommandBase.cs" />
     <Compile Include="Commands\CommandDispatcher.cs" />
-    <Compile Include="Commands\CommandDispatcherBuilder.cs" />
+    <Compile Include="Commands\PipelineBuilder.cs" />
+    <Compile Include="Commands\IocDispatcher.cs" />
     <Compile Include="Commands\PipelineDispatcher.cs" />
     <Compile Include="Commands\DispatcherFailedEventArgs.cs" />
     <Compile Include="Commands\Pipeline\ContainerDispatcher.cs" />
@@ -55,8 +56,12 @@
     <Compile Include="Commands\MemoryStorage.cs" />
     <Compile Include="Commands\Pipeline\AsyncHandler.cs" />
     <Compile Include="Commands\Pipeline\IUpstreamHandler.cs" />
-    <Compile Include="Commands\Pipeline\Messages\PipelineError.cs" />
+    <Compile Include="Commands\Pipeline\Messages\CommandWarning.cs" />
+    <Compile Include="Commands\Pipeline\Messages\NamespaceDoc.cs" />
+    <Compile Include="Commands\Pipeline\Messages\PipelineFailure.cs" />
     <Compile Include="Commands\Pipeline\Messages\Shutdown.cs" />
+    <Compile Include="Commands\Pipeline\Messages\Started.cs" />
+    <Compile Include="Commands\Pipeline\NamespaceDoc.cs" />
     <Compile Include="Commands\Pipeline\Pipeline.cs" />
     <Compile Include="Commands\Pipeline\PipelineBuilder.cs" />
     <Compile Include="Commands\Pipeline\RetryingHandler.cs" />

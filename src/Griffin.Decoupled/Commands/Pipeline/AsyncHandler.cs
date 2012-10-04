@@ -7,10 +7,12 @@ namespace Griffin.Decoupled.Commands.Pipeline
     /// <summary>
     /// Will enqueue messages and send them asynchronously
     /// </summary>
+    /// <remarks>It's recommended that the data storage implements the <see cref="ITransactionalCommandStorage"/> interface
+    /// so that we can use transactions during command invocation. It helps us to keep the commands in the database
+    /// if something fails or the application is crashing.</remarks>
     internal class AsyncHandler : IDownstreamHandler
     {
         private readonly ManualResetEventSlim _closingEvent = new ManualResetEventSlim(false);
-        private readonly ICommandDispatcher _inner;
         private readonly int _maxConcurrentTasks;
         private readonly ICommandStorage _storage;
         private bool _closing;
@@ -18,7 +20,7 @@ namespace Griffin.Decoupled.Commands.Pipeline
         private long _currentWorkers;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AsyncCommandDispatcher" /> class.
+        /// Initializes a new instance of the <see cref="AsyncHandler" /> class.
         /// </summary>
         /// <param name="storage">Where we should store commands.</param>
         /// <param name="maxConcurrentTasks">Maximum number of concurrent tasks.</param>
@@ -42,12 +44,19 @@ namespace Griffin.Decoupled.Commands.Pipeline
             var sendCmd = message as SendCommand;
             if (sendCmd != null)
             {
-                Sendcommand(sendCmd);
+                EnqueueCommand(sendCmd);
+                return;
             }
             if (message is Shutdown)
             {
                 Close();
             }
+            if (message is Started)
+            {
+                StartWorker();
+            }
+
+            context.SendDownstream(message);
         }
 
         #endregion
@@ -63,21 +72,21 @@ namespace Griffin.Decoupled.Commands.Pipeline
         }
 
         /// <summary>
-        /// We should start dispatching commands.
+        /// Dispatch all available commands.
         /// </summary>
-        /// <param name="state"></param>
-        private void DispatchCommandNow(object state)
+        private void DispatchCommands()
         {
             try
             {
                 while (DispatchCommand())
                 {
-                    
+                    // nothing in here,
+                    // we just want to dispach all messages
                 }
             }
             catch (Exception err)
             {
-                _context.SendUpstream(new PipelineError("AsyncHandler failed to dispatch commands.", err));
+                _context.SendUpstream(new PipelineFailure(this, "AsyncHandler failed to dispatch commands.", err));
             }
             finally
             {
@@ -95,42 +104,47 @@ namespace Griffin.Decoupled.Commands.Pipeline
             {
                 using (var transaction = transactional.BeginTransaction())
                 {
-                    var command2 = _storage.Dequeue();
-                    if (command2== null)
+                    var command = _storage.Dequeue();
+                    if (command == null)
                     {
                         transaction.Commit();
                         return false;
                     }
 
-                    _inner.Dispatch(command2);
+                    _context.SendDownstream(command);
                     transaction.Commit();
                 }
             }
             else
             {
-                var command2 = _storage.Dequeue();
-                if (command2 == null)
+                var command = _storage.Dequeue();
+                if (command == null)
                     return false;
 
-                _inner.Dispatch(command2);
+                _context.SendDownstream(command);
             }
 
             return true;
         }
 
 
-        private void Sendcommand(SendCommand sendCmd)
+        private void EnqueueCommand(SendCommand sendCmd)
         {
             _storage.Enqueue(sendCmd);
 
             if (_closing)
                 return;
 
+            StartWorker();
+        }
+
+        private void StartWorker()
+        {
             // Not very much thread safe.
             if (Interlocked.Read(ref _currentWorkers) < _maxConcurrentTasks)
             {
                 Interlocked.Increment(ref _currentWorkers);
-                ThreadPool.QueueUserWorkItem(DispatchCommandNow);
+                ThreadPool.QueueUserWorkItem(x => DispatchCommands());
             }
         }
     }

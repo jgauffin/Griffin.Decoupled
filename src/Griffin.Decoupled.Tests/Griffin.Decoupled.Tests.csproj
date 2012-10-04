@@ -54,7 +54,9 @@
     <Compile Include="Commands\CommandDispatcherTests.cs" />
     <Compile Include="Commands\DefaultDispatcherTests.cs" />
     <Compile Include="Commands\Helpers\BlockingDispatcher.cs" />
+    <Compile Include="Commands\Helpers\BlockingDownstreamHandler.cs" />
     <Compile Include="Commands\Helpers\BlockingHandler.cs" />
+    <Compile Include="Commands\Helpers\DownContext.cs" />
     <Compile Include="Commands\Helpers\FakeCommand.cs" />
     <Compile Include="Commands\Helpers\TestStorage.cs" />
     <Compile Include="Commands\RetryingDispatcherTests.cs" />

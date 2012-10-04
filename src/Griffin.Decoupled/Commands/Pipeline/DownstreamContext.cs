@@ -5,26 +5,18 @@ namespace Griffin.Decoupled.Commands.Pipeline
 {
     internal class DownstreamContext : IDownstreamContext
     {
+        private readonly ConcurrentQueue<object> _downMessages = new ConcurrentQueue<object>();
         private readonly IDownstreamHandler _mine;
-        private UpstreamContext _up;
+        private readonly ConcurrentQueue<object> _upMessages = new ConcurrentQueue<object>();
         private DownstreamContext _next;
-        ConcurrentQueue<object> _upMessages = new ConcurrentQueue<object>();
-        ConcurrentQueue<object> _downMessages = new ConcurrentQueue<object>();
+        private UpstreamContext _up;
 
         public DownstreamContext(IDownstreamHandler mine)
         {
             _mine = mine;
         }
 
-        public void SetNext(DownstreamContext next)
-        {
-            _next = next;
-        }
-
-        public void SetUpstream(UpstreamContext up)
-        {
-            _up = up;
-        }
+        #region IDownstreamContext Members
 
         public void SendUpstream(object message)
         {
@@ -34,6 +26,18 @@ namespace Griffin.Decoupled.Commands.Pipeline
         public void SendDownstream(object message)
         {
             _downMessages.Enqueue(message);
+        }
+
+        #endregion
+
+        public void SetNext(DownstreamContext next)
+        {
+            _next = next;
+        }
+
+        public void SetUpstream(UpstreamContext up)
+        {
+            _up = up;
         }
 
         public void Invoke(object message)

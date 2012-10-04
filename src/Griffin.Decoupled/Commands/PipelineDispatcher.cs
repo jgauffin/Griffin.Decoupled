@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Griffin.Decoupled.Commands.Pipeline;
 using Griffin.Decoupled.Commands.Pipeline.Messages;
 
@@ -27,6 +23,8 @@ namespace Griffin.Decoupled.Commands
             _pipeline.SetDestination(this);
         }
 
+        #region ICommandDispatcher Members
+
         /// <summary>
         /// Dispatch the command to the handler
         /// </summary>
@@ -41,6 +39,23 @@ namespace Griffin.Decoupled.Commands
             _pipeline.Send(msg);
         }
 
+        #endregion
+
+        #region IDisposable Members
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        /// <filterpriority>2</filterpriority>
+        public void Dispose()
+        {
+            _pipeline.Send(new Shutdown());
+        }
+
+        #endregion
+
+        #region IUpstreamHandler Members
+
         /// <summary>
         /// Send a message to the next handler
         /// </summary>
@@ -51,13 +66,6 @@ namespace Griffin.Decoupled.Commands
             Console.WriteLine(message);
         }
 
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        /// <filterpriority>2</filterpriority>
-        public void Dispose()
-        {
-            _pipeline.Send(new Shutdown());
-        }
+        #endregion
     }
 }

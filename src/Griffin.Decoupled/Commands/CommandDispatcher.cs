@@ -1,5 +1,4 @@
 ﻿using System;
-using Griffin.Decoupled.Commands.Pipeline.Messages;
 
 namespace Griffin.Decoupled.Commands
 {
@@ -36,7 +35,7 @@ namespace Griffin.Decoupled.Commands
                 throw new InvalidOperationException(
                     "A 'ICommandDispatcher' implementation have not been specified. Read the class documentation for the 'CommandDispatcher' class.");
 
-            _dispatcher.Dispatch<T>(command);
+            _dispatcher.Dispatch(command);
         }
     }
 }
