@@ -56,7 +56,7 @@ namespace Sample_1___Hello_domain_event
             new PipelineDispatcherBuilder(errorHandler)
                 .AsyncDispatching(1)
                 .RetryCommands(3)
-                .StoreCommandsInRavenDbEmbedded()
+                .UseRavenDbEmbedded()
                 .UseGriffinContainer(container)
                 .Build();
 

@@ -98,11 +98,11 @@ namespace Griffin.Decoupled.Commands
 
             if (_maxAttempts > 0)
             {
-                builder.RegisterDownstream(new RetryingHandler(_maxAttempts, _storage));
+                builder.RegisterUpstream(new RetryingHandler(_maxAttempts, _storage));
             }
 
             if (_container != null)
-                builder.RegisterDownstream(new Pipeline.IocDispatcher(_container));
+                builder.RegisterDownstream(new Pipeline.IocDispatcher(_container, _storage));
             else
                 builder.RegisterDownstream(_lastHandler);
 

@@ -119,6 +119,10 @@
       <Project>{C0C624D4-CB13-4916-9359-F117492054A4}</Project>
       <Name>Griffin.Decoupled.Container</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Griffin.Decoupled.RavenDb.Embedded\Griffin.Decoupled.RavenDb.Embedded.csproj">
+      <Project>{45917952-6814-4706-A428-F5C9E8B3FD3A}</Project>
+      <Name>Griffin.Decoupled.RavenDb.Embedded</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Griffin.Decoupled\Griffin.Decoupled.csproj">
       <Project>{5E4DEE9A-3B45-4F5B-8C8D-A04AD1EF0D36}</Project>
       <Name>Griffin.Decoupled</Name>

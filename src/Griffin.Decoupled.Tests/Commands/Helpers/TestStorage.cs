@@ -32,7 +32,7 @@ namespace Griffin.Decoupled.Tests.Commands.Helpers
         /// Enqueue a command
         /// </summary>
         /// <param name="command">Get the command which was </param>
-        public void Enqueue(SendCommand command)
+        public void Add(SendCommand command)
         {
             if (command == null) throw new ArgumentNullException("command");
             _queue.Enqueue(command);
@@ -46,10 +46,38 @@ namespace Griffin.Decoupled.Tests.Commands.Helpers
         {
             SendCommand state;
             if (!_queue.TryDequeue(out state))
-            return null;
+                return null;
             Dequeued.Add(state);
-            
+
             return state;
+        }
+
+        /// <summary>
+        /// Re add a command which we've tried to invoke but failed.
+        /// </summary>
+        /// <param name="command">Command to add</param>
+        public void Update(SendCommand command)
+        {
+            
+        }
+
+        /// <summary>
+        /// Delete a command
+        /// </summary>
+        /// <param name="command">Command to delete from storage</param>
+        public void Delete(ICommand command)
+        {
+            
+        }
+
+        /// <summary>
+        /// Find commands which has been marked as processed but not deleted.
+        /// </summary>
+        /// <param name="markedAsProcessBefore">Get all commands that were marked as being processed before this date/time.</param>
+        /// <returns>Any matching commands or an empty collection.</returns>
+        public IEnumerable<SendCommand> FindFailedCommands(DateTime markedAsProcessBefore)
+        {
+            return null;
         }
 
         #endregion

@@ -5,13 +5,13 @@ using Griffin.Decoupled.Pipeline;
 namespace Griffin.Decoupled.Commands.Pipeline
 {
     /// <summary>
-    /// Will try commands the configured amount of times before giving up.
+    /// Listens on the upstream message <see cref="CommandFailed"/> and will add the command into the storage again on failure.
     /// </summary>
     /// <remarks>
-    /// The <see cref="CommandFailed"/> message will be sent upstream each time a command failes and finally the <see cref="CommandAborted"/> message
+    /// Will send the <see cref="CommandAborted"/> message upstream 
     /// when we give up on a command.
     /// </remarks>
-    public class RetryingHandler : IDownstreamHandler
+    public class RetryingHandler : IUpstreamHandler
     {
         private readonly int _numberOfAttempts;
         private readonly ICommandStorage _storage;
@@ -32,42 +32,36 @@ namespace Griffin.Decoupled.Commands.Pipeline
             _storage = storage;
         }
 
-        #region IDownstreamHandler Members
-
-        public void HandleDownstream(IDownstreamContext context, object message)
-        {
-            var command = message as SendCommand;
-            if (command != null)
-            {
-                try
-                {
-                    context.SendDownstream(command);
-                }
-                catch (Exception err)
-                {
-                    command.Attempts++;
-                    command.LastException = err.ToString();
-                    if (command.Attempts >= _numberOfAttempts)
-                    {
-                        context.SendUpstream(new CommandAborted(command, err));
-                    }
-                    else
-                    {
-                        context.SendUpstream(new CommandFailed(command, err));
-                        _storage.Enqueue(command);
-                    }
-                }
-            }
-        }
-
-        #endregion
-
         /// <summary>
         /// Close the dispatcher gracefully.
         /// </summary>
         /// <remarks>Should make sure that all non-persitent commands are executed or stored before exeting.</remarks>
         public void Close()
         {
+        }
+
+        /// <summary>
+        /// Send a message to the next handler
+        /// </summary>
+        /// <param name="context">My context</param>
+        /// <param name="message">Message received</param>
+        public void HandleUpstream(IUpstreamContext context, object message)
+        {
+            var msg = message as CommandFailed;
+            if (msg != null)
+            {
+                if (msg.Message.Attempts >= _numberOfAttempts)
+                {
+                    context.SendUpstream(new CommandAborted(msg.Message, msg.Exception));
+                    _storage.Delete(msg.Message.Command);
+                    return;
+                }
+                
+                _storage.Update(msg.Message);
+            }
+
+            context.SendUpstream(message);
+            
         }
     }
 }

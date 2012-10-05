@@ -30,9 +30,9 @@ namespace Griffin.Decoupled.Commands.Pipeline.Messages
         /// <summary>
         /// Gets failed command
         /// </summary>
-        public ICommand Command
+        public SendCommand Message
         {
-            get { return _state.Command; }
+            get { return _state; }
         }
 
         /// <summary>

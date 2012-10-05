@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Griffin.Decoupled.Commands;
 using Griffin.Decoupled.Commands.Pipeline;
 using Griffin.Decoupled.Commands.Pipeline.Messages;
@@ -24,48 +19,48 @@ namespace Griffin.Decoupled.Tests.Commands
             Assert.Throws<ArgumentOutOfRangeException>(() => new RetryingHandler(0, storage));
             Assert.Throws<ArgumentOutOfRangeException>(() => new RetryingHandler(100, storage));
             new RetryingHandler(10, storage);
-
         }
+
         [Fact]
         public void FailAll()
         {
-            var evt = new ManualResetEvent(false);
-            var storage = new TestStorage();
+            var storage = Substitute.For<ICommandStorage>();
             var dispatcher = new RetryingHandler(3, storage);
-            var context = new DownContext(x => { throw new Exception("Constant failure"); }, x => { if (x is CommandAborted) evt.Set(); });
-            var state = new SendCommand(new FakeCommand()) { Attempts = 2 };
+            var msg = new CommandFailed(new SendCommand(new FakeCommand(), 3), new Exception());
+            var context = Substitute.For<IUpstreamContext>();
 
-            dispatcher.HandleDownstream(context, state);
+            dispatcher.HandleUpstream(context, msg);
 
-            Assert.True(evt.WaitOne(TimeSpan.FromMilliseconds(500)));
-            Assert.Equal(3, state.Attempts);
-            Assert.Equal(0, storage.StoredItems.Count());
+            context.Received().SendUpstream(Arg.Any<CommandAborted>());
+            storage.Received().Delete(msg.Message.Command);
         }
 
         [Fact]
-        public void FailOne()
+        public void FailTwo()
         {
-            int counter = 0;
-            bool gotFailed = false;
-            bool gotAbort = false;
-            var context = new DownContext(x =>
-                {
-                    if (counter < 1) throw new ExternalException("something extenral fail");
-                    counter++;
-                }, x =>
-                    {
-                        gotFailed = x is CommandFailed;
-                        if (x is CommandAborted)
-                            gotAbort = true;
-                    });
-            var storage = new TestStorage();
+            var context = Substitute.For<IUpstreamContext>();
+            var storage = Substitute.For<ICommandStorage>();
+            var msg = new CommandFailed(new SendCommand(new FakeCommand(), 1), new Exception());
             var dispatcher = new RetryingHandler(3, storage);
 
-            dispatcher.HandleDownstream(context, new SendCommand(new FakeCommand()));
+            dispatcher.HandleUpstream(context, msg);
 
-            Assert.Equal(1, storage.StoredItems.Count());
-            Assert.True(gotFailed);
-            Assert.False(gotAbort);
+            context.Received().SendUpstream(Arg.Any<CommandFailed>());
+            storage.Received().Update(msg.Message);
+        }
+
+        [Fact]
+        public void PassThrough()
+        {
+            var context = Substitute.For<IUpstreamContext>();
+            var storage = Substitute.For<ICommandStorage>();
+            var state = new SendCommand(new FakeCommand(), 3);
+            var dispatcher = new RetryingHandler(3, storage);
+
+            dispatcher.HandleUpstream(context, state);
+
+            context.Received().SendUpstream(Arg.Any<SendCommand>());
+            Assert.Equal(0, storage.ReceivedCalls().Count());
         }
     }
 }

@@ -42,12 +42,15 @@
     <Compile Include="Commands\CommandBase.cs" />
     <Compile Include="Commands\CommandDispatcher.cs" />
     <Compile Include="Commands\ISimpleTransaction.cs" />
-    <Compile Include="Commands\ITransactionalCommandStorage.cs" />
     <Compile Include="Commands\PipelineDispatcherBuilder.cs" />
     <Compile Include="Commands\IocDispatcher.cs" />
     <Compile Include="Commands\PipelineDispatcher.cs" />
     <Compile Include="Commands\DispatcherFailedEventArgs.cs" />
     <Compile Include="Commands\Pipeline\IocDispatcher.cs" />
+    <Compile Include="DomainEvents\Pipeline\IocHandler.cs" />
+    <Compile Include="DomainEvents\Pipeline\Messages\DispatchDomainEvent.cs" />
+    <Compile Include="DomainEvents\Pipeline\Messages\EventFailed.cs" />
+    <Compile Include="DomainEvents\Pipeline\TransactionalHandler.cs" />
     <Compile Include="Pipeline\DownstreamContext.cs" />
     <Compile Include="Pipeline\IDownstreamContext.cs" />
     <Compile Include="Pipeline\IDownstreamHandler.cs" />

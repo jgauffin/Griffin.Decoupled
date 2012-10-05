@@ -103,41 +103,19 @@ namespace Griffin.Decoupled.Commands.Pipeline
         /// </summary>
         private bool DispatchCommand()
         {
-            var transactional = _storage as ITransactionalCommandStorage;
-            if (transactional != null)
-            {
-                return DispatchUsingTransaction(transactional);
-            }
-
             var command = _storage.Dequeue();
             if (command == null)
                 return false;
 
             _context.SendDownstream(command);
-            return true;
-        }
-
-        private bool DispatchUsingTransaction(ITransactionalCommandStorage transactional)
-        {
-            using (var transaction = transactional.BeginTransaction())
-            {
-                var command = _storage.Dequeue();
-                if (command == null)
-                {
-                    transaction.Commit();
-                    return false;
-                }
-
-                _context.SendDownstream(command);
-                transaction.Commit();
-            }
+            _storage.Delete(command.Command);
             return true;
         }
 
 
         private void EnqueueCommand(SendCommand sendCmd)
         {
-            _storage.Enqueue(sendCmd);
+            _storage.Add(sendCmd);
 
             if (_closing)
                 return;

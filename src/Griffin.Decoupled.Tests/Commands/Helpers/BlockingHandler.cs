@@ -11,6 +11,13 @@ namespace Griffin.Decoupled.Tests.Commands.Helpers
     class BlockingHandler<T> : IHandleCommand<T> where T : class, ICommand
     {
         ManualResetEventSlim _event = new ManualResetEventSlim(false);
+        private Action<T> _action;
+
+        public BlockingHandler() { }
+        public BlockingHandler(Action<T> action)
+        {
+            _action = action;
+        }
 
         /// <summary>
         /// Invoke the command
@@ -18,6 +25,9 @@ namespace Griffin.Decoupled.Tests.Commands.Helpers
         /// <param name="command">Command to run</param>
         public void Invoke(T command)
         {
+            if (_action != null)
+                _action(command);
+
             _event.Set();
         }
 

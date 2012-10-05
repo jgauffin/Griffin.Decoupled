@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Griffin.Container;
 using Griffin.Decoupled;
 using Griffin.Decoupled.Commands;
+using Griffin.Decoupled.RavenDb;
 
 namespace Sample3
 {

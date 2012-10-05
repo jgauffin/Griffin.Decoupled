@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using Griffin.Decoupled.Commands.Pipeline.Messages;
 using Griffin.Decoupled.Pipeline;
 
@@ -14,14 +15,19 @@ namespace Griffin.Decoupled.Commands.Pipeline
     {
         private readonly MethodInfo _method;
         private readonly IRootContainer _rootContainer;
+        private readonly ICommandStorage _storage;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IocDispatcher" /> class.
         /// </summary>
         /// <param name="rootContainer">The IoC container.</param>
-        public IocDispatcher(IRootContainer rootContainer)
+        /// <param name="storage">Used to delete commands when they have been successfully being executed.</param>
+        public IocDispatcher(IRootContainer rootContainer, ICommandStorage storage)
         {
+            if (rootContainer == null) throw new ArgumentNullException("rootContainer");
+            if (storage == null) throw new ArgumentNullException("storage");
             _rootContainer = rootContainer;
+            _storage = storage;
             _method = GetType().GetMethod("Dispatch", BindingFlags.Instance | BindingFlags.NonPublic);
         }
 
@@ -34,10 +40,19 @@ namespace Griffin.Decoupled.Commands.Pipeline
         /// <param name="message">Message to send, typically <see cref="SendCommand"/>.</param>
         public void HandleDownstream(IDownstreamContext context, object message)
         {
-            var cmd = message as SendCommand;
-            if (cmd != null)
+            var msg = message as SendCommand;
+            if (msg != null)
             {
-                _method.MakeGenericMethod(cmd.Command.GetType()).Invoke(this, new object[] {cmd.Command});
+                try
+                {
+                    _method.MakeGenericMethod(msg.Command.GetType()).Invoke(this, new object[] { msg.Command });
+                    _storage.Delete(msg.Command);
+                }
+                catch(Exception err)
+                {
+                    msg.AddFailedAttempt();
+                    context.SendUpstream(new CommandFailed(msg, err));
+                }
                 return;
             }
 

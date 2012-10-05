@@ -57,9 +57,9 @@
     <Compile Include="RavenCommandStorage.cs" />
     <Compile Include="IUnitOfWork.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RavenDbTransactionalCommandStorage.cs" />
     <Compile Include="RavenDbUnitOfWork.cs" />
     <Compile Include="RavenEventStorage.cs" />
+    <Compile Include="StoredCommand.cs" />
     <Compile Include="StoredEvent.cs" />
     <Compile Include="RavenSessionFactory.cs" />
   </ItemGroup>

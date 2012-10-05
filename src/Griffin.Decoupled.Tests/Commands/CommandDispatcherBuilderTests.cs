@@ -37,11 +37,12 @@ namespace Griffin.Decoupled.Tests.Commands
         public void Complete()
         {
             var builder = new PipelineDispatcherBuilder(Substitute.For<IUpstreamHandler>());
-            builder
+            var dispatcher = builder
                 .AsyncDispatching(10)
                 .RetryCommands(4)
                 .Dispatcher(Substitute.For<IDownstreamHandler>())
                 .Build();
+            CommandDispatcher.Assign(dispatcher);
 
             CommandDispatcher.Dispatch(new FakeCommand());
         }

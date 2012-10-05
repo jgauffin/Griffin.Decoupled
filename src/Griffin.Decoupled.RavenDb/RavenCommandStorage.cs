@@ -26,9 +26,9 @@ namespace Griffin.Decoupled.RavenDb
         /// Enqueue a command
         /// </summary>
         /// <param name="command">Get the command which was </param>
-        public void Enqueue(SendCommand command)
+        public void Add(SendCommand command)
         {
-            _session.Store(command);
+            _session.Store(new StoredCommand(command));
             _session.SaveChanges();
         }
 
@@ -38,7 +38,54 @@ namespace Griffin.Decoupled.RavenDb
         /// <returns>Command if any; otherwise <c>null</c>.</returns>
         public SendCommand Dequeue()
         {
-            return _session.Query<SendCommand>().FirstOrDefault();
+            var cmd = _session.Query<StoredCommand>().FirstOrDefault();
+            if (cmd == null)
+                return null;
+
+            cmd.ProcessedAt = DateTime.Now;
+            _session.Store(cmd);
+            _session.SaveChanges();
+            return cmd.Command;
+        }
+
+        /// <summary>
+        /// Re add a command which we've tried to invoke but failed.
+        /// </summary>
+        /// <param name="command">Command to add</param>
+        public void Update(SendCommand command)
+        {
+            var cmd = _session.Load<StoredCommand>(command.Command.Id);
+            if (cmd == null)
+                return;
+
+            cmd.Command = command;
+            _session.Store(command);
+            _session.SaveChanges();
+        }
+
+        /// <summary>
+        /// Delete a command
+        /// </summary>
+        /// <param name="command">Command to delete from storage</param>
+        public void Delete(ICommand command)
+        {
+            var cmd = _session.Load<StoredCommand>(command.Id);
+            if (cmd == null)
+                return;
+
+            _session.Delete(cmd);
+            _session.SaveChanges();
+        }
+
+        /// <summary>
+        /// Find commands which has been marked as processed but not deleted.
+        /// </summary>
+        /// <param name="markedAsProcessBefore">Get all commands that were marked as being processed before this date/time.</param>
+        /// <returns>Any matching commands or an empty collection.</returns>
+        public IEnumerable<SendCommand> FindFailedCommands(DateTime markedAsProcessBefore)
+        {
+            return
+                _session.Query<StoredCommand>().Where(x => x.ProcessedAt < markedAsProcessBefore).Select(x => x.Command);
         }
     }
 }

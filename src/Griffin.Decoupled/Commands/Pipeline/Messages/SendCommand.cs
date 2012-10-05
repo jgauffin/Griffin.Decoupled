@@ -13,6 +13,13 @@ namespace Griffin.Decoupled.Commands.Pipeline.Messages
             Command = command;
         }
 
+        public SendCommand(ICommand command, int attempts)
+        {
+            if (command == null) throw new ArgumentNullException("command");
+            Command = command;
+            Attempts = attempts;
+        }
+
         protected SendCommand()
         {
         }
@@ -26,11 +33,15 @@ namespace Griffin.Decoupled.Commands.Pipeline.Messages
         /// Gets or sets number of attempts to execute this command
         /// </summary>
         /// <remarks>Default = 0</remarks>
-        public int Attempts { get; set; }
+        public int Attempts { get; private set; }
 
         /// <summary>
-        /// Gets or sets why last attempt failed.
+        /// Failed once more.
         /// </summary>
-        public string LastException { get; set; }
+        public void AddFailedAttempt()
+        {
+            Attempts++;
+        }
+
     }
 }
