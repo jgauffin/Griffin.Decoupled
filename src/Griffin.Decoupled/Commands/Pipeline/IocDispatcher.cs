@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Griffin.Decoupled.Commands.Pipeline.Messages;
+using Griffin.Decoupled.Pipeline;
 
 namespace Griffin.Decoupled.Commands.Pipeline
 {
@@ -9,16 +10,16 @@ namespace Griffin.Decoupled.Commands.Pipeline
     /// <remarks>
     /// A scope (child container) is created each time a new command should be invoked.
     /// </remarks>
-    public class ContainerDispatcher : IDownstreamHandler
+    public class IocDispatcher : IDownstreamHandler
     {
         private readonly MethodInfo _method;
         private readonly IRootContainer _rootContainer;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ContainerDispatcher" /> class.
+        /// Initializes a new instance of the <see cref="IocDispatcher" /> class.
         /// </summary>
         /// <param name="rootContainer">The IoC container.</param>
-        public ContainerDispatcher(IRootContainer rootContainer)
+        public IocDispatcher(IRootContainer rootContainer)
         {
             _rootContainer = rootContainer;
             _method = GetType().GetMethod("Dispatch", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -42,7 +43,7 @@ namespace Griffin.Decoupled.Commands.Pipeline
 
             context.SendUpstream(
                 new PipelineFailure(this,
-                    "We, ContainerDispatcher, should be the last downstream handler. Received: " + message, null));
+                    "We, IocDispatcher, should be the last downstream handler. Received: " + message, null));
         }
 
         #endregion

@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Concurrent;
+using Griffin.Decoupled.Commands.Pipeline;
 
-namespace Griffin.Decoupled.Commands.Pipeline
+namespace Griffin.Decoupled.Pipeline
 {
     /// <summary>
     /// Context implementation

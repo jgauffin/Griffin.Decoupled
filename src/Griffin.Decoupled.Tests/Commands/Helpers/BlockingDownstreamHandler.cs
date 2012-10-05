@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Griffin.Decoupled.Commands.Pipeline;
 using Griffin.Decoupled.Commands.Pipeline.Messages;
+using Griffin.Decoupled.Pipeline;
 
 namespace Griffin.Decoupled.Tests.Commands.Helpers
 {

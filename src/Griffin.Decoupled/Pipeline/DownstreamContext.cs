@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Concurrent;
+using Griffin.Decoupled.Commands.Pipeline;
 
-namespace Griffin.Decoupled.Commands.Pipeline
+namespace Griffin.Decoupled.Pipeline
 {
     internal class DownstreamContext : IDownstreamContext
     {
@@ -20,12 +21,14 @@ namespace Griffin.Decoupled.Commands.Pipeline
 
         public void SendUpstream(object message)
         {
-            _upMessages.Enqueue(message);
+            _up.Invoke(message);
+            //_upMessages.Enqueue(message);
         }
 
         public void SendDownstream(object message)
         {
-            _downMessages.Enqueue(message);
+            _next.Invoke(message);
+            //_downMessages.Enqueue(message);
         }
 
         #endregion

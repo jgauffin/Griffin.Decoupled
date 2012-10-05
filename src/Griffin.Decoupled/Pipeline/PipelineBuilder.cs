@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Griffin.Decoupled.Commands.Pipeline;
 
-namespace Griffin.Decoupled.Commands.Pipeline
+namespace Griffin.Decoupled.Pipeline
 {
     /// <summary>
     /// Build the pipeline
@@ -40,7 +41,7 @@ namespace Griffin.Decoupled.Commands.Pipeline
         /// </summary>
         public IPipeline Build()
         {
-            var pipeline = new Pipeline();
+            var pipeline = new Decoupled.Pipeline.Pipeline();
 
             var firstDown = new DownstreamContext(_downstreamHandlers[0]);
             var firstUp = new UpstreamContext(_upstreamHandlers[0]);
@@ -53,7 +54,7 @@ namespace Griffin.Decoupled.Commands.Pipeline
             return pipeline;
         }
 
-        private void ConfigureDownstream(Pipeline pipeline, DownstreamContext firstDown, UpstreamContext firstUp)
+        private void ConfigureDownstream(Decoupled.Pipeline.Pipeline pipeline, DownstreamContext firstDown, UpstreamContext firstUp)
         {
             var lastDown = firstDown;
             pipeline.Add(lastDown);
@@ -67,7 +68,7 @@ namespace Griffin.Decoupled.Commands.Pipeline
             }
         }
 
-        private void ConfigureUpstream(Pipeline pipeline, UpstreamContext firstUp, DownstreamContext firstDown)
+        private void ConfigureUpstream(Decoupled.Pipeline.Pipeline pipeline, UpstreamContext firstUp, DownstreamContext firstDown)
         {
             var lastUp = firstUp;
             pipeline.Add(firstDown);

@@ -1,4 +1,6 @@
-namespace Griffin.Decoupled.Commands.Pipeline
+using Griffin.Decoupled.Commands.Pipeline;
+
+namespace Griffin.Decoupled.Pipeline
 {
     /// <summary>
     /// The pipeline which is used to handle the dispatching

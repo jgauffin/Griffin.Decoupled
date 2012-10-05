@@ -1,6 +1,6 @@
 using Griffin.Decoupled.Commands.Pipeline.Messages;
 
-namespace Griffin.Decoupled.Commands.Pipeline
+namespace Griffin.Decoupled.Pipeline
 {
     /// <summary>
     /// Used to send messages downstream

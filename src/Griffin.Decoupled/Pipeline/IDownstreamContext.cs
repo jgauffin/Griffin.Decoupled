@@ -1,4 +1,4 @@
-namespace Griffin.Decoupled.Commands.Pipeline
+namespace Griffin.Decoupled.Pipeline
 {
     /// <summary>
     /// Context for each handler.

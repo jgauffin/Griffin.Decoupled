@@ -1,6 +1,7 @@
 ﻿using System;
 using Griffin.Decoupled.Commands.Pipeline;
 using Griffin.Decoupled.Commands.Pipeline.Messages;
+using Griffin.Decoupled.Pipeline;
 
 namespace Griffin.Decoupled.Commands
 {

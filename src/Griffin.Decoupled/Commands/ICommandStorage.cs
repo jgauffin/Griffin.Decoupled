@@ -1,4 +1,3 @@
-using System;
 using Griffin.Decoupled.Commands.Pipeline.Messages;
 
 namespace Griffin.Decoupled.Commands
@@ -16,19 +15,9 @@ namespace Griffin.Decoupled.Commands
         void Enqueue(SendCommand command);
 
         /// <summary>
-        /// Get command which was stored first.
+        /// Dequeue a command (get and remove it from the storage)
         /// </summary>
         /// <returns>Command if any; otherwise <c>null</c>.</returns>
         SendCommand Dequeue();
-    }
-
-    public interface ITransactionalCommandStorage : ICommandStorage
-    {
-        ISimpleTransaction BeginTransaction();
-    }
-
-    public interface ISimpleTransaction : IDisposable
-    {
-        void Commit();
     }
 }

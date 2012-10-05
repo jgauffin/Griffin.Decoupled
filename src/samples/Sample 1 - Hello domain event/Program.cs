@@ -10,7 +10,6 @@ using Griffin.Decoupled.Commands;
 using Griffin.Decoupled.Commands.Pipeline;
 using Griffin.Decoupled.Commands.Pipeline.Messages;
 using Griffin.Decoupled.RavenDb;
-using PipelineBuilder = Griffin.Decoupled.Commands.PipelineBuilder;
 
 namespace Sample_1___Hello_domain_event
 {
@@ -54,11 +53,11 @@ namespace Sample_1___Hello_domain_event
 
             var errorHandler = new ErrorHandler();
 
-            new PipelineBuilder(errorHandler)
+            new PipelineDispatcherBuilder(errorHandler)
                 .AsyncDispatching(1)
                 .RetryCommands(3)
                 .StoreCommandsInRavenDbEmbedded()
-                .DispatchUsingGriffinContainer(container)
+                .UseGriffinContainer(container)
                 .Build();
 
             CommandDispatcher.Dispatch(new SayHello());

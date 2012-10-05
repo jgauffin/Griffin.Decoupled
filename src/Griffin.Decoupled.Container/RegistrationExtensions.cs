@@ -17,13 +17,23 @@ namespace Griffin.Decoupled
         /// <param name="builder">this</param>
         /// <param name="griffinContainer">Your created container, look at the Griffin.Container HP for instructions on how to build it.</param>
         /// <returns>this</returns>
-        public static PipelineBuilder DispatchUsingGriffinContainer(this PipelineBuilder builder, IParentContainer griffinContainer)
+        public static PipelineDispatcherBuilder UseGriffinContainer(this PipelineDispatcherBuilder builder, IParentContainer griffinContainer)
         {
             if (builder == null) throw new ArgumentNullException("builder");
             if (griffinContainer == null) throw new ArgumentNullException("griffinContainer");
 
             builder.UseContainer(new ContainerAdapter(griffinContainer));
             return builder;
+        }
+
+        /// <summary>
+        /// Dispatch commands using our favorite container
+        /// </summary>
+        /// <param name="container">Container instance.</param>
+        public static void DispatchCommands(this IParentContainer container)
+        {
+            if (container == null) throw new ArgumentNullException("container");
+            CommandDispatcher.Assign(new IocDispatcher(new ContainerAdapter(container)));
         }
     }
 }

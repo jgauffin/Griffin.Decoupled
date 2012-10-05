@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Griffin.Decoupled.Commands;
 using Griffin.Decoupled.Commands.Pipeline;
 using Griffin.Decoupled.Commands.Pipeline.Messages;
@@ -11,9 +8,9 @@ using Griffin.Decoupled.Tests.Commands.Helpers;
 using NSubstitute;
 using Xunit;
 
-namespace Griffin.Decoupled.Tests.Commands
+namespace Griffin.Decoupled.Tests.Commands.Pipeline
 {
-    public class AsyncDispatcherTests
+    public class AsyncTests
     {
         [Fact]
         public void MustHaveTasks()
@@ -69,6 +66,80 @@ namespace Griffin.Decoupled.Tests.Commands
             Assert.Same( state2, storage.Dequeued.Last());
         }
 
+        [Fact]
+        public void Transaction_NoEntries()
+        {
+            var transaction = Substitute.For<ISimpleTransaction>();
+            var storage = Substitute.For<ITransactionalCommandStorage>();
+            storage.BeginTransaction().Returns(transaction);
+            storage.Dequeue().Returns((SendCommand)null);
+            var context = new DownContext(null, null);
+
+            var dispatcher = new AsyncHandler(storage, 1);
+            dispatcher.HandleDownstream(context, new Started());
+            Thread.Sleep(50); //only way I could think of to be able to wait on the worker.
+
+            storage.Received().Dequeue();
+            storage.Received().BeginTransaction();
+            transaction.Received().Commit();
+        }
+
+        [Fact]
+        public void Transaction_OneFailingEntry_ShouldRollback()
+        {
+            var transaction = Substitute.For<ISimpleTransaction>();
+            var storage = Substitute.For<ITransactionalCommandStorage>();
+            storage.BeginTransaction().Returns(transaction);
+            var command = new SendCommand(new FakeCommand());
+            storage.Dequeue().Returns(command);
+            var context = new DownContext(x => { if (!(x is SendCommand)) return; throw new Exception(); }, null);
+
+            var dispatcher = new AsyncHandler(storage, 1);
+            dispatcher.HandleDownstream(context, new Started());
+            Thread.Sleep(50); //only way I could think of to be able to wait on the worker.
+
+            storage.Received().Dequeue();
+            storage.Received().BeginTransaction();
+            transaction.DidNotReceive().Commit();
+        }
+
+        [Fact]
+        public void Transaction_OneSuccessfulEntry_PipelineFailed()
+        {
+            var transaction = Substitute.For<ISimpleTransaction>();
+            var storage = Substitute.For<ITransactionalCommandStorage>();
+            storage.BeginTransaction().Returns(transaction);
+            var command = new SendCommand(new FakeCommand());
+            storage.Dequeue().Returns(command);
+            var context = new DownContext(x => { if (!(x is SendCommand)) return; throw new Exception(); }, null);
+
+            var dispatcher = new AsyncHandler(storage, 1);
+            dispatcher.HandleDownstream(context, new Started());
+            Thread.Sleep(50); //only way I could think of to be able to wait on the worker.
+
+            storage.Received().Dequeue();
+            storage.Received().BeginTransaction();
+            transaction.DidNotReceive().Commit();
+        }
+
+        [Fact]
+        public void Transaction_OneSuccessfulEntry_Success()
+        {
+            var transaction = Substitute.For<ISimpleTransaction>();
+            var storage = Substitute.For<ITransactionalCommandStorage>();
+            storage.BeginTransaction().Returns(transaction);
+            var command = new SendCommand(new FakeCommand());
+            storage.Dequeue().Returns(command);
+            var context = new DownContext(null, null);
+
+            var dispatcher = new AsyncHandler(storage, 1);
+            dispatcher.HandleDownstream(context, new Started());
+            Thread.Sleep(50); //only way I could think of to be able to wait on the worker.
+
+            storage.Received().Dequeue();
+            storage.Received().BeginTransaction();
+            transaction.Received().Commit();
+        }
 
 
         [Fact]
@@ -83,13 +154,13 @@ namespace Griffin.Decoupled.Tests.Commands
 
             // dispatch first and check that it's passed by properly
             dispatcher.HandleDownstream(context, state);
-            Assert.True(context.WaitDown(TimeSpan.FromMilliseconds(200)));
+            Assert.True(context.WaitDown(TimeSpan.FromMilliseconds(50)));
             context.ResetDown();
 
             dispatcher.Close();
 
             dispatcher.HandleDownstream(context, state2);
-            Assert.False(context.WaitDown(TimeSpan.FromMilliseconds(200)));
+            Assert.False(context.WaitDown(TimeSpan.FromMilliseconds(50)));
         }
 
 
@@ -104,14 +175,14 @@ namespace Griffin.Decoupled.Tests.Commands
             var context = new DownContext(x=>evt.WaitOne(), null);
 
             dispatcher.HandleDownstream(context, state1);
-            Assert.True(context.WaitDown(TimeSpan.FromMilliseconds(100)));
+            Assert.True(context.WaitDown(TimeSpan.FromMilliseconds(50)));
             context.ResetDown();
 
             dispatcher.HandleDownstream(context, state2);
-            Assert.False(context.WaitDown(TimeSpan.FromMilliseconds(100)));
+            Assert.False(context.WaitDown(TimeSpan.FromMilliseconds(50)));
             evt.Set();
 
-            Assert.True(context.WaitDown(TimeSpan.FromMilliseconds(100)));
+            Assert.True(context.WaitDown(TimeSpan.FromMilliseconds(50)));
         }
 
         [Fact]

@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
+using Griffin.Decoupled.Commands.Pipeline;
 using Griffin.Decoupled.Commands.Pipeline.Messages;
 
-namespace Griffin.Decoupled.Commands.Pipeline
+namespace Griffin.Decoupled.Pipeline
 {
     /// <summary>
     /// Our own implementation of a pipeline

@@ -1,5 +1,6 @@
 ﻿using System;
 using Griffin.Decoupled.Commands.Pipeline;
+using Griffin.Decoupled.Pipeline;
 
 namespace Griffin.Decoupled.Commands
 {
@@ -8,7 +9,7 @@ namespace Griffin.Decoupled.Commands
     /// <remarks>
     /// <para>Check the Pipeline namespace documention for information about a pipeline.</para>
     /// </remarks>
-    public class PipelineBuilder
+    public class PipelineDispatcherBuilder
     {
         private readonly IUpstreamHandler _errrorHandler;
         private IRootContainer _container;
@@ -17,7 +18,7 @@ namespace Griffin.Decoupled.Commands
         private ICommandStorage _storage = new MemoryStorage();
         private int _workers;
 
-        public PipelineBuilder(IUpstreamHandler errrorHandler)
+        public PipelineDispatcherBuilder(IUpstreamHandler errrorHandler)
         {
             _errrorHandler = errrorHandler;
         }
@@ -28,7 +29,7 @@ namespace Griffin.Decoupled.Commands
         /// <param name="storage">The storage</param>
         /// <returns>this</returns>
         /// <remarks>The memory is used per default</remarks>
-        public PipelineBuilder StoreCommands(ICommandStorage storage)
+        public PipelineDispatcherBuilder StoreCommands(ICommandStorage storage)
         {
             if (storage == null) throw new ArgumentNullException("storage");
 
@@ -41,7 +42,7 @@ namespace Griffin.Decoupled.Commands
         /// </summary>
         /// <param name="maxConcurrentCommands">Number of commands that can be executed simultaneously.</param>
         /// <returns>this</returns>
-        public PipelineBuilder AsyncDispatching(int maxConcurrentCommands)
+        public PipelineDispatcherBuilder AsyncDispatching(int maxConcurrentCommands)
         {
             if (maxConcurrentCommands < 0 || maxConcurrentCommands > 10)
                 throw new ArgumentOutOfRangeException("maxConcurrentCommands", maxConcurrentCommands,
@@ -56,7 +57,7 @@ namespace Griffin.Decoupled.Commands
         /// </summary>
         /// <param name="maxAttempts">Number of attempts for failing commands</param>
         /// <returns>this</returns>
-        public PipelineBuilder RetryCommands(int maxAttempts)
+        public PipelineDispatcherBuilder RetryCommands(int maxAttempts)
         {
             if (maxAttempts < 0 || maxAttempts > 10)
                 throw new ArgumentOutOfRangeException("maxAttempts", maxAttempts, "Attempts should be between 1 and 10.");
@@ -70,7 +71,7 @@ namespace Griffin.Decoupled.Commands
         /// </summary>
         /// <param name="container">IoC adapter.</param>
         /// <returns>this</returns>
-        public PipelineBuilder UseContainer(IRootContainer container)
+        public PipelineDispatcherBuilder UseContainer(IRootContainer container)
         {
             if (container == null) throw new ArgumentNullException("container");
             _container = container;
@@ -86,12 +87,12 @@ namespace Griffin.Decoupled.Commands
         {
             if (_lastHandler == null && _container == null)
                 throw new InvalidOperationException(
-                    "You must have specified a handler which can actually invoke the correct command handler. For instance the 'ContainerDispatcher'.");
+                    "You must have specified a handler which can actually invoke the correct command handler. For instance the 'IocDispatcher'.");
             if (_container == null && _lastHandler == null)
                 throw new InvalidOperationException(
-                    "You must have specified a SINGLE handler that can invoke the correct command handler. Either use 'ContainerDispatcher' or another one, not both alternatives.");
+                    "You must have specified a SINGLE handler that can invoke the correct command handler. Either use 'IocDispatcher' or another one, not both alternatives.");
 
-            var builder = new Pipeline.PipelineBuilder();
+            var builder = new PipelineBuilder();
             if (_workers > 0)
                 builder.RegisterDownstream(new AsyncHandler(_storage, _workers));
 
@@ -101,14 +102,13 @@ namespace Griffin.Decoupled.Commands
             }
 
             if (_container != null)
-                builder.RegisterDownstream(new ContainerDispatcher(_container));
+                builder.RegisterDownstream(new Pipeline.IocDispatcher(_container));
             else
                 builder.RegisterDownstream(_lastHandler);
 
             builder.RegisterUpstream(_errrorHandler);
 
             var dispatcher = new PipelineDispatcher(builder.Build());
-            CommandDispatcher.Assign(dispatcher);
             return dispatcher;
         }
 
@@ -116,7 +116,7 @@ namespace Griffin.Decoupled.Commands
         /// Add a dispatcher which actually dispatches the commands.
         /// </summary>
         /// <param name="lastHandler">Last handler in the pipeline. Should invoke the correct command handler.</param>
-        public PipelineBuilder Dispatcher(IDownstreamHandler lastHandler)
+        public PipelineDispatcherBuilder Dispatcher(IDownstreamHandler lastHandler)
         {
             if (lastHandler == null) throw new ArgumentNullException("lastHandler");
             _lastHandler = lastHandler;

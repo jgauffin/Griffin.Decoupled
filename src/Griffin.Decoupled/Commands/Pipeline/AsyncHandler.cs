@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using Griffin.Decoupled.Commands.Pipeline.Messages;
+using Griffin.Decoupled.Pipeline;
 
 namespace Griffin.Decoupled.Commands.Pipeline
 {
@@ -68,7 +69,8 @@ namespace Griffin.Decoupled.Commands.Pipeline
         public void Close()
         {
             _closing = true;
-            _closingEvent.Wait(TimeSpan.FromSeconds(10));
+            if (Interlocked.Read(ref _currentWorkers) > 0)
+                _closingEvent.Wait(TimeSpan.FromSeconds(10));
         }
 
         /// <summary>
@@ -91,6 +93,8 @@ namespace Griffin.Decoupled.Commands.Pipeline
             finally
             {
                 Interlocked.Decrement(ref _currentWorkers);
+                if (_currentWorkers == 0 && _closing)
+                    _closingEvent.Set();
             }
         }
 
@@ -102,28 +106,31 @@ namespace Griffin.Decoupled.Commands.Pipeline
             var transactional = _storage as ITransactionalCommandStorage;
             if (transactional != null)
             {
-                using (var transaction = transactional.BeginTransaction())
-                {
-                    var command = _storage.Dequeue();
-                    if (command == null)
-                    {
-                        transaction.Commit();
-                        return false;
-                    }
-
-                    _context.SendDownstream(command);
-                    transaction.Commit();
-                }
+                return DispatchUsingTransaction(transactional);
             }
-            else
+
+            var command = _storage.Dequeue();
+            if (command == null)
+                return false;
+
+            _context.SendDownstream(command);
+            return true;
+        }
+
+        private bool DispatchUsingTransaction(ITransactionalCommandStorage transactional)
+        {
+            using (var transaction = transactional.BeginTransaction())
             {
                 var command = _storage.Dequeue();
                 if (command == null)
+                {
+                    transaction.Commit();
                     return false;
+                }
 
                 _context.SendDownstream(command);
+                transaction.Commit();
             }
-
             return true;
         }
 
@@ -145,6 +152,10 @@ namespace Griffin.Decoupled.Commands.Pipeline
             {
                 Interlocked.Increment(ref _currentWorkers);
                 ThreadPool.QueueUserWorkItem(x => DispatchCommands());
+            }
+            else
+            {
+                Console.WriteLine("Can't max workers... :(");
             }
         }
     }
