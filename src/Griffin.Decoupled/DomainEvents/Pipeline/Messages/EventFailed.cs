@@ -11,10 +11,10 @@ namespace Griffin.Decoupled.DomainEvents.Pipeline.Messages
     /// </summary>
     public class EventFailed
     {
-        private readonly DispatchDomainEvent _failedEvent;
+        private readonly DispatchEvent _failedEvent;
         private readonly Exception _exception;
 
-        public EventFailed(DispatchDomainEvent failedEvent, Exception exception)
+        public EventFailed(DispatchEvent failedEvent, Exception exception)
         {
             if (failedEvent == null) throw new ArgumentNullException("failedEvent");
             if (exception == null) throw new ArgumentNullException("exception");
@@ -25,7 +25,7 @@ namespace Griffin.Decoupled.DomainEvents.Pipeline.Messages
         /// <summary>
         /// Gets event which we failed to deliver
         /// </summary>
-        public DispatchDomainEvent FailedEvent
+        public DispatchEvent FailedEvent
         {
             get { return _failedEvent; }
         }

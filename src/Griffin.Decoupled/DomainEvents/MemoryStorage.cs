@@ -20,7 +20,7 @@ namespace Griffin.Decoupled.DomainEvents
         /// <param name="batchId">Key used to store the domain event. It's not unique and therefore not PK either.</param>
         /// <param name="domainEvent">The actual domain event</param>
         /// <exception cref="System.ArgumentException">Batchid is not specified.</exception>
-        public void Store(Guid batchId, IDomainEvent domainEvent)
+        public void Hold(Guid batchId, IDomainEvent domainEvent)
         {
             if (batchId == Guid.Empty)
                 throw new ArgumentException("You must specify a batchId", "batchId");
@@ -37,7 +37,7 @@ namespace Griffin.Decoupled.DomainEvents
         /// </summary>
         /// <param name="batchId">Id used when storing events</param>
         /// <returns>Collection of stored domain events (0..n). Empty collection if none was stored.</returns>
-        public IEnumerable<IDomainEvent> Load(Guid batchId)
+        public IEnumerable<IDomainEvent> Release(Guid batchId)
         {
             if (batchId == Guid.Empty)
                 throw new ArgumentException("You must specify a batchId", "batchId");
@@ -45,6 +45,7 @@ namespace Griffin.Decoupled.DomainEvents
             ICollection<IDomainEvent> domainEvents;
             return _domainEvents.TryGetValue(batchId, out domainEvents) ? domainEvents : new IDomainEvent[0];
         }
+
 
         /// <summary>
         /// Delete all events which has been stored for the specified id

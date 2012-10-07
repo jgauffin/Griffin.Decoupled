@@ -66,9 +66,12 @@
     <Compile Include="DomainEvents\DomainEventTests.cs" />
     <Compile Include="DomainEvents\Helpers\FailingHandler.cs" />
     <Compile Include="DomainEvents\Helpers\FakeEvent.cs" />
+    <Compile Include="DomainEvents\Helpers\FakeHandler.cs" />
     <Compile Include="DomainEvents\Helpers\FakeUowAdapter.cs" />
     <Compile Include="DomainEvents\Helpers\TestDispatcher.cs" />
     <Compile Include="DomainEvents\MemoryStorageTests.cs" />
+    <Compile Include="DomainEvents\Pipeline\IocHandlerTests.cs" />
+    <Compile Include="DomainEvents\Pipeline\TransactionalHandlerTests.cs" />
     <Compile Include="DomainEvents\ThreadedUowMapperTests.cs" />
     <Compile Include="IServiceLocator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

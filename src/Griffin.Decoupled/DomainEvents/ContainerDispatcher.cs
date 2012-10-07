@@ -3,7 +3,7 @@ using System;
 namespace Griffin.Decoupled.DomainEvents
 {
     /// <summary>
-    /// Uses an inversion of control container to dispatch the events..
+    /// Uses an inversion of control container to dispatch the events synchronously..
     /// </summary>
     /// <remarks>You need to implement the <see cref="IRootContainer"/> interface to be able to use this class.</remarks>
     public class ContainerDispatcher : IDomainEventDispatcher

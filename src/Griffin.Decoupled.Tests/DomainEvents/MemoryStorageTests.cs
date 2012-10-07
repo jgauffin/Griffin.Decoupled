@@ -13,7 +13,7 @@ namespace Griffin.Decoupled.Tests.DomainEvents
         {
             var storage = new MemoryStorage();
 
-            Assert.Throws<ArgumentException>(() => storage.Load(Guid.Empty));
+            Assert.Throws<ArgumentException>(() => storage.Release(Guid.Empty));
         }
 
         [Fact]
@@ -21,7 +21,7 @@ namespace Griffin.Decoupled.Tests.DomainEvents
         {
             var storage = new MemoryStorage();
 
-            var result = storage.Load(Guid.NewGuid());
+            var result = storage.Release(Guid.NewGuid());
 
             Assert.Empty(result);
         }
@@ -32,7 +32,7 @@ namespace Griffin.Decoupled.Tests.DomainEvents
             var theEvent = new FakeEvent();
             var storage = new MemoryStorage();
 
-            Assert.Throws<ArgumentException>(() => storage.Store(Guid.Empty, theEvent));
+            Assert.Throws<ArgumentException>(() => storage.Hold(Guid.Empty, theEvent));
         }
 
 
@@ -43,8 +43,8 @@ namespace Griffin.Decoupled.Tests.DomainEvents
             var theEvent = new FakeEvent();
 
             var storage = new MemoryStorage();
-            storage.Store(guid, theEvent);
-            var result = storage.Load(guid);
+            storage.Hold(guid, theEvent);
+            var result = storage.Release(guid);
 
             Assert.Same(theEvent, result.FirstOrDefault());
         }
@@ -56,7 +56,7 @@ namespace Griffin.Decoupled.Tests.DomainEvents
             var theEvent = new FakeEvent();
 
             var storage = new MemoryStorage();
-            storage.Store(guid, theEvent);
+            storage.Hold(guid, theEvent);
             storage.Delete(guid);
         }
 

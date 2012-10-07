@@ -1,5 +1,6 @@
 using System;
 using Griffin.Decoupled.Commands.Pipeline;
+using Griffin.Decoupled.Pipeline;
 
 namespace Sample3
 {

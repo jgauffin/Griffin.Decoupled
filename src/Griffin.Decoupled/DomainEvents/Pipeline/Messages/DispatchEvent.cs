@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Griffin.Decoupled.DomainEvents.Pipeline.Messages
 {
-    public class DispatchDomainEvent
+    public class DispatchEvent
     {
         private readonly IDomainEvent _domainEvent;
 
-        public DispatchDomainEvent(IDomainEvent domainEvent)
+        public DispatchEvent(IDomainEvent domainEvent)
         {
             _domainEvent = domainEvent;
         }

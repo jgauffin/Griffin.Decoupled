@@ -24,7 +24,7 @@ namespace Griffin.Decoupled.RavenDb
         /// </summary>
         /// <param name="batchId">Key used to store the domain event. It's not unique and therefore not PK either.</param>
         /// <param name="domainEvent">The actual domain event</param>
-        public void Store(Guid batchId, IDomainEvent domainEvent)
+        public void Hold(Guid batchId, IDomainEvent domainEvent)
         {
             var batch = _session.Load<Batch>(batchId) ?? new Batch(batchId);
             batch.Events.Add(domainEvent);
@@ -37,11 +37,12 @@ namespace Griffin.Decoupled.RavenDb
         /// </summary>
         /// <param name="batchId">Id used when storing events</param>
         /// <returns>Collection of stored domain events (0..n). Empty collection if none was stored.</returns>
-        public IEnumerable<IDomainEvent> Load(Guid batchId)
+        public IEnumerable<IDomainEvent> Release(Guid batchId)
         {
             var batch = _session.Load<Batch>(batchId);
             return batch != null ? batch.Events : new IDomainEvent[0];
         }
+
 
         /// <summary>
         /// Delete all events which has been stored for the specified id

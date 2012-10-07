@@ -13,7 +13,7 @@ namespace Griffin.Decoupled.DomainEvents.Pipeline
     /// <summary>
     /// Will dispatch messages to all subscribers.
     /// </summary>
-    /// <remarks>Do not handle any exceptions.</remarks>
+    /// <remarks>Should be the last downstream handler in the pipeline (will not pass any messages on).</remarks>
     public class IocHandler : IDownstreamHandler
     {
         private readonly IRootContainer _rootContainer;
@@ -31,14 +31,21 @@ namespace Griffin.Decoupled.DomainEvents.Pipeline
         /// </summary>
         /// <param name="context">my context</param>
         /// <param name="message">Message to send, typically <see cref="SendCommand"/>.</param>
-        public void HandleDownstream(IDownstreamContext context, object message)
+        public virtual void HandleDownstream(IDownstreamContext context, object message)
         {
             _context = context;
-            var dispatchMsg = message as DispatchDomainEvent;
+            var dispatchMsg = message as DispatchEvent;
             if (dispatchMsg != null)
             {
-                _method.MakeGenericMethod(dispatchMsg.DomainEvent.GetType()).Invoke(this, new object[] { dispatchMsg.DomainEvent });
-                return;
+                try
+                {
+                    _method.MakeGenericMethod(dispatchMsg.DomainEvent.GetType()).Invoke(this, new object[] { dispatchMsg.DomainEvent });    
+                    return;
+                }
+                catch(Exception err)
+                {
+                    context.SendUpstream(new EventFailed(dispatchMsg, err));
+                }
             }
         }
 
