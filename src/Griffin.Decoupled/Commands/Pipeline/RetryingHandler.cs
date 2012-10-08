@@ -32,13 +32,7 @@ namespace Griffin.Decoupled.Commands.Pipeline
             _storage = storage;
         }
 
-        /// <summary>
-        /// Close the dispatcher gracefully.
-        /// </summary>
-        /// <remarks>Should make sure that all non-persitent commands are executed or stored before exeting.</remarks>
-        public void Close()
-        {
-        }
+        #region IUpstreamHandler Members
 
         /// <summary>
         /// Send a message to the next handler
@@ -56,12 +50,21 @@ namespace Griffin.Decoupled.Commands.Pipeline
                     _storage.Delete(msg.Message.Command);
                     return;
                 }
-                
+
                 _storage.Update(msg.Message);
             }
 
             context.SendUpstream(message);
-            
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Close the dispatcher gracefully.
+        /// </summary>
+        /// <remarks>Should make sure that all non-persitent commands are executed or stored before exeting.</remarks>
+        public void Close()
+        {
         }
     }
 }

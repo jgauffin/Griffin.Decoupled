@@ -1,25 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Griffin.Container;
 using Griffin.Decoupled;
 using Griffin.Decoupled.Commands;
-using Griffin.Decoupled.Commands.Pipeline;
-using Griffin.Decoupled.Commands.Pipeline.Messages;
 using Griffin.Decoupled.Pipeline;
 using Griffin.Decoupled.RavenDb;
 
 namespace Sample_1___Hello_domain_event
 {
     public class SayHello : CommandBase
-    { }
+    {
+    }
 
     [Component]
     public class SayHelloHandler : IHandleCommand<SayHello>
     {
+        #region IHandleCommand<SayHello> Members
+
         /// <summary>
         /// Invoke the command
         /// </summary>
@@ -28,10 +25,14 @@ namespace Sample_1___Hello_domain_event
         {
             Console.WriteLine("Hello");
         }
+
+        #endregion
     }
 
     public class ErrorHandler : IUpstreamHandler
     {
+        #region IUpstreamHandler Members
+
         /// <summary>
         /// Send a message to the next handler
         /// </summary>
@@ -41,11 +42,13 @@ namespace Sample_1___Hello_domain_event
         {
             Console.WriteLine(message);
         }
+
+        #endregion
     }
 
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var registrar = new ContainerRegistrar(Lifetime.Scoped);
             registrar.RegisterComponents(Lifetime.Default, Assembly.GetExecutingAssembly());
@@ -64,7 +67,5 @@ namespace Sample_1___Hello_domain_event
             CommandDispatcher.Dispatch(new SayHello());
             Console.ReadLine();
         }
-
-
     }
 }

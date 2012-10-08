@@ -17,6 +17,8 @@ namespace Griffin.Decoupled.Container
             _childContainer = childContainer;
         }
 
+        #region IScopedContainer Members
+
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
@@ -49,5 +51,7 @@ namespace Griffin.Decoupled.Container
         {
             return _childContainer.Resolve<T>();
         }
+
+        #endregion
     }
 }

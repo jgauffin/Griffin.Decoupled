@@ -14,7 +14,7 @@ namespace Griffin.Decoupled.DomainEvents.Pipeline
     public class TransactionalHandler : IDownstreamHandler, IUnitOfWorkObserver
     {
         private readonly IDomainEventStorage _storage;
-        private readonly ThreadedUowMapper _threadedUowMapper = new ThreadedUowMapper();
+        private readonly IThreadBatchIdMapper _threadBatchIdMapper = new ThreadBatchIdMapper();
         private IDownstreamContext _context;
 
         /// <summary>
@@ -30,19 +30,37 @@ namespace Griffin.Decoupled.DomainEvents.Pipeline
             adapter.Register(this);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TransactionalHandler" /> class.
+        /// </summary>
+        /// <param name="adapter">Used to monitor all transactions.</param>
+        /// <param name="storage">Used to temporarily store domain events until the transaction have been committed.</param>
+        /// <param name="threadBatchIdMapper">Used to map batch ids to threads</param>
+        public TransactionalHandler(IUnitOfWorkAdapter adapter, IDomainEventStorage storage,
+                                    IThreadBatchIdMapper threadBatchIdMapper)
+        {
+            if (adapter == null) throw new ArgumentNullException("adapter");
+            if (storage == null) throw new ArgumentNullException("storage");
+            _storage = storage;
+            adapter.Register(this);
+            _threadBatchIdMapper = threadBatchIdMapper;
+        }
+
         #region IDownstreamHandler Members
 
         /// <summary>
         /// Send a message to the command handler
         /// </summary>
         /// <param name="context">my context</param>
-        /// <param name="message">Message to send, typically <see cref="SendCommand"/>.</param>
+        /// <param name="message">Message to send, typically <see cref="DispatchCommand"/>.</param>
         public void HandleDownstream(IDownstreamContext context, object message)
         {
+            _context = context;
+
             var msg = message as DispatchEvent;
             if (msg != null)
             {
-                var batchId = _threadedUowMapper.GetBatchId();
+                var batchId = _threadBatchIdMapper.GetBatchId();
                 if (batchId != Guid.Empty)
                 {
                     _storage.Hold(batchId, msg.DomainEvent);
@@ -50,7 +68,6 @@ namespace Griffin.Decoupled.DomainEvents.Pipeline
                 }
             }
 
-            _context = context;
 
             context.SendDownstream(message);
         }
@@ -65,7 +82,7 @@ namespace Griffin.Decoupled.DomainEvents.Pipeline
         /// <param name="unitOfWork">The unit of work that was created.</param>
         public void Create(object unitOfWork)
         {
-            _threadedUowMapper.Create(unitOfWork);
+            _threadBatchIdMapper.Create(unitOfWork);
         }
 
         /// <summary>
@@ -75,7 +92,7 @@ namespace Griffin.Decoupled.DomainEvents.Pipeline
         /// <param name="successful"><c>true</c> if the UoW was saved successfully; otherwise <c>false</c>.</param>
         public void Released(object unitOfWork, bool successful)
         {
-            var guid = _threadedUowMapper.Release(unitOfWork);
+            var guid = _threadBatchIdMapper.Release(unitOfWork);
             if (successful)
             {
                 var jobs = _storage.Release(guid);
@@ -86,7 +103,7 @@ namespace Griffin.Decoupled.DomainEvents.Pipeline
             }
             else
             {
-                _storage.Release(guid);
+                _storage.Delete(guid);
             }
         }
 

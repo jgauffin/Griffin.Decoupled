@@ -1,27 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using Griffin.Decoupled.Commands.Pipeline;
 using Griffin.Decoupled.Pipeline;
 
 namespace Griffin.Decoupled.Tests.Commands.Helpers
 {
-    class DownContext : IDownstreamContext
+    internal class DownContext : IDownstreamContext
     {
-        private readonly Action<object> _up;
         private readonly Action<object> _down;
-        ManualResetEvent _downEvent = new ManualResetEvent(false);
-        ManualResetEvent _upEvent = new ManualResetEvent(false);
+        private readonly ManualResetEvent _downEvent = new ManualResetEvent(false);
+        private readonly Action<object> _up;
+        private readonly ManualResetEvent _upEvent = new ManualResetEvent(false);
 
         public DownContext(Action<object> down, Action<object> up)
         {
             _up = up;
             _down = down;
         }
-        
+
+        #region IDownstreamContext Members
+
         /// <summary>
         /// Send a message back up the chain, typically an error message
         /// </summary>
@@ -45,6 +42,8 @@ namespace Griffin.Decoupled.Tests.Commands.Helpers
             if (_down != null)
                 _down(message);
         }
+
+        #endregion
 
         public bool WaitDown(TimeSpan span)
         {

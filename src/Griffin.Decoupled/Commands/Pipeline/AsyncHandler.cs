@@ -8,9 +8,6 @@ namespace Griffin.Decoupled.Commands.Pipeline
     /// <summary>
     /// Will enqueue messages and send them asynchronously
     /// </summary>
-    /// <remarks>It's recommended that the data storage implements the <see cref="ITransactionalCommandStorage"/> interface
-    /// so that we can use transactions during command invocation. It helps us to keep the commands in the database
-    /// if something fails or the application is crashing.</remarks>
     internal class AsyncHandler : IDownstreamHandler
     {
         private readonly ManualResetEventSlim _closingEvent = new ManualResetEventSlim(false);
@@ -42,7 +39,7 @@ namespace Griffin.Decoupled.Commands.Pipeline
         {
             _context = context;
 
-            var sendCmd = message as SendCommand;
+            var sendCmd = message as DispatchCommand;
             if (sendCmd != null)
             {
                 EnqueueCommand(sendCmd);
@@ -86,10 +83,6 @@ namespace Griffin.Decoupled.Commands.Pipeline
                     // we just want to dispach all messages
                 }
             }
-            catch (Exception err)
-            {
-                _context.SendUpstream(new PipelineFailure(this, "AsyncHandler failed to dispatch commands.", err));
-            }
             finally
             {
                 Interlocked.Decrement(ref _currentWorkers);
@@ -107,15 +100,23 @@ namespace Griffin.Decoupled.Commands.Pipeline
             if (command == null)
                 return false;
 
-            _context.SendDownstream(command);
-            _storage.Delete(command.Command);
+            try
+            {
+                _context.SendDownstream(command);
+                _storage.Delete(command.Command);
+            }
+            catch (Exception err)
+            {
+                _context.SendUpstream(new PipelineFailure(this, command, "AsyncHandler failed to dispatch commands.", err));
+
+            }
             return true;
         }
 
 
-        private void EnqueueCommand(SendCommand sendCmd)
+        private void EnqueueCommand(DispatchCommand dispatchCmd)
         {
-            _storage.Add(sendCmd);
+            _storage.Add(dispatchCmd);
 
             if (_closing)
                 return;

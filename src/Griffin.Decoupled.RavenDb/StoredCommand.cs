@@ -8,16 +8,15 @@ namespace Griffin.Decoupled.RavenDb
     /// </summary>
     public class StoredCommand
     {
-        private readonly SendCommand _command;
-
-        public StoredCommand(SendCommand command)
+        public StoredCommand(DispatchCommand command)
         {
             if (command == null) throw new ArgumentNullException("command");
-            _command = command;
-            Id = command.Command.Id;
+            Command = command;
+            Id = command.Command.Id.ToString("D");
         }
-        public SendCommand Command { get; set; }
+
+        public DispatchCommand Command { get; set; }
         public DateTime? ProcessedAt { get; set; }
-        public Guid Id { get; private set; }
+        public string Id { get; private set; }
     }
 }

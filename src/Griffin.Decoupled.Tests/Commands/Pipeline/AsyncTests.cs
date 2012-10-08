@@ -40,30 +40,30 @@ namespace Griffin.Decoupled.Tests.Commands.Pipeline
             var storage = Substitute.For<ICommandStorage>();
             var dispatcher = new AsyncHandler(storage, 1);
             var context = new DownContext(null, null);
-            var state = new SendCommand(new FakeCommand());
-            storage.Dequeue().Returns( state);
+            var state = new DispatchCommand(new FakeCommand());
+            storage.Dequeue().Returns(state);
 
             dispatcher.HandleDownstream(context, state);
 
-            storage.Received().Add( state);
+            storage.Received().Add(state);
             Assert.True(context.WaitDown(TimeSpan.FromSeconds(1)));
             storage.Received().Dequeue();
         }
 
         [Fact]
-        public void DispatchTwoSingleWorker()
+        public void DispatchTwoSingleWorkers()
         {
             var storage = new TestStorage();
             var dispatcher = new AsyncHandler(storage, 1);
-            var state1 = new SendCommand(new FakeCommand());
-            var state2 = new SendCommand(new FakeCommand());
+            var state1 = new DispatchCommand(new FakeCommand());
+            var state2 = new DispatchCommand(new FakeCommand());
             var context = new DownContext(null, null);
 
             dispatcher.HandleDownstream(context, state1);
             dispatcher.HandleDownstream(context, state2);
 
             Assert.True(context.WaitDown(TimeSpan.FromSeconds(1)));
-            Assert.Same( state2, storage.Dequeued.Last());
+            Assert.Same(state2, storage.Dequeued.Last());
         }
 
         /*
@@ -74,7 +74,7 @@ namespace Griffin.Decoupled.Tests.Commands.Pipeline
             var transaction = Substitute.For<ISimpleTransaction>();
             var storage = Substitute.For<ICommandStorage>();
             storage.BeginTransaction().Returns(transaction);
-            storage.Dequeue().Returns((SendCommand)null);
+            storage.Dequeue().Returns((DispatchCommand)null);
             var context = new DownContext(null, null);
 
             var dispatcher = new AsyncHandler(storage, 1);
@@ -92,9 +92,9 @@ namespace Griffin.Decoupled.Tests.Commands.Pipeline
             var transaction = Substitute.For<ISimpleTransaction>();
             var storage = Substitute.For<ICommandStorage>();
             storage.BeginTransaction().Returns(transaction);
-            var command = new SendCommand(new FakeCommand());
+            var command = new DispatchCommand(new FakeCommand());
             storage.Dequeue().Returns(command);
-            var context = new DownContext(x => { if (!(x is SendCommand)) return; throw new Exception(); }, null);
+            var context = new DownContext(x => { if (!(x is DispatchCommand)) return; throw new Exception(); }, null);
 
             var dispatcher = new AsyncHandler(storage, 1);
             dispatcher.HandleDownstream(context, new Started());
@@ -111,9 +111,9 @@ namespace Griffin.Decoupled.Tests.Commands.Pipeline
             var transaction = Substitute.For<ISimpleTransaction>();
             var storage = Substitute.For<ICommandStorage>();
             storage.BeginTransaction().Returns(transaction);
-            var command = new SendCommand(new FakeCommand());
+            var command = new DispatchCommand(new FakeCommand());
             storage.Dequeue().Returns(command);
-            var context = new DownContext(x => { if (!(x is SendCommand)) return; throw new Exception(); }, null);
+            var context = new DownContext(x => { if (!(x is DispatchCommand)) return; throw new Exception(); }, null);
 
             var dispatcher = new AsyncHandler(storage, 1);
             dispatcher.HandleDownstream(context, new Started());
@@ -130,7 +130,7 @@ namespace Griffin.Decoupled.Tests.Commands.Pipeline
             var transaction = Substitute.For<ISimpleTransaction>();
             var storage = Substitute.For<ICommandStorage>();
             storage.BeginTransaction().Returns(transaction);
-            var command = new SendCommand(new FakeCommand());
+            var command = new DispatchCommand(new FakeCommand());
             storage.Dequeue().Returns(command);
             var context = new DownContext(null, null);
 
@@ -150,8 +150,8 @@ namespace Griffin.Decoupled.Tests.Commands.Pipeline
             var storage = new TestStorage();
             var dispatcher = new AsyncHandler(storage, 2);
             var command = new FakeCommand();
-            var state = new SendCommand(command);
-            var state2 = new SendCommand(new FakeCommand());
+            var state = new DispatchCommand(command);
+            var state2 = new DispatchCommand(new FakeCommand());
             var context = new DownContext(null, null);
 
             // dispatch first and check that it's passed by properly
@@ -171,10 +171,10 @@ namespace Griffin.Decoupled.Tests.Commands.Pipeline
         {
             var storage = new TestStorage();
             var dispatcher = new AsyncHandler(storage, 1);
-            var state1 = new SendCommand(new FakeCommand());
-            var state2 = new SendCommand(new FakeCommand());
+            var state1 = new DispatchCommand(new FakeCommand());
+            var state2 = new DispatchCommand(new FakeCommand());
             var evt = new ManualResetEvent(false);
-            var context = new DownContext(x=>evt.WaitOne(), null);
+            var context = new DownContext(x => evt.WaitOne(), null);
 
             dispatcher.HandleDownstream(context, state1);
             Assert.True(context.WaitDown(TimeSpan.FromMilliseconds(50)));
@@ -192,8 +192,8 @@ namespace Griffin.Decoupled.Tests.Commands.Pipeline
         {
             var storage = new TestStorage();
             var dispatcher = new AsyncHandler(storage, 2);
-            var state1 = new SendCommand(new FakeCommand());
-            var state2 = new SendCommand(new FakeCommand());
+            var state1 = new DispatchCommand(new FakeCommand());
+            var state2 = new DispatchCommand(new FakeCommand());
             var evt = new ManualResetEvent(false);
             var context = new DownContext(null, x => evt.WaitOne());
 
@@ -218,16 +218,14 @@ namespace Griffin.Decoupled.Tests.Commands.Pipeline
                     sync.Set();
                 });
 
-            var state1 = new SendCommand(new FakeCommand());
+            var state1 = new DispatchCommand(new FakeCommand());
 
             dispatcher.HandleDownstream(context, state1);
 
             Assert.True(sync.WaitOne(TimeSpan.FromMilliseconds(100)));
             Assert.NotNull(msg);
             Assert.IsType<PipelineFailure>(msg);
-            Assert.Same(expected, ((PipelineFailure)msg).Exception);
+            Assert.Same(expected, ((PipelineFailure) msg).Exception);
         }
-
-
     }
 }

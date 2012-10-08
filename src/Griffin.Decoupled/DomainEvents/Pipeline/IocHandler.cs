@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Griffin.Decoupled.Commands.Pipeline.Messages;
 using Griffin.Decoupled.DomainEvents.Pipeline.Messages;
 using Griffin.Decoupled.Pipeline;
@@ -16,8 +12,8 @@ namespace Griffin.Decoupled.DomainEvents.Pipeline
     /// <remarks>Should be the last downstream handler in the pipeline (will not pass any messages on).</remarks>
     public class IocHandler : IDownstreamHandler
     {
-        private readonly IRootContainer _rootContainer;
         private readonly MethodInfo _method;
+        private readonly IRootContainer _rootContainer;
         private IDownstreamContext _context;
 
         public IocHandler(IRootContainer rootContainer)
@@ -26,11 +22,13 @@ namespace Griffin.Decoupled.DomainEvents.Pipeline
             _method = GetType().GetMethod("Dispatch", BindingFlags.Instance | BindingFlags.NonPublic);
         }
 
+        #region IDownstreamHandler Members
+
         /// <summary>
         /// Send a message to the domainEvent handler
         /// </summary>
         /// <param name="context">my context</param>
-        /// <param name="message">Message to send, typically <see cref="SendCommand"/>.</param>
+        /// <param name="message">Message to send, typically <see cref="DispatchCommand"/>.</param>
         public virtual void HandleDownstream(IDownstreamContext context, object message)
         {
             _context = context;
@@ -39,15 +37,20 @@ namespace Griffin.Decoupled.DomainEvents.Pipeline
             {
                 try
                 {
-                    _method.MakeGenericMethod(dispatchMsg.DomainEvent.GetType()).Invoke(this, new object[] { dispatchMsg.DomainEvent });    
+                    _method.MakeGenericMethod(dispatchMsg.DomainEvent.GetType()).Invoke(this,
+                                                                                        new object[]
+                                                                                            {dispatchMsg.DomainEvent});
+                    
                     return;
                 }
-                catch(Exception err)
+                catch (Exception err)
                 {
                     context.SendUpstream(new EventFailed(dispatchMsg, err));
                 }
             }
         }
+
+        #endregion
 
         /// <summary>
         /// Invoked through reflection
@@ -64,6 +67,5 @@ namespace Griffin.Decoupled.DomainEvents.Pipeline
                 }
             }
         }
-
     }
 }

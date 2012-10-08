@@ -25,19 +25,19 @@ namespace Griffin.Decoupled.Commands
         /// Add a new command
         /// </summary>
         /// <param name="command">Store the command in the DB. You can use the <see cref="ICommand.Id"/> as an identity.</param>
-        void Add(SendCommand command);
+        void Add(DispatchCommand command);
 
         /// <summary>
         /// Dequeue a command (get and and mark it as being processed so that no other threads can access it)
         /// </summary>
         /// <returns>Command if any; otherwise <c>null</c>.</returns>
-        SendCommand Dequeue();
+        DispatchCommand Dequeue();
 
         /// <summary>
         /// Re add a command which we've tried to invoke but failed.
         /// </summary>
         /// <param name="command">Command to add</param>
-        void Update(SendCommand command);
+        void Update(DispatchCommand command);
 
         /// <summary>
         /// Delete a command
@@ -50,6 +50,6 @@ namespace Griffin.Decoupled.Commands
         /// </summary>
         /// <param name="markedAsProcessBefore">Get all commands that were marked as being processed before this date/time.</param>
         /// <returns>Any matching commands or an empty collection.</returns>
-        IEnumerable<SendCommand> FindFailedCommands(DateTime markedAsProcessBefore);
+        IEnumerable<DispatchCommand> FindFailedCommands(DateTime markedAsProcessBefore);
     }
 }

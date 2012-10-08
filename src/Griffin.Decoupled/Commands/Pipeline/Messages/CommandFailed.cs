@@ -8,9 +8,9 @@ namespace Griffin.Decoupled.Commands.Pipeline.Messages
     public class CommandFailed
     {
         private readonly Exception _exception;
-        private readonly SendCommand _state;
+        private readonly DispatchCommand _state;
 
-        public CommandFailed(SendCommand state, Exception exception)
+        public CommandFailed(DispatchCommand state, Exception exception)
         {
             if (state == null) throw new ArgumentNullException("state");
             if (exception == null) throw new ArgumentNullException("exception");
@@ -30,7 +30,7 @@ namespace Griffin.Decoupled.Commands.Pipeline.Messages
         /// <summary>
         /// Gets failed command
         /// </summary>
-        public SendCommand Message
+        public DispatchCommand Message
         {
             get { return _state; }
         }

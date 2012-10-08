@@ -8,11 +8,13 @@ namespace Griffin.Decoupled.DomainEvents
     /// <summary>
     /// Used to map UnitOfWork objects to Guids which is easier to persist.
     /// </summary>
-    internal class ThreadedUowMapper
+    public class ThreadBatchIdMapper : IThreadBatchIdMapper
     {
         // no need for locks since every thread can only check it's own id.
         private readonly Dictionary<int, ICollection<UowGuidMapping>> _threadMappings =
             new Dictionary<int, ICollection<UowGuidMapping>>();
+
+        #region IThreadBatchIdMapper Members
 
         /// <summary>
         /// Gets if the current thread has an active UoW
@@ -93,6 +95,8 @@ namespace Griffin.Decoupled.DomainEvents
             var lastMapping = mappings.LastOrDefault();
             return lastMapping == null ? Guid.Empty : lastMapping.Guid;
         }
+
+        #endregion
 
         #region Nested type: UowGuidMapping
 

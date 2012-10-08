@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Griffin.Decoupled.DomainEvents.Pipeline.Messages;
 using Griffin.Decoupled.Pipeline;
 
@@ -32,6 +28,8 @@ namespace Griffin.Decoupled.DomainEvents
             _pipeline.Send(new Started());
         }
 
+        #region IDomainEventDispatcher Members
+
         /// <summary>
         /// Dispatch domain event.
         /// </summary>
@@ -50,5 +48,7 @@ namespace Griffin.Decoupled.DomainEvents
         {
             _pipeline.Send(new Shutdown());
         }
+
+        #endregion
     }
 }

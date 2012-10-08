@@ -1,30 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Configuration;
 using Griffin.Decoupled.Commands;
 using Raven.Client.Embedded;
 
 namespace Griffin.Decoupled.RavenDb
 {
-
-
     public static class CommandDispatcherBuilderExtensions
     {
-        public static PipelineDispatcherBuilder UseRavenDbEmbedded(this PipelineDispatcherBuilder instance, bool useTransactions = true)
+        public static PipelineDispatcherBuilder UseRavenDbEmbedded(this PipelineDispatcherBuilder instance,
+                                                                   bool useTransactions = true)
         {
             var documentStore = new EmbeddableDocumentStore
                 {
-                    Conventions = { IdentityPartsSeparator = "-" },
+                    Conventions = {IdentityPartsSeparator = "-"},
                     DefaultDatabase = "GriffinDecoupled"
                 };
             if (ConfigurationManager.ConnectionStrings["GriffinDecoupled"] != null)
                 documentStore.ConnectionStringName = "GriffinDecoupled";
             documentStore.Initialize();
 
-            instance.StoreCommands(new RavenCommandStorage(documentStore.OpenSession()));
+            instance.StoreCommands(new RavenCommandStorage(documentStore));
             return instance;
         }
     }

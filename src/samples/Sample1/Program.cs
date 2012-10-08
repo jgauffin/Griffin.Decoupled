@@ -1,22 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Griffin.Container;
 using Griffin.Decoupled;
 using Griffin.Decoupled.Commands;
 
 namespace Sample1
 {
-    class Program
+    internal class Program
     {
         // This is the easiest way to gt started. 
         // Do note that the commands are invoked synchronous, but using a seperate IoC scope/child container for each invocation.
         //
         // Do not be tempted to return things from the commands even though you could.
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var container = ConfigureGriffinContainer();
 
@@ -24,7 +20,7 @@ namespace Sample1
             container.DispatchCommands();
 
             // Invoke that command.
-            CommandDispatcher.Dispatch(new SayHello());    
+            CommandDispatcher.Dispatch(new SayHello());
 
 
             Console.ReadLine();

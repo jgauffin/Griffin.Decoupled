@@ -16,7 +16,7 @@ namespace Sample3
         /// <param name="command">Command to run</param>
         public void Invoke(SayHello command)
         {
-            Console.WriteLine("Hello, I got invoked on thread #" + Thread.CurrentThread.ManagedThreadId);
+            Console.WriteLine("Hello, I ({0}) got invoked on thread #{1}", command.GetHashCode(), Thread.CurrentThread.ManagedThreadId);
         }
 
         #endregion

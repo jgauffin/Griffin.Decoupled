@@ -1,5 +1,4 @@
 using System;
-using Griffin.Decoupled.Commands.Pipeline;
 using Griffin.Decoupled.Pipeline;
 
 namespace Sample2___Async_Commands
@@ -9,6 +8,8 @@ namespace Sample2___Async_Commands
     /// </summary>
     public class ErrorHandler : IUpstreamHandler
     {
+        #region IUpstreamHandler Members
+
         /// <summary>
         /// Send a message to the next handler
         /// </summary>
@@ -18,5 +19,7 @@ namespace Sample2___Async_Commands
         {
             Console.WriteLine(message);
         }
+
+        #endregion
     }
 }

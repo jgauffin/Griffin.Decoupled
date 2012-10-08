@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Griffin.Decoupled.Commands.Pipeline;
 using Griffin.Decoupled.Commands.Pipeline.Messages;
 
 namespace Griffin.Decoupled.Pipeline
@@ -30,7 +29,7 @@ namespace Griffin.Decoupled.Pipeline
         /// Send a message to the command handler
         /// </summary>
         /// <param name="context">my context</param>
-        /// <param name="message">Message to send, typically <see cref="SendCommand"/>.</param>
+        /// <param name="message">Message to send, typically <see cref="DispatchCommand"/>.</param>
         void IDownstreamHandler.HandleDownstream(IDownstreamContext context, object message)
         {
             throw new InvalidOperationException(_downstream[_downstream.Count - 2] +

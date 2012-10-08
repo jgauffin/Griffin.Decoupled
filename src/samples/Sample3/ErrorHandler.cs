@@ -1,5 +1,4 @@
 using System;
-using Griffin.Decoupled.Commands.Pipeline;
 using Griffin.Decoupled.Pipeline;
 
 namespace Sample3
@@ -9,6 +8,8 @@ namespace Sample3
     /// </summary>
     public class ErrorHandler : IUpstreamHandler
     {
+        #region IUpstreamHandler Members
+
         /// <summary>
         /// Send a message to the next handler
         /// </summary>
@@ -18,5 +19,7 @@ namespace Sample3
         {
             Console.WriteLine(message);
         }
+
+        #endregion
     }
 }

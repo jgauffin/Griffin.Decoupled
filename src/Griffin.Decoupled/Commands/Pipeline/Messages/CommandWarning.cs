@@ -1,8 +1,4 @@
-﻿    using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace Griffin.Decoupled.Commands.Pipeline.Messages
 {
@@ -11,9 +7,8 @@ namespace Griffin.Decoupled.Commands.Pipeline.Messages
     /// </summary>
     public class CommandAborted
     {
-        public CommandAborted(SendCommand command, Exception exception)
+        public CommandAborted(DispatchCommand command, Exception exception)
         {
-            
         }
     }
 }

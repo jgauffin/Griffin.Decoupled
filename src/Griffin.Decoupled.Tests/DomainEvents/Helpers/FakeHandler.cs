@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Griffin.Decoupled.Pipeline;
 
 namespace Griffin.Decoupled.Tests.DomainEvents.Helpers
 {
-    class FakeContext : IDownstreamContext
+    internal class FakeContext : IDownstreamContext
     {
         private readonly Action<object> _down;
         private readonly Action<object> _up;
@@ -20,6 +16,10 @@ namespace Griffin.Decoupled.Tests.DomainEvents.Helpers
             _up = up;
         }
 
+        public object Message { get; private set; }
+
+        #region IDownstreamContext Members
+
         /// <summary>
         /// Send a message back up the chain, typically an error message
         /// </summary>
@@ -27,8 +27,10 @@ namespace Griffin.Decoupled.Tests.DomainEvents.Helpers
         public void SendUpstream(object message)
         {
             Message = message;
-            _up(message);
             _event.Set();
+
+            if (_up != null)
+                _up(message);
         }
 
         /// <summary>
@@ -38,15 +40,22 @@ namespace Griffin.Decoupled.Tests.DomainEvents.Helpers
         public void SendDownstream(object message)
         {
             Message = message;
-            _down(message);
             _event.Set();
+            if (_down != null)
+                _down(message);
         }
+
+        #endregion
 
         public bool Wait(TimeSpan span)
         {
             return _event.WaitOne(span);
         }
 
-        public object Message { get; private set; }
+        public void Reset()
+        {
+            _event.Reset();
+            Message = null;
+        }
     }
 }

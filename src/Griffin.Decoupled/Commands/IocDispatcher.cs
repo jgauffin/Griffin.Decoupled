@@ -35,9 +35,8 @@ namespace Griffin.Decoupled.Commands
 
             using (var scope = _inversionOfControlContainer.CreateScope())
             {
-                scope.Resolve<IHandleCommand<T>>().Invoke(command);    
+                scope.Resolve<IHandleCommand<T>>().Invoke(command);
             }
-            
         }
 
         #endregion

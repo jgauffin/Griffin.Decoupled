@@ -47,7 +47,11 @@
     <Compile Include="Commands\PipelineDispatcher.cs" />
     <Compile Include="Commands\DispatcherFailedEventArgs.cs" />
     <Compile Include="Commands\Pipeline\IocDispatcher.cs" />
+    <Compile Include="Commands\Pipeline\Messages\CommandProcessed.cs" />
+    <Compile Include="Commands\Pipeline\Messages\CommandStored.cs" />
+    <Compile Include="Commands\Pipeline\StorageHandler.cs" />
     <Compile Include="DomainEvents\EventPipelineDispatcher.cs" />
+    <Compile Include="DomainEvents\IThreadBatchIdMapper.cs" />
     <Compile Include="DomainEvents\Pipeline\AsyncHandler.cs" />
     <Compile Include="DomainEvents\Pipeline\IocHandler.cs" />
     <Compile Include="DomainEvents\Pipeline\Messages\DispatchEvent.cs" />
@@ -81,7 +85,7 @@
     <Compile Include="Commands\ICommandDispatcher.cs" />
     <Compile Include="Commands\IHandleCommand.cs" />
     <Compile Include="Commands\NamespaceDoc.cs" />
-    <Compile Include="Commands\Pipeline\Messages\SendCommand.cs" />
+    <Compile Include="Commands\Pipeline\Messages\DispatchCommand.cs" />
     <Compile Include="DomainEvents\ContainerDispatcher.cs" />
     <Compile Include="DomainEvents\DispatcherFailedEventArgs.cs" />
     <Compile Include="DomainEvents\DomainEvent.cs" />
@@ -95,7 +99,7 @@
     <Compile Include="DomainEvents\IUnitOfWorkObserver.cs" />
     <Compile Include="DomainEvents\MemoryStorage.cs" />
     <Compile Include="DomainEvents\NamespaceDoc.cs" />
-    <Compile Include="DomainEvents\ThreadedUowMapper.cs" />
+    <Compile Include="DomainEvents\ThreadBatchIdMapper.cs" />
     <Compile Include="IRootContainer.cs" />
     <Compile Include="IScopedContainer.cs" />
     <Compile Include="IServiceLocator.cs" />

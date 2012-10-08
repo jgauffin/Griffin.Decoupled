@@ -28,6 +28,8 @@ namespace Griffin.Decoupled.RavenDb
         /// </summary>
         public IDocumentSession Session { get; private set; }
 
+        #region IUnitOfWork Members
+
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
@@ -49,5 +51,7 @@ namespace Griffin.Decoupled.RavenDb
             _saved = true;
             _observer.Released(this, true);
         }
+
+        #endregion
     }
 }

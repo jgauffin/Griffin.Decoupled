@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using Griffin.Decoupled.Commands.Pipeline;
 using Griffin.Decoupled.Commands.Pipeline.Messages;
 using Griffin.Decoupled.Pipeline;
 
@@ -12,27 +7,31 @@ namespace Griffin.Decoupled.Tests.Commands.Helpers
 {
     public delegate void DownHandler(IDownstreamContext context, object message);
 
-    class BlockingDownstreamHandler : IDownstreamHandler
+    internal class BlockingDownstreamHandler : IDownstreamHandler
     {
+        private readonly ManualResetEvent _event = new ManualResetEvent(false);
         private readonly DownHandler _handler;
-        ManualResetEvent _event = new ManualResetEvent(false);
-        
+
         public BlockingDownstreamHandler(DownHandler handler)
         {
             _handler = handler;
         }
 
+        #region IDownstreamHandler Members
+
         /// <summary>
         /// Send a message to the command handler
         /// </summary>
         /// <param name="context">my context</param>
-        /// <param name="message">Message to send, typically <see cref="SendCommand"/>.</param>
+        /// <param name="message">Message to send, typically <see cref="DispatchCommand"/>.</param>
         public void HandleDownstream(IDownstreamContext context, object message)
         {
             _event.Set();
 
             _handler(context, message);
         }
+
+        #endregion
 
         public bool Wait(TimeSpan span)
         {

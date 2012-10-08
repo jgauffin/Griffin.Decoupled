@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Griffin.Decoupled.Commands.Pipeline.Messages;
@@ -11,27 +10,22 @@ namespace Griffin.Decoupled.Commands
     /// </summary>
     public class MemoryStorage : ICommandStorage
     {
+        private readonly object _lock = new object();
         private readonly List<MyStruct> _queue = new List<MyStruct>();
-        private object _lock = new object();
 
         #region ICommandStorage Members
 
-        class MyStruct
-        {
-            public SendCommand Command { get;set; }
-            public DateTime StartedAt { get; set; }
-        }
         /// <summary>
         /// Add a new command
         /// </summary>
         /// <param name="command">Store the command in the DB. You can use the <see cref="ICommand.Id"/> as an identity.</param>
-        public void Add(SendCommand command)
+        public void Add(DispatchCommand command)
         {
             if (command == null) throw new ArgumentNullException("command");
 
             lock (_lock)
             {
-                _queue.Add(new MyStruct { Command = command });
+                _queue.Add(new MyStruct {Command = command});
             }
         }
 
@@ -39,7 +33,7 @@ namespace Griffin.Decoupled.Commands
         /// Get command which was stored first.
         /// </summary>
         /// <returns>Command if any; otherwise <c>null</c>.</returns>
-        public SendCommand Dequeue()
+        public DispatchCommand Dequeue()
         {
             MyStruct state;
             lock (_queue)
@@ -58,7 +52,7 @@ namespace Griffin.Decoupled.Commands
         /// Re add a command which we've tried to invoke but failed.
         /// </summary>
         /// <param name="command">Command to add</param>
-        public void Update(SendCommand command)
+        public void Update(DispatchCommand command)
         {
             lock (_lock)
             {
@@ -85,12 +79,22 @@ namespace Griffin.Decoupled.Commands
         /// </summary>
         /// <param name="markedAsProcessBefore">Get all commands that were marked as being processed before this date/time.</param>
         /// <returns>Any matching commands or an empty collection.</returns>
-        public IEnumerable<SendCommand> FindFailedCommands(DateTime markedAsProcessBefore)
+        public IEnumerable<DispatchCommand> FindFailedCommands(DateTime markedAsProcessBefore)
         {
             lock (_queue)
             {
                 return _queue.Where(x => x.StartedAt < markedAsProcessBefore).Select(x => x.Command).ToList();
             }
+        }
+
+        #endregion
+
+        #region Nested type: MyStruct
+
+        private class MyStruct
+        {
+            public DispatchCommand Command { get; set; }
+            public DateTime StartedAt { get; set; }
         }
 
         #endregion

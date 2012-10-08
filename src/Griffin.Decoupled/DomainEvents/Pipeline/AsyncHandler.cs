@@ -50,7 +50,7 @@ namespace Griffin.Decoupled.DomainEvents.Pipeline
                 if (Interlocked.Read(ref _currentWorkers) < _maxWorkers)
                 {
                     Interlocked.Increment(ref _currentWorkers);
-                    ThreadPool.QueueUserWorkItem(DispatchEventNow);
+                    ThreadPool.QueueUserWorkItem(DispatchEventsNow);
                 }
             }
             else if (message is Shutdown)
@@ -76,14 +76,12 @@ namespace Griffin.Decoupled.DomainEvents.Pipeline
         }
 
 
-        private void DispatchEventNow(object state)
+        private void DispatchEventsNow(object state)
         {
             try
             {
-                DispatchEvent theEvent;
-                if (_queue.TryDequeue(out theEvent))
+                while (DispatchEventNow())
                 {
-                    _context.SendDownstream(theEvent);
                 }
             }
             finally
@@ -92,6 +90,18 @@ namespace Griffin.Decoupled.DomainEvents.Pipeline
                 if (_currentWorkers == 0 && _shutDown)
                     _shutdownEvent.Set();
             }
+        }
+
+        private bool DispatchEventNow()
+        {
+            DispatchEvent theEvent;
+            if (_queue.TryDequeue(out theEvent))
+            {
+                _context.SendDownstream(theEvent);
+                return true;
+            }
+
+            return false;
         }
     }
 }

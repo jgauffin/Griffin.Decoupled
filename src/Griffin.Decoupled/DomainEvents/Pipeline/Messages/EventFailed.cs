@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Griffin.Decoupled.DomainEvents.Pipeline.Messages
 {
@@ -11,8 +7,8 @@ namespace Griffin.Decoupled.DomainEvents.Pipeline.Messages
     /// </summary>
     public class EventFailed
     {
-        private readonly DispatchEvent _failedEvent;
         private readonly Exception _exception;
+        private readonly DispatchEvent _failedEvent;
 
         public EventFailed(DispatchEvent failedEvent, Exception exception)
         {

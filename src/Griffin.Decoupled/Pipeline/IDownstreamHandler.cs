@@ -12,7 +12,7 @@ namespace Griffin.Decoupled.Pipeline
         /// Send a message to the command handler
         /// </summary>
         /// <param name="context">my context</param>
-        /// <param name="message">Message to send, typically <see cref="SendCommand"/>.</param>
+        /// <param name="message">Message to send, typically <see cref="DispatchCommand"/>.</param>
         void HandleDownstream(IDownstreamContext context, object message);
     }
 }

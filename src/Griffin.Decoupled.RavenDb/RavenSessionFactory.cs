@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Griffin.Decoupled.DomainEvents;
 using Raven.Client;
 
@@ -24,6 +20,8 @@ namespace Griffin.Decoupled.RavenDb
             _documentStore = documentStore;
         }
 
+        #region IUnitOfWorkAdapter Members
+
         /// <summary>
         /// Register our own observer which is used to control when the domain events are dispatched.
         /// </summary>
@@ -34,6 +32,8 @@ namespace Griffin.Decoupled.RavenDb
 
             _observer = observer;
         }
+
+        #endregion
 
         /// <summary>
         /// Create a new unit of work

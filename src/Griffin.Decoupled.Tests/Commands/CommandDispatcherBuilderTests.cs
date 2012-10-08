@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Griffin.Decoupled.Commands;
-using Griffin.Decoupled.Commands.Pipeline;
 using Griffin.Decoupled.Pipeline;
 using Griffin.Decoupled.Tests.Commands.Helpers;
 using NSubstitute;

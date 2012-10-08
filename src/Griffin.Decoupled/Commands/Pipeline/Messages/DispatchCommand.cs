@@ -3,24 +3,24 @@ using System;
 namespace Griffin.Decoupled.Commands.Pipeline.Messages
 {
     /// <summary>
-    /// Want to dispatch a command
+    /// Want to dispatch a command through the pipeline
     /// </summary>
-    public class SendCommand
+    public class DispatchCommand
     {
-        public SendCommand(ICommand command)
+        public DispatchCommand(ICommand command)
         {
             if (command == null) throw new ArgumentNullException("command");
             Command = command;
         }
 
-        public SendCommand(ICommand command, int attempts)
+        public DispatchCommand(ICommand command, int attempts)
         {
             if (command == null) throw new ArgumentNullException("command");
             Command = command;
             Attempts = attempts;
         }
 
-        protected SendCommand()
+        protected DispatchCommand()
         {
         }
 
@@ -42,6 +42,5 @@ namespace Griffin.Decoupled.Commands.Pipeline.Messages
         {
             Attempts++;
         }
-
     }
 }

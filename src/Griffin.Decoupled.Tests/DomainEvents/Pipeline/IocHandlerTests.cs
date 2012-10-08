@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Griffin.Decoupled.DomainEvents;
 using Griffin.Decoupled.DomainEvents.Pipeline;
 using Griffin.Decoupled.DomainEvents.Pipeline.Messages;
@@ -36,7 +32,7 @@ namespace Griffin.Decoupled.Tests.DomainEvents.Pipeline
             var context = Substitute.For<IDownstreamContext>();
             var child = Substitute.For<IScopedContainer>();
             container.CreateScope().Returns(child);
-            var msg = new FakeEvent();
+            var msg = new DispatchEvent(new FakeEvent());
             child.ResolveAll<ISubscribeOn<FakeEvent>>().Returns(call => { throw new Exception(); });
 
             var handler = new IocHandler(container);
@@ -44,7 +40,5 @@ namespace Griffin.Decoupled.Tests.DomainEvents.Pipeline
 
             context.Received().SendUpstream(Arg.Any<EventFailed>());
         }
-
-
     }
 }

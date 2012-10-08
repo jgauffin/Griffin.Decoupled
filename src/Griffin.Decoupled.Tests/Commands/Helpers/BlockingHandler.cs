@@ -1,23 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Griffin.Decoupled.Commands;
 
 namespace Griffin.Decoupled.Tests.Commands.Helpers
 {
-    class BlockingHandler<T> : IHandleCommand<T> where T : class, ICommand
+    internal class BlockingHandler<T> : IHandleCommand<T> where T : class, ICommand
     {
-        ManualResetEventSlim _event = new ManualResetEventSlim(false);
-        private Action<T> _action;
+        private readonly Action<T> _action;
+        private readonly ManualResetEventSlim _event = new ManualResetEventSlim(false);
 
-        public BlockingHandler() { }
+        public BlockingHandler()
+        {
+        }
+
         public BlockingHandler(Action<T> action)
         {
             _action = action;
         }
+
+        #region IHandleCommand<T> Members
 
         /// <summary>
         /// Invoke the command
@@ -30,6 +31,8 @@ namespace Griffin.Decoupled.Tests.Commands.Helpers
 
             _event.Set();
         }
+
+        #endregion
 
         public void Reset()
         {

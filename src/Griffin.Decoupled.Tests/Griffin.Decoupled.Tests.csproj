@@ -62,7 +62,7 @@
     <Compile Include="Commands\Helpers\TestStorage.cs" />
     <Compile Include="Commands\RetryingDispatcherTests.cs" />
     <Compile Include="DomainEvents\ContainerDispatcherTests.cs" />
-    <Compile Include="DomainEvents\DefaultDispatcherTests.cs" />
+    <Compile Include="DomainEvents\Pipeline\AsyncHandlerTests.cs" />
     <Compile Include="DomainEvents\DomainEventTests.cs" />
     <Compile Include="DomainEvents\Helpers\FailingHandler.cs" />
     <Compile Include="DomainEvents\Helpers\FakeEvent.cs" />

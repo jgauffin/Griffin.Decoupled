@@ -1,22 +1,15 @@
-﻿    using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Griffin.Decoupled.DomainEvents;
-    using Griffin.Decoupled.DomainEvents.Pipeline;
-    using Griffin.Decoupled.DomainEvents.Pipeline.Messages;
-    using Griffin.Decoupled.Pipeline;
-    using Griffin.Decoupled.Tests.DomainEvents.Helpers;
-    using NSubstitute;
-    using Xunit;
+﻿using Griffin.Decoupled.DomainEvents;
+using Griffin.Decoupled.DomainEvents.Pipeline;
+using Griffin.Decoupled.DomainEvents.Pipeline.Messages;
+using Griffin.Decoupled.Pipeline;
+using Griffin.Decoupled.Tests.DomainEvents.Helpers;
+using NSubstitute;
+using Xunit;
 
 namespace Griffin.Decoupled.Tests.DomainEvents.Pipeline
 {
-    class TransactionalHandlerTests
+    public class TransactionalHandlerTests
     {
-
         [Fact]
         public void UowDispatcherNoUow()
         {
@@ -38,30 +31,37 @@ namespace Griffin.Decoupled.Tests.DomainEvents.Pipeline
             var storage = Substitute.For<IDomainEventStorage>();
             var context = Substitute.For<IDownstreamContext>();
             var msg = new DispatchEvent(new FakeEvent());
+            var uowMapper = new ThreadBatchIdMapper();
 
-            var handler = new TransactionalHandler(uowAdapter, storage);
+            var handler = new TransactionalHandler(uowAdapter, storage, uowMapper);
             uowAdapter.Observer.Create(uowAdapter);
-            handler.HandleDownstream(context,  msg);
-            
+            handler.HandleDownstream(context, msg);
 
-            storage.Received().Hold();
+
+            storage.Received().Hold(uowMapper.GetBatchId(), msg.DomainEvent);
         }
 
         [Fact]
         public void UowDispatcher_UowReleasedSuccessfully()
         {
             var uowAdapter = new FakeUowAdapter();
-            var innerDispatcher = new TestDispatcher(true);
-            var domainEvent = Substitute.For<IDomainEvent>();
-            var dispatcher = new DefaultDispatcher(innerDispatcher, uowAdapter);
-            var triggerEvent = new ManualResetEvent(false);
-            dispatcher.DispatcherFailed += (sender, args) => triggerEvent.Set();
-
+            var storage = Substitute.For<IDomainEventStorage>();
+            var context = Substitute.For<IDownstreamContext>();
+            var msg = new DispatchEvent(new FakeEvent());
+            var uowMapper = new ThreadBatchIdMapper();
+            var handler = new TransactionalHandler(uowAdapter, storage, uowMapper);
             uowAdapter.Observer.Create(uowAdapter);
-            dispatcher.Dispatch(domainEvent);
+            var batchId = uowMapper.GetBatchId();
+            storage.Release(batchId).Returns(new[] {new FakeEvent()});
+
+            handler.HandleDownstream(context, msg);
+            context.DidNotReceive().SendDownstream(msg);
             uowAdapter.Observer.Released(uowAdapter, true);
 
-            Assert.True(triggerEvent.WaitOne(1000));
+
+            storage.Received().Hold(batchId, msg.DomainEvent);
+            storage.Received().Release(batchId);
+            context.Received().SendDownstream(Arg.Any<DispatchEvent>());
         }
 
 
@@ -69,18 +69,23 @@ namespace Griffin.Decoupled.Tests.DomainEvents.Pipeline
         public void UowDispatcher_UowReleasedFailed()
         {
             var uowAdapter = new FakeUowAdapter();
-            var innerDispatcher = new TestDispatcher(true);
-            var domainEvent = Substitute.For<IDomainEvent>();
-            var dispatcher = new DefaultDispatcher(innerDispatcher, uowAdapter);
-            var triggerEvent = new ManualResetEvent(false);
-            dispatcher.DispatcherFailed += (sender, args) => triggerEvent.Set();
-
+            var storage = Substitute.For<IDomainEventStorage>();
+            var context = Substitute.For<IDownstreamContext>();
+            var msg = new DispatchEvent(new FakeEvent());
+            var uowMapper = new ThreadBatchIdMapper();
+            var handler = new TransactionalHandler(uowAdapter, storage, uowMapper);
             uowAdapter.Observer.Create(uowAdapter);
-            dispatcher.Dispatch(domainEvent);
+            var batchId = uowMapper.GetBatchId();
+            storage.Release(batchId).Returns(new[] {new FakeEvent()});
+
+            handler.HandleDownstream(context, msg);
+            context.DidNotReceive().SendDownstream(msg);
             uowAdapter.Observer.Released(uowAdapter, false);
 
-            Assert.False(triggerEvent.WaitOne(1000));
+
+            storage.Received().Hold(batchId, msg.DomainEvent);
+            storage.Received().Delete(batchId);
+            context.DidNotReceive().SendDownstream(Arg.Any<DispatchEvent>());
         }
     }
-
 }

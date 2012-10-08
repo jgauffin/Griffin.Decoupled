@@ -48,7 +48,6 @@ namespace Griffin.Decoupled.Tests.DomainEvents
         /// <remarks>Should make sure that all events are propagated before returning.</remarks>
         public void Close()
         {
-            
         }
 
         #endregion

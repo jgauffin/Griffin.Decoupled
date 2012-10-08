@@ -1,5 +1,4 @@
 ﻿using System;
-using Griffin.Decoupled.Commands.Pipeline;
 using Griffin.Decoupled.Commands.Pipeline.Messages;
 using Griffin.Decoupled.Pipeline;
 
@@ -36,7 +35,7 @@ namespace Griffin.Decoupled.Commands
         {
             if (command == null) throw new ArgumentNullException("command");
 
-            var msg = new SendCommand(command);
+            var msg = new DispatchCommand(command);
             _pipeline.Send(msg);
         }
 

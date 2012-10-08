@@ -37,18 +37,18 @@ namespace Griffin.Decoupled.Commands.Pipeline
         /// Send a message to the command handler
         /// </summary>
         /// <param name="context">my context</param>
-        /// <param name="message">Message to send, typically <see cref="SendCommand"/>.</param>
+        /// <param name="message">Message to send, typically <see cref="DispatchCommand"/>.</param>
         public void HandleDownstream(IDownstreamContext context, object message)
         {
-            var msg = message as SendCommand;
+            var msg = message as DispatchCommand;
             if (msg != null)
             {
                 try
                 {
-                    _method.MakeGenericMethod(msg.Command.GetType()).Invoke(this, new object[] { msg.Command });
+                    _method.MakeGenericMethod(msg.Command.GetType()).Invoke(this, new object[] {msg.Command});
                     _storage.Delete(msg.Command);
                 }
-                catch(Exception err)
+                catch (Exception err)
                 {
                     msg.AddFailedAttempt();
                     context.SendUpstream(new CommandFailed(msg, err));
@@ -58,7 +58,9 @@ namespace Griffin.Decoupled.Commands.Pipeline
 
             context.SendUpstream(
                 new PipelineFailure(this,
-                    "We, IocDispatcher, should be the last downstream handler. Received: " + message, null));
+                                    message,
+                                    "We, IocDispatcher, should be the last downstream handler. Received: " + message,
+                                    null));
         }
 
         #endregion

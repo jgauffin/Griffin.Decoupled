@@ -27,7 +27,7 @@ namespace Griffin.Decoupled.Tests.Commands
         {
             var storage = Substitute.For<ICommandStorage>();
             var dispatcher = new RetryingHandler(3, storage);
-            var msg = new CommandFailed(new SendCommand(new FakeCommand(), 3), new Exception());
+            var msg = new CommandFailed(new DispatchCommand(new FakeCommand(), 3), new Exception());
             var context = Substitute.For<IUpstreamContext>();
 
             dispatcher.HandleUpstream(context, msg);
@@ -41,7 +41,7 @@ namespace Griffin.Decoupled.Tests.Commands
         {
             var context = Substitute.For<IUpstreamContext>();
             var storage = Substitute.For<ICommandStorage>();
-            var msg = new CommandFailed(new SendCommand(new FakeCommand(), 1), new Exception());
+            var msg = new CommandFailed(new DispatchCommand(new FakeCommand(), 1), new Exception());
             var dispatcher = new RetryingHandler(3, storage);
 
             dispatcher.HandleUpstream(context, msg);
@@ -55,12 +55,12 @@ namespace Griffin.Decoupled.Tests.Commands
         {
             var context = Substitute.For<IUpstreamContext>();
             var storage = Substitute.For<ICommandStorage>();
-            var state = new SendCommand(new FakeCommand(), 3);
+            var state = new DispatchCommand(new FakeCommand(), 3);
             var dispatcher = new RetryingHandler(3, storage);
 
             dispatcher.HandleUpstream(context, state);
 
-            context.Received().SendUpstream(Arg.Any<SendCommand>());
+            context.Received().SendUpstream(Arg.Any<DispatchCommand>());
             Assert.Equal(0, storage.ReceivedCalls().Count());
         }
     }

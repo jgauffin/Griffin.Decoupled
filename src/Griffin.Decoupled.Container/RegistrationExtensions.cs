@@ -4,6 +4,7 @@ using Griffin.Decoupled.Commands;
 using Griffin.Decoupled.Container;
 
 // In root namespace to that it will show up in intellisense
+
 namespace Griffin.Decoupled
 {
     /// <summary>
@@ -17,7 +18,8 @@ namespace Griffin.Decoupled
         /// <param name="builder">this</param>
         /// <param name="griffinContainer">Your created container, look at the Griffin.Container HP for instructions on how to build it.</param>
         /// <returns>this</returns>
-        public static PipelineDispatcherBuilder UseGriffinContainer(this PipelineDispatcherBuilder builder, IParentContainer griffinContainer)
+        public static PipelineDispatcherBuilder UseGriffinContainer(this PipelineDispatcherBuilder builder,
+                                                                    IParentContainer griffinContainer)
         {
             if (builder == null) throw new ArgumentNullException("builder");
             if (griffinContainer == null) throw new ArgumentNullException("griffinContainer");

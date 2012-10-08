@@ -11,7 +11,7 @@ namespace Griffin.Decoupled.Pipeline
         /// <summary>
         /// Send a message to the next handler
         /// </summary>
-        /// <param name="message">Message to send, most commonly <see cref="SendCommand"/>.</param>
+        /// <param name="message">Message to send, most commonly <see cref="DispatchCommand"/>.</param>
         void SendUpstream(object message);
 
         /// <summary>
