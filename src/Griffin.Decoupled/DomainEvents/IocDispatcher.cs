@@ -6,16 +6,16 @@ namespace Griffin.Decoupled.DomainEvents
     /// Uses an inversion of control container to dispatch the events synchronously..
     /// </summary>
     /// <remarks>You need to implement the <see cref="IRootContainer"/> interface to be able to use this class.</remarks>
-    public class ContainerDispatcher : IDomainEventDispatcher
+    public class IocDispatcher : IDomainEventDispatcher
     {
         private readonly IRootContainer _container;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ContainerDispatcher" /> class.
+        /// Initializes a new instance of the <see cref="IocDispatcher" /> class.
         /// </summary>
         /// <param name="container">The service locator (adapter for your favorite IoC container adapter).</param>
         /// <exception cref="System.ArgumentNullException"></exception>
-        public ContainerDispatcher(IRootContainer container)
+        public IocDispatcher(IRootContainer container)
         {
             if (container == null) throw new ArgumentNullException("container");
 

@@ -5,7 +5,7 @@ namespace Griffin.Decoupled.DomainEvents
     /// <summary>
     /// Singleton proxy for the domain event dispatching
     /// </summary>
-    /// <remarks>The actual dispatching is made by a <see cref="IDomainEventDispatcher"/>. The recommended approach is to use <see cref="ContainerDispatcher"/>. An implementation
+    /// <remarks>The actual dispatching is made by a <see cref="IDomainEventDispatcher"/>. The recommended approach is to use <see cref="IocDispatcher"/>. An implementation
     /// is specified by using the <c>DomainEvent.Assign()</c> method.
     /// </remarks>
     public class DomainEvent
@@ -28,7 +28,7 @@ namespace Griffin.Decoupled.DomainEvents
         /// <typeparam name="T">Type of domain event</typeparam>
         /// <param name="domainEvent">Event to dispatch</param>
         /// <remarks>The domain event will either be dispatched synchronusly or async depending on the used implementation.</remarks>
-        public static void Dispatch<T>(T domainEvent) where T : class, IDomainEvent
+        public static void Publish<T>(T domainEvent) where T : class, IDomainEvent
         {
             if (_domainEventDispatcher == null)
                 throw new InvalidOperationException(

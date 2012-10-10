@@ -12,7 +12,7 @@ namespace Griffin.Decoupled.DomainEvents
         /// </summary>
         public DomainEventBase()
         {
-            Id = Guid.NewGuid();
+            EventId = Guid.NewGuid();
         }
 
         #region IDomainEvent Members
@@ -20,7 +20,7 @@ namespace Griffin.Decoupled.DomainEvents
         /// <summary>
         /// Gets domain event ID
         /// </summary>
-        public Guid Id { get; private set; }
+        public Guid EventId { get; private set; }
 
         #endregion
     }

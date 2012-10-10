@@ -17,7 +17,7 @@ namespace Griffin.Decoupled.Tests.DomainEvents
             child.ResolveAll<ISubscribeOn<FakeEvent>>().Returns(new[] {handler});
             var theEvent = new FakeEvent();
 
-            var dispatcher = new ContainerDispatcher(root);
+            var dispatcher = new IocDispatcher(root);
             dispatcher.Dispatch(theEvent);
 
             handler.Received().Handle(theEvent);

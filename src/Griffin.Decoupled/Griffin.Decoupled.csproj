@@ -87,7 +87,7 @@
     <Compile Include="Commands\IHandleCommand.cs" />
     <Compile Include="Commands\NamespaceDoc.cs" />
     <Compile Include="Commands\Pipeline\Messages\DispatchCommand.cs" />
-    <Compile Include="DomainEvents\ContainerDispatcher.cs" />
+    <Compile Include="DomainEvents\IocDispatcher.cs" />
     <Compile Include="DomainEvents\DispatcherFailedEventArgs.cs" />
     <Compile Include="DomainEvents\DomainEvent.cs" />
     <Compile Include="DomainEvents\DomainEventBase.cs" />

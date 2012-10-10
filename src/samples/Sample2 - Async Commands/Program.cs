@@ -7,6 +7,10 @@ using Griffin.Decoupled.Commands;
 
 namespace Sample2___Async_Commands
 {
+    /*
+     * All commands in this example is asynchronous.
+     * 
+     */
     internal class Program
     {
         private static void Main(string[] args)

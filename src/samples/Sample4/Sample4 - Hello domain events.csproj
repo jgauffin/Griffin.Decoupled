@@ -4,14 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C46F41FC-3BE2-4143-A8CE-8B439A433F78}</ProjectGuid>
+    <ProjectGuid>{E4189FD5-157B-403C-995E-842F067E7607}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sample2___Async_Commands</RootNamespace>
-    <AssemblyName>Sample2 - Async Commands</AssemblyName>
+    <RootNamespace>Sample4</RootNamespace>
+    <AssemblyName>Sample4</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -35,7 +35,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Griffin.Container">
-      <HintPath>..\packages\Griffin.Container.1.0.5\lib\net40\Griffin.Container.dll</HintPath>
+      <HintPath>..\..\packages\Griffin.Container.1.0.5\lib\net40\Griffin.Container.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -46,22 +46,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ErrorHandler.cs" />
+    <Compile Include="DeliverUsingMessenger.cs" />
+    <Compile Include="LockFoulWordUsers.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SayHello.cs" />
-    <Compile Include="SayHelloHandler.cs" />
+    <Compile Include="UserRegistered.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Griffin.Decoupled.Container\Griffin.Decoupled.Container.csproj">
+    <ProjectReference Include="..\..\Griffin.Decoupled.Container\Griffin.Decoupled.Container.csproj">
       <Project>{C0C624D4-CB13-4916-9359-F117492054A4}</Project>
       <Name>Griffin.Decoupled.Container</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Griffin.Decoupled\Griffin.Decoupled.csproj">
+    <ProjectReference Include="..\..\Griffin.Decoupled\Griffin.Decoupled.csproj">
       <Project>{5E4DEE9A-3B45-4F5B-8C8D-A04AD1EF0D36}</Project>
       <Name>Griffin.Decoupled</Name>
     </ProjectReference>

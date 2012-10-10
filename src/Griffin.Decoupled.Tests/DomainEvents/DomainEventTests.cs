@@ -14,7 +14,7 @@ namespace Griffin.Decoupled.Tests.DomainEvents
             DomainEvent.Assign(innerDispatcher);
             var domainEvent = Substitute.For<IDomainEvent>();
 
-            DomainEvent.Dispatch(domainEvent);
+            DomainEvent.Publish(domainEvent);
 
             innerDispatcher.Received().Dispatch(domainEvent);
         }
@@ -25,7 +25,7 @@ namespace Griffin.Decoupled.Tests.DomainEvents
             DomainEvent.Assign(null);
             var domainEvent = Substitute.For<IDomainEvent>();
 
-            Assert.Throws<InvalidOperationException>(() => DomainEvent.Dispatch(domainEvent));
+            Assert.Throws<InvalidOperationException>(() => DomainEvent.Publish(domainEvent));
         }
     }
 }

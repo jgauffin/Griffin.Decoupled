@@ -6,12 +6,18 @@ using Griffin.Decoupled.Commands;
 
 namespace Sample1
 {
+    /*
+     * This is the most basic approach
+     * 
+     * The example is just using your IoC container
+     * to dispatch the events.
+     * 
+     * The example is using Griffin.Container but you can use your favorite
+     * container.
+     * 
+     */
     internal class Program
     {
-        // This is the easiest way to gt started. 
-        // Do note that the commands are invoked synchronous, but using a seperate IoC scope/child container for each invocation.
-        //
-        // Do not be tempted to return things from the commands even though you could.
         private static void Main(string[] args)
         {
             var container = ConfigureGriffinContainer();

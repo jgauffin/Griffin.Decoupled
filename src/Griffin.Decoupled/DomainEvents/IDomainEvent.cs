@@ -10,6 +10,6 @@ namespace Griffin.Decoupled.DomainEvents
         /// <summary>
         /// Gets domain event ID
         /// </summary>
-        Guid Id { get; }
+        Guid EventId { get; }
     }
 }

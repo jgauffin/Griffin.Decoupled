@@ -8,6 +8,22 @@ using Griffin.Decoupled.RavenDb;
 
 namespace Sample3
 {
+    /*
+     * All commands in this example is stored in an embedded RavenDb database.
+     * = you really don't have to care. Just install the "griffin.decoupled.ravendb.embedded" package.
+     * 
+     * Do this:
+     * 
+     * 1. Put a breakpoint in SayHelloHandler.Invoke
+     * 2. Start the application
+     * 3. Stop the application when the breakpoint is reached
+     * 4. Remove the breakpoint
+     * 5. Start the application again
+     * 6. The previous command (and the new one) should get invoked.
+     * 
+     * The example would of course work fine without the async handler, simply remove it
+     * and try the example again.
+     */
     internal class Program
     {
         private static void Main(string[] args)
