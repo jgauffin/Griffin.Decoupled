@@ -25,11 +25,14 @@ namespace Griffin.Decoupled.Tests.Commands.Helpers
         /// <param name="message">Message to send</param>
         public void SendUpstream(object message)
         {
+            Message = message;
             _upEvent.Set();
 
             if (_up != null)
                 _up(message);
         }
+
+        public object Message { get; set; }
 
         /// <summary>
         /// Send a message towards the command handler
@@ -37,6 +40,7 @@ namespace Griffin.Decoupled.Tests.Commands.Helpers
         /// <param name="message">Message to forward</param>
         public void SendDownstream(object message)
         {
+            Message = message;
             _downEvent.Set();
 
             if (_down != null)

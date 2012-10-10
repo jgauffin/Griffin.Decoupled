@@ -47,7 +47,7 @@
     <Compile Include="Commands\PipelineDispatcher.cs" />
     <Compile Include="Commands\DispatcherFailedEventArgs.cs" />
     <Compile Include="Commands\Pipeline\IocDispatcher.cs" />
-    <Compile Include="Commands\Pipeline\Messages\CommandProcessed.cs" />
+    <Compile Include="Commands\Pipeline\Messages\CommandCompleted.cs" />
     <Compile Include="Commands\Pipeline\Messages\CommandStored.cs" />
     <Compile Include="Commands\Pipeline\StorageHandler.cs" />
     <Compile Include="DomainEvents\EventPipelineDispatcher.cs" />
@@ -55,6 +55,7 @@
     <Compile Include="DomainEvents\Pipeline\AsyncHandler.cs" />
     <Compile Include="DomainEvents\Pipeline\IocHandler.cs" />
     <Compile Include="DomainEvents\Pipeline\Messages\DispatchEvent.cs" />
+    <Compile Include="DomainEvents\Pipeline\Messages\EventCompleted.cs" />
     <Compile Include="DomainEvents\Pipeline\Messages\EventFailed.cs" />
     <Compile Include="DomainEvents\Pipeline\Messages\Shutdown.cs" />
     <Compile Include="DomainEvents\Pipeline\Messages\Started.cs" />

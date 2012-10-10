@@ -1,5 +1,6 @@
 ﻿using System;
 using Griffin.Decoupled.Commands.Pipeline;
+using Griffin.Decoupled.Commands.Pipeline.Messages;
 using Griffin.Decoupled.Pipeline;
 
 namespace Griffin.Decoupled.Commands
@@ -15,8 +16,8 @@ namespace Griffin.Decoupled.Commands
         private IRootContainer _container;
         private IDownstreamHandler _lastHandler;
         private int _maxAttempts;
-        private ICommandStorage _storage = new MemoryStorage();
         private int _workers;
+        private StorageHandler _storageHandler;
 
         public PipelineDispatcherBuilder(IUpstreamHandler errrorHandler)
         {
@@ -33,7 +34,7 @@ namespace Griffin.Decoupled.Commands
         {
             if (storage == null) throw new ArgumentNullException("storage");
 
-            _storage = storage;
+            _storageHandler = new StorageHandler(storage);
             return this;
         }
 
@@ -93,22 +94,35 @@ namespace Griffin.Decoupled.Commands
                     "You must have specified a SINGLE handler that can invoke the correct command handler. Either use 'IocDispatcher' or another one, not both alternatives.");
 
             var builder = new PipelineBuilder();
-            if (_workers > 0)
-                builder.RegisterDownstream(new AsyncHandler(_storage, _workers));
 
+            // must be registered before the storage since the storage listens on CommandAborted
             if (_maxAttempts > 0)
             {
-                builder.RegisterUpstream(new RetryingHandler(_maxAttempts, _storage));
+                var handler = new RetryingHandler(_maxAttempts);
+                builder.RegisterUpstream(handler);
             }
 
+            // Must be registered before the async handler.
+            if (_storageHandler != null)
+            {
+                builder.RegisterDownstream(_storageHandler);
+                builder.RegisterUpstream(_storageHandler);
+            }
+
+
+            if (_workers > 0)
+                builder.RegisterDownstream(new AsyncHandler(_workers));
+
             if (_container != null)
-                builder.RegisterDownstream(new Pipeline.IocDispatcher(_container, _storage));
+                builder.RegisterDownstream(new Pipeline.IocDispatcher(_container));
             else
                 builder.RegisterDownstream(_lastHandler);
 
             builder.RegisterUpstream(_errrorHandler);
 
-            var dispatcher = new PipelineDispatcher(builder.Build());
+            var pipeline = builder.Build();
+            pipeline.Send(new Started());
+            var dispatcher = new PipelineDispatcher(pipeline);
             return dispatcher;
         }
 

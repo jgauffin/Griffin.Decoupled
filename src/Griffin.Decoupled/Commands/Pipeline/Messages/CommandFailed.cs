@@ -42,5 +42,10 @@ namespace Griffin.Decoupled.Commands.Pipeline.Messages
         {
             get { return _exception; }
         }
+
+        public override string ToString()
+        {
+            return string.Format("Command '{0}' failed, Attempt '{1}' \r\n{2}", _state, NumberOfAttempts, Exception);
+        }
     }
 }

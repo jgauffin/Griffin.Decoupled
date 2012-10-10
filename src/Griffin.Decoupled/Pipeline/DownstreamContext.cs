@@ -3,6 +3,11 @@ using System.Collections.Concurrent;
 
 namespace Griffin.Decoupled.Pipeline
 {
+    interface IPipelineInvoker
+    {
+        void InvokeUpstream(UpstreamContext up, object message);
+        void InvokeDownstream(DownstreamContext next, object message);
+    }
     internal class DownstreamContext : IDownstreamContext
     {
         private readonly ConcurrentQueue<object> _downMessages = new ConcurrentQueue<object>();
@@ -16,18 +21,23 @@ namespace Griffin.Decoupled.Pipeline
             _mine = mine;
         }
 
+        public bool GotNext
+        {
+            get { return _next != null; }
+        }
+
         #region IDownstreamContext Members
 
         public void SendUpstream(object message)
         {
             _up.Invoke(message);
-            //_upMessages.Enqueue(message);
         }
 
         public void SendDownstream(object message)
         {
+            if (_next == null)
+                throw new InvalidOperationException("Failed to find a next handler.");
             _next.Invoke(message);
-            //_downMessages.Enqueue(message);
         }
 
         #endregion

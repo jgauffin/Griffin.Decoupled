@@ -30,27 +30,11 @@ namespace Griffin.Decoupled.RavenDb
         {
             using (var session = _documentStore.OpenSession())
             {
-                session.Store(new StoredCommand(command));
-                session.SaveChanges();
-            }
-        }
-
-        /// <summary>
-        /// Get command which was stored first.
-        /// </summary>
-        /// <returns>Command if any; otherwise <c>null</c>.</returns>
-        public DispatchCommand Dequeue()
-        {
-            using (var session = _documentStore.OpenSession())
-            {
-                var cmd = session.Query<StoredCommand>().FirstOrDefault();
-                if (cmd == null)
-                    return null;
-
+                Diagnostics(command.Command.Id, session, "Add");
+                var cmd = new StoredCommand(command);
                 cmd.ProcessedAt = DateTime.Now;
                 session.Store(cmd);
                 session.SaveChanges();
-                return cmd.Command;
             }
         }
 
@@ -62,13 +46,13 @@ namespace Griffin.Decoupled.RavenDb
         {
             using (var session = _documentStore.OpenSession())
             {
-
                 var cmd = session.Load<StoredCommand>(command.Command.Id);
                 if (cmd == null)
-                    return;
+                    throw new InvalidOperationException("Failed to find command with id: " + command.Command.Id);
 
-                cmd.Command = command;
-                cmd.ProcessedAt = DateTime.MinValue;
+                cmd.Command = command.Command;
+                cmd.Attempts = command.Attempts;
+                cmd.ProcessedAt = null;
                 session.Store(command);
                 session.SaveChanges();
             }
@@ -82,12 +66,27 @@ namespace Griffin.Decoupled.RavenDb
         {
             using (var session = _documentStore.OpenSession())
             {
+                Diagnostics(command.Id, session, "Delete");
+
                 var cmd = session.Load<StoredCommand>(command.Id);
                 if (cmd == null)
-                    return;
+                {
+                    throw new InvalidOperationException("Failed to find command " + command.Id);
+                    
+                }
 
                 session.Delete(cmd);
                 session.SaveChanges();
+            }
+        }
+
+        private void Diagnostics(Guid id, IDocumentSession sessiom, string methodName)
+        {
+            return;
+            Console.WriteLine(methodName + ": Working with " + id);
+            foreach (var cmd in sessiom.Query<StoredCommand>())
+            {
+                Console.WriteLine(methodName + ": Existing: " + cmd.Id);
             }
         }
 
@@ -102,9 +101,13 @@ namespace Griffin.Decoupled.RavenDb
             {
 
                 return
-                    session.Query<StoredCommand>().Where(x => x.ProcessedAt < markedAsProcessBefore).Select(
-                        x => x.Command);
+                    session.Query<StoredCommand>().Where(x => x.ProcessedAt < markedAsProcessBefore).Select(BuildMessage);
             }
+        }
+
+        private DispatchCommand BuildMessage(StoredCommand entity)
+        {
+            return new DispatchCommand(entity.Command, entity.Attempts);
         }
 
         #endregion

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Threading;
 using Griffin.Decoupled.Commands.Pipeline.Messages;
 using Griffin.Decoupled.Pipeline;
@@ -8,28 +9,27 @@ namespace Griffin.Decoupled.Commands.Pipeline
     /// <summary>
     /// Will enqueue messages and send them asynchronously
     /// </summary>
+    /// <remarks>All queued messages are queued i memory. Thus you need to store them somewhere (using for instance <see cref="StorageHandler"/>) if you do not want to risk to loosing them on shutdown or application crash.</remarks>
     internal class AsyncHandler : IDownstreamHandler
     {
         private readonly ManualResetEventSlim _closingEvent = new ManualResetEventSlim(false);
+        private readonly ConcurrentQueue<DispatchCommand> _commands = new ConcurrentQueue<DispatchCommand>();
         private readonly int _maxConcurrentTasks;
-        private readonly ICommandStorage _storage;
         private bool _closing;
         private IDownstreamContext _context;
         private long _currentWorkers;
 
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AsyncHandler" /> class.
         /// </summary>
-        /// <param name="storage">Where we should store commands.</param>
         /// <param name="maxConcurrentTasks">Maximum number of concurrent tasks.</param>
-        public AsyncHandler(ICommandStorage storage, int maxConcurrentTasks)
+        public AsyncHandler(int maxConcurrentTasks)
         {
-            if (storage == null) throw new ArgumentNullException("storage");
             if (maxConcurrentTasks < 1 || maxConcurrentTasks > 100)
                 throw new ArgumentOutOfRangeException("maxConcurrentTasks", maxConcurrentTasks,
                                                       "1 to 100 is somewhat reasonable.");
 
-            _storage = storage;
             _maxConcurrentTasks = maxConcurrentTasks;
         }
 
@@ -96,19 +96,18 @@ namespace Griffin.Decoupled.Commands.Pipeline
         /// </summary>
         private bool DispatchCommand()
         {
-            var command = _storage.Dequeue();
-            if (command == null)
+            DispatchCommand command;
+            if (!_commands.TryDequeue(out command))
                 return false;
 
             try
             {
                 _context.SendDownstream(command);
-                _storage.Delete(command.Command);
             }
             catch (Exception err)
             {
-                _context.SendUpstream(new PipelineFailure(this, command, "AsyncHandler failed to dispatch commands.", err));
-
+                _context.SendUpstream(new PipelineFailure(this, command, "AsyncHandler failed to dispatch commands.",
+                                                          err));
             }
             return true;
         }
@@ -116,7 +115,7 @@ namespace Griffin.Decoupled.Commands.Pipeline
 
         private void EnqueueCommand(DispatchCommand dispatchCmd)
         {
-            _storage.Add(dispatchCmd);
+            _commands.Enqueue(dispatchCmd);
 
             if (_closing)
                 return;

@@ -15,46 +15,29 @@ namespace Griffin.Decoupled.Tests.Commands.Pipeline
         [Fact]
         public void MustHaveTasks()
         {
-            var storage = Substitute.For<ICommandStorage>();
-            var inner = Substitute.For<ICommandDispatcher>();
-
-            Assert.Throws<ArgumentOutOfRangeException>(() => new AsyncHandler(storage, 0));
-            Assert.Throws<ArgumentOutOfRangeException>(() => new AsyncHandler(storage, -1));
-            Assert.Throws<ArgumentOutOfRangeException>(() => new AsyncHandler(storage, 1000));
-            new AsyncHandler(storage, 10);
-        }
-
-        [Fact]
-        public void MustHaveStorage()
-        {
-            var storage = Substitute.For<ICommandStorage>();
-            var inner = Substitute.For<ICommandDispatcher>();
-
-            Assert.Throws<ArgumentNullException>(() => new AsyncHandler(null, 0));
-            new AsyncHandler(storage, 10);
+            Assert.Throws<ArgumentOutOfRangeException>(() => new AsyncHandler(0));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new AsyncHandler(-1));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new AsyncHandler(1000));
+            new AsyncHandler(10);
         }
 
         [Fact]
         public void Enqueue()
         {
-            var storage = Substitute.For<ICommandStorage>();
-            var dispatcher = new AsyncHandler(storage, 1);
+            var dispatcher = new AsyncHandler(1);
             var context = new DownContext(null, null);
             var state = new DispatchCommand(new FakeCommand());
-            storage.Dequeue().Returns(state);
 
             dispatcher.HandleDownstream(context, state);
 
-            storage.Received().Add(state);
             Assert.True(context.WaitDown(TimeSpan.FromSeconds(1)));
-            storage.Received().Dequeue();
+            Assert.Same(state, context.Message);
         }
 
         [Fact]
-        public void DispatchTwoSingleWorkers()
+        public void DispatchTwo_SingleWorker()
         {
-            var storage = new TestStorage();
-            var dispatcher = new AsyncHandler(storage, 1);
+            var dispatcher = new AsyncHandler(1);
             var state1 = new DispatchCommand(new FakeCommand());
             var state2 = new DispatchCommand(new FakeCommand());
             var context = new DownContext(null, null);
@@ -63,92 +46,13 @@ namespace Griffin.Decoupled.Tests.Commands.Pipeline
             dispatcher.HandleDownstream(context, state2);
 
             Assert.True(context.WaitDown(TimeSpan.FromSeconds(1)));
-            Assert.Same(state2, storage.Dequeued.Last());
+            Assert.IsType<DispatchCommand>(context.Message);
         }
-
-        /*
-
-        [Fact]
-        public void Transaction_NoEntries()
-        {
-            var transaction = Substitute.For<ISimpleTransaction>();
-            var storage = Substitute.For<ICommandStorage>();
-            storage.BeginTransaction().Returns(transaction);
-            storage.Dequeue().Returns((DispatchCommand)null);
-            var context = new DownContext(null, null);
-
-            var dispatcher = new AsyncHandler(storage, 1);
-            dispatcher.HandleDownstream(context, new Started());
-            Thread.Sleep(50); //only way I could think of to be able to wait on the worker.
-
-            storage.Received().Dequeue();
-            storage.Received().BeginTransaction();
-            transaction.Received().Commit();
-        }
-
-        [Fact]
-        public void Transaction_OneFailingEntry_ShouldRollback()
-        {
-            var transaction = Substitute.For<ISimpleTransaction>();
-            var storage = Substitute.For<ICommandStorage>();
-            storage.BeginTransaction().Returns(transaction);
-            var command = new DispatchCommand(new FakeCommand());
-            storage.Dequeue().Returns(command);
-            var context = new DownContext(x => { if (!(x is DispatchCommand)) return; throw new Exception(); }, null);
-
-            var dispatcher = new AsyncHandler(storage, 1);
-            dispatcher.HandleDownstream(context, new Started());
-            Thread.Sleep(50); //only way I could think of to be able to wait on the worker.
-
-            storage.Received().Dequeue();
-            storage.Received().BeginTransaction();
-            transaction.DidNotReceive().Commit();
-        }
-
-        [Fact]
-        public void Transaction_OneSuccessfulEntry_PipelineFailed()
-        {
-            var transaction = Substitute.For<ISimpleTransaction>();
-            var storage = Substitute.For<ICommandStorage>();
-            storage.BeginTransaction().Returns(transaction);
-            var command = new DispatchCommand(new FakeCommand());
-            storage.Dequeue().Returns(command);
-            var context = new DownContext(x => { if (!(x is DispatchCommand)) return; throw new Exception(); }, null);
-
-            var dispatcher = new AsyncHandler(storage, 1);
-            dispatcher.HandleDownstream(context, new Started());
-            Thread.Sleep(50); //only way I could think of to be able to wait on the worker.
-
-            storage.Received().Dequeue();
-            storage.Received().BeginTransaction();
-            transaction.DidNotReceive().Commit();
-        }
-
-        [Fact]
-        public void Transaction_OneSuccessfulEntry_Success()
-        {
-            var transaction = Substitute.For<ISimpleTransaction>();
-            var storage = Substitute.For<ICommandStorage>();
-            storage.BeginTransaction().Returns(transaction);
-            var command = new DispatchCommand(new FakeCommand());
-            storage.Dequeue().Returns(command);
-            var context = new DownContext(null, null);
-
-            var dispatcher = new AsyncHandler(storage, 1);
-            dispatcher.HandleDownstream(context, new Started());
-            Thread.Sleep(50); //only way I could think of to be able to wait on the worker.
-
-            storage.Received().Dequeue();
-            storage.Received().BeginTransaction();
-            transaction.Received().Commit();
-        }
-        */
 
         [Fact]
         public void ShutDown_NoMoreDispatching()
         {
-            var storage = new TestStorage();
-            var dispatcher = new AsyncHandler(storage, 2);
+            var dispatcher = new AsyncHandler(2);
             var command = new FakeCommand();
             var state = new DispatchCommand(command);
             var state2 = new DispatchCommand(new FakeCommand());
@@ -169,8 +73,7 @@ namespace Griffin.Decoupled.Tests.Commands.Pipeline
         [Fact]
         public void OnlyOneWorker_TriggerThroughQueue()
         {
-            var storage = new TestStorage();
-            var dispatcher = new AsyncHandler(storage, 1);
+            var dispatcher = new AsyncHandler(1);
             var state1 = new DispatchCommand(new FakeCommand());
             var state2 = new DispatchCommand(new FakeCommand());
             var evt = new ManualResetEvent(false);
@@ -190,8 +93,7 @@ namespace Griffin.Decoupled.Tests.Commands.Pipeline
         [Fact]
         public void TwoWorkers_DispatchTwoThreads()
         {
-            var storage = new TestStorage();
-            var dispatcher = new AsyncHandler(storage, 2);
+            var dispatcher = new AsyncHandler(2);
             var state1 = new DispatchCommand(new FakeCommand());
             var state2 = new DispatchCommand(new FakeCommand());
             var evt = new ManualResetEvent(false);
@@ -210,7 +112,7 @@ namespace Griffin.Decoupled.Tests.Commands.Pipeline
         {
             var sync = new ManualResetEvent(false);
             var expected = new Exception("Work not made");
-            var dispatcher = new AsyncHandler(new MemoryStorage(), 2);
+            var dispatcher = new AsyncHandler(2);
             object msg = null;
             var context = new DownContext(y => { throw expected; }, x =>
                 {

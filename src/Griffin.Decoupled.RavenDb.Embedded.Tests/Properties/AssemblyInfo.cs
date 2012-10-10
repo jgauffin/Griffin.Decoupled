@@ -1,15 +1,15 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-
-[assembly: AssemblyTitle("Sample 1 - Hello domain event")]
+[assembly: AssemblyTitle("Griffin.Decoupled.RavenDb.Embedded.Tests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Hewlett-Packard")]
-[assembly: AssemblyProduct("Sample 1 - Hello domain event")]
+[assembly: AssemblyProduct("Griffin.Decoupled.RavenDb.Embedded.Tests")]
 [assembly: AssemblyCopyright("Copyright © Hewlett-Packard 2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -17,12 +17,10 @@ using System.Runtime.InteropServices;
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
 // COM, set the ComVisible attribute to true on that type.
-
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-
-[assembly: Guid("1009b446-a07b-4ac5-b8a4-9735fc42f2ec")]
+[assembly: Guid("c1a7b111-cb7f-45ad-b70a-760d24aa4702")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -34,6 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]

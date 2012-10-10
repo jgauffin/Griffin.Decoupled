@@ -20,15 +20,13 @@ namespace Griffin.Decoupled.Tests.Commands.Pipeline
             root.CreateScope().Returns(child);
             child.Resolve<IHandleCommand<FakeCommand>>().Returns(handler);
             var context = Substitute.For<IDownstreamContext>();
-            var storage = Substitute.For<ICommandStorage>();
-            var dispatcher = new IocDispatcher(root, storage);
+            var dispatcher = new IocDispatcher(root);
             var msg = new DispatchCommand(new FakeCommand());
 
             dispatcher.HandleDownstream(context, msg);
 
             handler.Received().Invoke((FakeCommand) msg.Command);
             context.DidNotReceive().SendUpstream(Arg.Any<CommandFailed>());
-            storage.Received().Delete(msg.Command);
         }
 
         [Fact]
@@ -40,8 +38,7 @@ namespace Griffin.Decoupled.Tests.Commands.Pipeline
             root.CreateScope().Returns(child);
             child.Resolve<IHandleCommand<FakeCommand>>().Returns(handler);
             var context = Substitute.For<IDownstreamContext>();
-            var storage = Substitute.For<ICommandStorage>();
-            var dispatcher = new IocDispatcher(root, storage);
+            var dispatcher = new IocDispatcher(root);
             var msg = new DispatchCommand(new FakeCommand());
 
             dispatcher.HandleDownstream(context, msg);

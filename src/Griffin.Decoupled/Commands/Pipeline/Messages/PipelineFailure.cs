@@ -41,7 +41,7 @@ namespace Griffin.Decoupled.Commands.Pipeline.Messages
         /// <filterpriority>2</filterpriority>
         public override string ToString()
         {
-            return string.Format("'{0}' failed to handle a message '{1}' due to: {2}", Handler.GetType().FullName, PipelineMessage, ErrorMsg);
+            return string.Format("'{0}' failed to handle a message '{1}' due to: {2}\r\n{3}", Handler.GetType().FullName, PipelineMessage, ErrorMsg, Exception);
         }
     }
 }

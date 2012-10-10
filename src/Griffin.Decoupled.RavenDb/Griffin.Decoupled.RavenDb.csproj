@@ -38,10 +38,12 @@
     <Reference Include="NLog">
       <HintPath>..\packages\NLog.2.0.0.2000\lib\net40\NLog.dll</HintPath>
     </Reference>
-    <Reference Include="Raven.Abstractions">
+    <Reference Include="Raven.Abstractions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=37f41c7f99471593, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\RavenDB.Client.1.0.972\lib\net40\Raven.Abstractions.dll</HintPath>
     </Reference>
-    <Reference Include="Raven.Client.Lightweight">
+    <Reference Include="Raven.Client.Lightweight, Version=1.0.0.0, Culture=neutral, PublicKeyToken=37f41c7f99471593, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\RavenDB.Client.1.0.972\lib\net40\Raven.Client.Lightweight.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -64,13 +66,13 @@
     <Compile Include="RavenSessionFactory.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Griffin.Decoupled\Griffin.Decoupled.csproj">
       <Project>{5E4DEE9A-3B45-4F5B-8C8D-A04AD1EF0D36}</Project>
       <Name>Griffin.Decoupled</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

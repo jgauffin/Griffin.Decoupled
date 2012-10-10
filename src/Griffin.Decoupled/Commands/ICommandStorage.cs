@@ -28,12 +28,6 @@ namespace Griffin.Decoupled.Commands
         void Add(DispatchCommand command);
 
         /// <summary>
-        /// Dequeue a command (get and and mark it as being processed so that no other threads can access it)
-        /// </summary>
-        /// <returns>Command if any; otherwise <c>null</c>.</returns>
-        DispatchCommand Dequeue();
-
-        /// <summary>
         /// Re add a command which we've tried to invoke but failed.
         /// </summary>
         /// <param name="command">Command to add</param>

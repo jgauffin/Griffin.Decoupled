@@ -11,11 +11,11 @@ namespace Griffin.Decoupled.RavenDb
         {
             var documentStore = new EmbeddableDocumentStore
                 {
-                    Conventions = {IdentityPartsSeparator = "-"},
-                    DefaultDatabase = "GriffinDecoupled"
+                    //Conventions = {IdentityPartsSeparator = "-"},
+                    //DefaultDatabase = "GriffinDecoupled"
                 };
-            if (ConfigurationManager.ConnectionStrings["GriffinDecoupled"] != null)
-                documentStore.ConnectionStringName = "GriffinDecoupled";
+            //if (ConfigurationManager.ConnectionStrings["GriffinDecoupled"] != null)
+                //documentStore.ConnectionStringName = "GriffinDecoupled";
             documentStore.Initialize();
 
             instance.StoreCommands(new RavenCommandStorage(documentStore));

@@ -10,24 +10,22 @@ namespace Griffin.Decoupled.Commands.Pipeline
     /// </summary>
     /// <remarks>
     /// A scope (child container) is created each time a new command should be invoked.
+    /// <para>Will dispatch the message <see cref="CommandCompleted"/> upstream if the invocation is successful or <see cref="CommandFailed"/>
+    /// if the invocation failed.</para>
     /// </remarks>
     public class IocDispatcher : IDownstreamHandler
     {
         private readonly MethodInfo _method;
         private readonly IRootContainer _rootContainer;
-        private readonly ICommandStorage _storage;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IocDispatcher" /> class.
         /// </summary>
         /// <param name="rootContainer">The IoC container.</param>
-        /// <param name="storage">Used to delete commands when they have been successfully being executed.</param>
-        public IocDispatcher(IRootContainer rootContainer, ICommandStorage storage)
+        public IocDispatcher(IRootContainer rootContainer)
         {
             if (rootContainer == null) throw new ArgumentNullException("rootContainer");
-            if (storage == null) throw new ArgumentNullException("storage");
             _rootContainer = rootContainer;
-            _storage = storage;
             _method = GetType().GetMethod("Dispatch", BindingFlags.Instance | BindingFlags.NonPublic);
         }
 
@@ -46,21 +44,19 @@ namespace Griffin.Decoupled.Commands.Pipeline
                 try
                 {
                     _method.MakeGenericMethod(msg.Command.GetType()).Invoke(this, new object[] {msg.Command});
-                    _storage.Delete(msg.Command);
+                    context.SendUpstream(new CommandCompleted(msg));
                 }
                 catch (Exception err)
                 {
                     msg.AddFailedAttempt();
                     context.SendUpstream(new CommandFailed(msg, err));
+                    return;
                 }
+
                 return;
             }
 
-            context.SendUpstream(
-                new PipelineFailure(this,
-                                    message,
-                                    "We, IocDispatcher, should be the last downstream handler. Received: " + message,
-                                    null));
+            context.SendDownstream(message);
         }
 
         #endregion
