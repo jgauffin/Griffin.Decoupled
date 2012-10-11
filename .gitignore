@@ -9,3 +9,4 @@ TestResults
 *.ncrunchsolution*
 src/packages/*
 src/*.suo
+src/*DotSettings.user

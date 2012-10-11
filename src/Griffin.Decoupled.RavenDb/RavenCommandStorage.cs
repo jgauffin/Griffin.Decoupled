@@ -30,7 +30,7 @@ namespace Griffin.Decoupled.RavenDb
         {
             using (var session = _documentStore.OpenSession())
             {
-                Diagnostics(command.Command.Id, session, "Add");
+                Diagnostics(command.Command.CommandId, session, "Add");
                 var cmd = new StoredCommand(command);
                 cmd.ProcessedAt = DateTime.Now;
                 session.Store(cmd);
@@ -46,9 +46,9 @@ namespace Griffin.Decoupled.RavenDb
         {
             using (var session = _documentStore.OpenSession())
             {
-                var cmd = session.Load<StoredCommand>(command.Command.Id);
+                var cmd = session.Load<StoredCommand>(command.Command.CommandId);
                 if (cmd == null)
-                    throw new InvalidOperationException("Failed to find command with id: " + command.Command.Id);
+                    throw new InvalidOperationException("Failed to find command with id: " + command.Command.CommandId);
 
                 cmd.Command = command.Command;
                 cmd.Attempts = command.Attempts;
@@ -66,27 +66,16 @@ namespace Griffin.Decoupled.RavenDb
         {
             using (var session = _documentStore.OpenSession())
             {
-                Diagnostics(command.Id, session, "Delete");
+                Diagnostics(command.CommandId, session, "Delete");
 
-                var cmd = session.Load<StoredCommand>(command.Id);
+                var cmd = session.Load<StoredCommand>(command.CommandId);
                 if (cmd == null)
                 {
-                    throw new InvalidOperationException("Failed to find command " + command.Id);
-                    
+                    throw new InvalidOperationException("Failed to find command " + command.CommandId);
                 }
 
                 session.Delete(cmd);
                 session.SaveChanges();
-            }
-        }
-
-        private void Diagnostics(Guid id, IDocumentSession sessiom, string methodName)
-        {
-            return;
-            Console.WriteLine(methodName + ": Working with " + id);
-            foreach (var cmd in sessiom.Query<StoredCommand>())
-            {
-                Console.WriteLine(methodName + ": Existing: " + cmd.Id);
             }
         }
 
@@ -99,9 +88,20 @@ namespace Griffin.Decoupled.RavenDb
         {
             using (var session = _documentStore.OpenSession())
             {
-
                 return
                     session.Query<StoredCommand>().Where(x => x.ProcessedAt < markedAsProcessBefore).Select(BuildMessage);
+            }
+        }
+
+        #endregion
+
+        private void Diagnostics(Guid id, IDocumentSession sessiom, string methodName)
+        {
+            return;
+            Console.WriteLine(methodName + ": Working with " + id);
+            foreach (var cmd in sessiom.Query<StoredCommand>())
+            {
+                Console.WriteLine(methodName + ": Existing: " + cmd.Id);
             }
         }
 
@@ -109,7 +109,5 @@ namespace Griffin.Decoupled.RavenDb
         {
             return new DispatchCommand(entity.Command, entity.Attempts);
         }
-
-        #endregion
     }
 }

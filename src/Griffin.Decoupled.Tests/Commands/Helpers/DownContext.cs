@@ -17,6 +17,8 @@ namespace Griffin.Decoupled.Tests.Commands.Helpers
             _down = down;
         }
 
+        public object Message { get; set; }
+
         #region IDownstreamContext Members
 
         /// <summary>
@@ -31,8 +33,6 @@ namespace Griffin.Decoupled.Tests.Commands.Helpers
             if (_up != null)
                 _up(message);
         }
-
-        public object Message { get; set; }
 
         /// <summary>
         /// Send a message towards the command handler

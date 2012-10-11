@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Griffin.Decoupled.Commands;
 using Griffin.Decoupled.Commands.Pipeline.Messages;
 using Raven.Client;
@@ -13,32 +10,19 @@ namespace Griffin.Decoupled.RavenDb.Embedded.Tests
 {
     public class CommandStorageTests
     {
-        private EmbeddableDocumentStore _store;
+        private readonly EmbeddableDocumentStore _store;
 
         public CommandStorageTests()
         {
             _store = new EmbeddableDocumentStore();
-           // _store.DataDirectory = Environment.CurrentDirectory + "Db";
+            // _store.DataDirectory = Environment.CurrentDirectory + "Db";
             _store.RunInMemory = true;
             _store.Initialize();
-           
-
         }
 
         private IDocumentSession CreateSession()
         {
             return _store.OpenSession();
-        }
-
-        public class SomeTest
-        {
-            public SomeTest()
-            {
-                Id = Guid.NewGuid();
-            }
-           
-            public Guid Id { get; private set; }
-            public ICommand Command { get; set; }
         }
 
 
@@ -60,7 +44,6 @@ namespace Griffin.Decoupled.RavenDb.Embedded.Tests
                 var item = session.Load<StoredCommand>(obj.Id);
                 session.Delete(item);
             }
-
         }
 
         [Fact]
@@ -79,10 +62,24 @@ namespace Griffin.Decoupled.RavenDb.Embedded.Tests
 
             //Assert.NotNull(commandStore.Dequeue());
         }
+
+        #region Nested type: SomeTest
+
+        public class SomeTest
+        {
+            public SomeTest()
+            {
+                Id = Guid.NewGuid();
+            }
+
+            public Guid Id { get; private set; }
+            public ICommand Command { get; set; }
+        }
+
+        #endregion
     }
 
     public class TempCommand : CommandBase
     {
-        
     }
 }

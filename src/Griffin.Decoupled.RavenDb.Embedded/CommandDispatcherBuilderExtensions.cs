@@ -1,5 +1,4 @@
-﻿using System.Configuration;
-using Griffin.Decoupled.Commands;
+﻿using Griffin.Decoupled.Commands;
 using Raven.Client.Embedded;
 
 namespace Griffin.Decoupled.RavenDb
@@ -15,7 +14,7 @@ namespace Griffin.Decoupled.RavenDb
                     //DefaultDatabase = "GriffinDecoupled"
                 };
             //if (ConfigurationManager.ConnectionStrings["GriffinDecoupled"] != null)
-                //documentStore.ConnectionStringName = "GriffinDecoupled";
+            //documentStore.ConnectionStringName = "GriffinDecoupled";
             documentStore.Initialize();
 
             instance.StoreCommands(new RavenCommandStorage(documentStore));

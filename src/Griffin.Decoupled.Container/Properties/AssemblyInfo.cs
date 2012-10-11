@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 
 [assembly: AssemblyTitle("Griffin.Decoupled.Container")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Support for Griffin.Container")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Gauffin Interactive AB")]
 [assembly: AssemblyProduct("Griffin.Decoupled.Container")]
-[assembly: AssemblyCopyright("Copyright ©  2012")]
+[assembly: AssemblyCopyright("Copyright ©  Gauffin Interactive AB 2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

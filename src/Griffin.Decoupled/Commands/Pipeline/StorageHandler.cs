@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Griffin.Decoupled.Commands.Pipeline.Messages;
 using Griffin.Decoupled.Pipeline;
 
 namespace Griffin.Decoupled.Commands.Pipeline
 {
-
     /// <summary>
     /// Used to abstract away the storage handling from the rest of the handlers.
     /// </summary>
@@ -23,6 +18,8 @@ namespace Griffin.Decoupled.Commands.Pipeline
         {
             _storage = storage;
         }
+
+        #region IDownstreamHandler Members
 
         /// <summary>
         /// Send a message to the command handler
@@ -51,6 +48,10 @@ namespace Griffin.Decoupled.Commands.Pipeline
             context.SendDownstream(message);
         }
 
+        #endregion
+
+        #region IUpstreamHandler Members
+
         /// <summary>
         /// Send a message to the next handler
         /// </summary>
@@ -78,5 +79,7 @@ namespace Griffin.Decoupled.Commands.Pipeline
                 _storage.Update(failed.Message);
             }
         }
+
+        #endregion
     }
 }

@@ -10,6 +10,6 @@ namespace Griffin.Decoupled.Commands
         /// <summary>
         /// Get command id
         /// </summary>
-        Guid Id { get; }
+        Guid CommandId { get; }
     }
 }

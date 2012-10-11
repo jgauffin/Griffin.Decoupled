@@ -5,7 +5,6 @@ using Griffin.Decoupled.DomainEvents.Pipeline.Messages;
 
 namespace Griffin.Decoupled.Pipeline
 {
-    
     /// <summary>
     /// Our own implementation of a pipeline
     /// </summary>
@@ -13,13 +12,12 @@ namespace Griffin.Decoupled.Pipeline
     /// that goes wrong.</remarks>
     internal class Pipeline : IPipeline, IUpstreamHandler, IDownstreamHandler, IPipelineInvoker
     {
+        [ThreadStatic] private static bool _invoking;
         private readonly List<DownstreamContext> _downstream = new List<DownstreamContext>();
         private readonly DownstreamContext _myDownContext;
         private readonly UpstreamContext _myUpContext;
         private readonly List<UpstreamContext> _upstream = new List<UpstreamContext>();
         private bool _fixed;
-        [ThreadStatic]
-        private static bool _invoking;
 
         public Pipeline()
         {
@@ -37,9 +35,9 @@ namespace Griffin.Decoupled.Pipeline
         void IDownstreamHandler.HandleDownstream(IDownstreamContext context, object message)
         {
             if (message is DispatchCommand)
-                _upstream[0].Invoke(new CommandCompleted((DispatchCommand)message));
+                _upstream[0].Invoke(new CommandCompleted((DispatchCommand) message));
             else if (message is DispatchEvent)
-                _upstream[0].Invoke(new EventCompleted((DispatchEvent)message));
+                _upstream[0].Invoke(new EventCompleted((DispatchEvent) message));
 
             // just ignore everything else.
         }
@@ -76,6 +74,21 @@ namespace Griffin.Decoupled.Pipeline
             _downstream[_downstream.Count - 1].SetNext(_myDownContext);
 
             _fixed = true;
+        }
+
+        #endregion
+
+        #region IPipelineInvoker Members
+
+        public void InvokeUpstream(UpstreamContext up, object message)
+        {
+            throw new InvalidOperationException(
+                "Your application should be the last upstream handler. Do not send messages upstream from your last handler..");
+        }
+
+        public void InvokeDownstream(DownstreamContext next, object message)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion
@@ -123,16 +136,6 @@ namespace Griffin.Decoupled.Pipeline
                     "The pipeline may not be modified after SetDestination has been called.");
 
             _upstream.Add(context);
-        }
-
-        public void InvokeUpstream(UpstreamContext up, object message)
-        {
-            throw new InvalidOperationException("Your application should be the last upstream handler. Do not send messages upstream from your last handler..");
-        }
-
-        public void InvokeDownstream(DownstreamContext next, object message)
-        {
-            throw new NotImplementedException();
         }
     }
 }

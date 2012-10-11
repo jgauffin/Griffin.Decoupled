@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 
 [assembly: AssemblyTitle("Griffin.Decoupled.RavenDb")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Support for RavenDB")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Hewlett-Packard")]
+[assembly: AssemblyCompany("Gauffin Interactive AB")]
 [assembly: AssemblyProduct("Griffin.Decoupled.RavenDb")]
-[assembly: AssemblyCopyright("Copyright © Hewlett-Packard 2012")]
+[assembly: AssemblyCopyright("Copyright © Gauffin Interactive AB 2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

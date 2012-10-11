@@ -16,8 +16,8 @@ namespace Griffin.Decoupled.Commands
         private IRootContainer _container;
         private IDownstreamHandler _lastHandler;
         private int _maxAttempts;
-        private int _workers;
         private StorageHandler _storageHandler;
+        private int _workers;
 
         public PipelineDispatcherBuilder(IUpstreamHandler errrorHandler)
         {

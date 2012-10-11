@@ -7,11 +7,11 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 
 [assembly: AssemblyTitle("Griffin.Decoupled")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Library which makes it easy to write decoupled and scalable applications")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Gauffin Interactive AB")]
 [assembly: AssemblyProduct("Griffin.Decoupled")]
-[assembly: AssemblyCopyright("Copyright ©  2012")]
+[assembly: AssemblyCopyright("Copyright ©  Gauffin Interactive AB 2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: InternalsVisibleTo("Griffin.Decoupled.Tests")]

@@ -37,20 +37,6 @@ namespace Griffin.Decoupled.Tests.Commands.Helpers
         }
 
         /// <summary>
-        /// Get command which was stored first.
-        /// </summary>
-        /// <returns>Command if any; otherwise <c>null</c>.</returns>
-        public DispatchCommand Dequeue()
-        {
-            DispatchCommand state;
-            if (!_queue.TryDequeue(out state))
-                return null;
-            Dequeued.Add(state);
-
-            return state;
-        }
-
-        /// <summary>
         /// Re add a command which we've tried to invoke but failed.
         /// </summary>
         /// <param name="command">Command to add</param>
@@ -77,5 +63,19 @@ namespace Griffin.Decoupled.Tests.Commands.Helpers
         }
 
         #endregion
+
+        /// <summary>
+        /// Get command which was stored first.
+        /// </summary>
+        /// <returns>Command if any; otherwise <c>null</c>.</returns>
+        public DispatchCommand Dequeue()
+        {
+            DispatchCommand state;
+            if (!_queue.TryDequeue(out state))
+                return null;
+            Dequeued.Add(state);
+
+            return state;
+        }
     }
 }

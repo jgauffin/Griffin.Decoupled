@@ -12,7 +12,7 @@ namespace Griffin.Decoupled.Commands
         /// </summary>
         protected CommandBase()
         {
-            Id = Guid.NewGuid();
+            CommandId = Guid.NewGuid();
         }
 
         #region ICommand Members
@@ -20,7 +20,7 @@ namespace Griffin.Decoupled.Commands
         /// <summary>
         /// Get command id
         /// </summary>
-        public Guid Id { get; private set; }
+        public Guid CommandId { get; private set; }
 
         #endregion
     }

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using Griffin.Decoupled.Commands;
 using Griffin.Decoupled.Commands.Pipeline;
 using Griffin.Decoupled.Commands.Pipeline.Messages;
 using Griffin.Decoupled.Pipeline;

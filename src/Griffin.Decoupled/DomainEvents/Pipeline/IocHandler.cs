@@ -40,7 +40,7 @@ namespace Griffin.Decoupled.DomainEvents.Pipeline
                     _method.MakeGenericMethod(dispatchMsg.DomainEvent.GetType()).Invoke(this,
                                                                                         new object[]
                                                                                             {dispatchMsg.DomainEvent});
-                    
+
                     return;
                 }
                 catch (Exception err)

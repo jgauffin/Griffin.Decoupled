@@ -18,7 +18,7 @@ namespace Griffin.Decoupled.Commands
         /// <summary>
         /// Add a new command
         /// </summary>
-        /// <param name="command">Store the command in the DB. You can use the <see cref="ICommand.Id"/> as an identity.</param>
+        /// <param name="command">Store the command in the DB. You can use the <see cref="ICommand.CommandId"/> as an identity.</param>
         public void Add(DispatchCommand command)
         {
             if (command == null) throw new ArgumentNullException("command");
@@ -28,6 +28,47 @@ namespace Griffin.Decoupled.Commands
                 _queue.Add(new MyStruct {Command = command});
             }
         }
+
+        /// <summary>
+        /// Re add a command which we've tried to invoke but failed.
+        /// </summary>
+        /// <param name="command">Command to add</param>
+        public void Update(DispatchCommand command)
+        {
+            lock (_lock)
+            {
+                var first = _queue.FirstOrDefault(x => x.Command.Command.CommandId == command.Command.CommandId);
+                if (first != null)
+                    first.StartedAt = DateTime.MinValue;
+            }
+        }
+
+        /// <summary>
+        /// Delete a command
+        /// </summary>
+        /// <param name="command">Command to delete from storage</param>
+        public void Delete(ICommand command)
+        {
+            lock (_queue)
+            {
+                _queue.RemoveAll(x => x.Command.Command.CommandId == command.CommandId);
+            }
+        }
+
+        /// <summary>
+        /// Find commands which has been marked as processed but not deleted.
+        /// </summary>
+        /// <param name="markedAsProcessBefore">Get all commands that were marked as being processed before this date/time.</param>
+        /// <returns>Any matching commands or an empty collection.</returns>
+        public IEnumerable<DispatchCommand> FindFailedCommands(DateTime markedAsProcessBefore)
+        {
+            lock (_queue)
+            {
+                return _queue.Where(x => x.StartedAt < markedAsProcessBefore).Select(x => x.Command).ToList();
+            }
+        }
+
+        #endregion
 
         /// <summary>
         /// Get command which was stored first.
@@ -47,47 +88,6 @@ namespace Griffin.Decoupled.Commands
 
             return state.Command;
         }
-
-        /// <summary>
-        /// Re add a command which we've tried to invoke but failed.
-        /// </summary>
-        /// <param name="command">Command to add</param>
-        public void Update(DispatchCommand command)
-        {
-            lock (_lock)
-            {
-                var first = _queue.FirstOrDefault(x => x.Command.Command.Id == command.Command.Id);
-                if (first != null)
-                    first.StartedAt = DateTime.MinValue;
-            }
-        }
-
-        /// <summary>
-        /// Delete a command
-        /// </summary>
-        /// <param name="command">Command to delete from storage</param>
-        public void Delete(ICommand command)
-        {
-            lock (_queue)
-            {
-                _queue.RemoveAll(x => x.Command.Command.Id == command.Id);
-            }
-        }
-
-        /// <summary>
-        /// Find commands which has been marked as processed but not deleted.
-        /// </summary>
-        /// <param name="markedAsProcessBefore">Get all commands that were marked as being processed before this date/time.</param>
-        /// <returns>Any matching commands or an empty collection.</returns>
-        public IEnumerable<DispatchCommand> FindFailedCommands(DateTime markedAsProcessBefore)
-        {
-            lock (_queue)
-            {
-                return _queue.Where(x => x.StartedAt < markedAsProcessBefore).Select(x => x.Command).ToList();
-            }
-        }
-
-        #endregion
 
         #region Nested type: MyStruct
 

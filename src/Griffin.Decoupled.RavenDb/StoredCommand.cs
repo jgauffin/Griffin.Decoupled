@@ -13,17 +13,17 @@ namespace Griffin.Decoupled.RavenDb
         {
             if (msg == null) throw new ArgumentNullException("msg");
             Command = msg.Command;
-            Id = Command.Id;
+            Id = Command.CommandId;
             Attempts = msg.Attempts;
         }
 
         protected StoredCommand()
         {
-            
         }
 
         public DateTime? ProcessedAt { get; set; }
         public Guid Id { get; private set; }
+
         /// <summary>
         /// Gets or sets actual command
         /// </summary>

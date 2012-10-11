@@ -3,11 +3,12 @@ using System.Collections.Concurrent;
 
 namespace Griffin.Decoupled.Pipeline
 {
-    interface IPipelineInvoker
+    internal interface IPipelineInvoker
     {
         void InvokeUpstream(UpstreamContext up, object message);
         void InvokeDownstream(DownstreamContext next, object message);
     }
+
     internal class DownstreamContext : IDownstreamContext
     {
         private readonly ConcurrentQueue<object> _downMessages = new ConcurrentQueue<object>();

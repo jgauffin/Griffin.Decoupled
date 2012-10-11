@@ -24,7 +24,7 @@ namespace Griffin.Decoupled.Commands
         /// <summary>
         /// Add a new command
         /// </summary>
-        /// <param name="command">Store the command in the DB. You can use the <see cref="ICommand.Id"/> as an identity.</param>
+        /// <param name="command">Store the command in the DB. You can use the <see cref="ICommand.CommandId"/> as an identity.</param>
         void Add(DispatchCommand command);
 
         /// <summary>
