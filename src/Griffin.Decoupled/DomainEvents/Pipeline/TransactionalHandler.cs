@@ -53,7 +53,7 @@ namespace Griffin.Decoupled.DomainEvents.Pipeline
         /// </summary>
         /// <param name="context">my context</param>
         /// <param name="message">Message to send, typically <see cref="DispatchCommand"/>.</param>
-        public void HandleDownstream(IDownstreamContext context, object message)
+        public void HandleDownstream(IDownstreamContext context, IDownstreamMessage message)
         {
             _context = context;
 

@@ -2,6 +2,7 @@
 using Griffin.Decoupled.Commands.Pipeline;
 using Griffin.Decoupled.Commands.Pipeline.Messages;
 using Griffin.Decoupled.Pipeline;
+using Griffin.Decoupled.Pipeline.Messages;
 
 namespace Griffin.Decoupled.Commands
 {
@@ -12,16 +13,22 @@ namespace Griffin.Decoupled.Commands
     /// </remarks>
     public class PipelineDispatcherBuilder
     {
-        private readonly IUpstreamHandler _errrorHandler;
+        private readonly IUpstreamHandler _errorHandler;
         private IRootContainer _container;
         private IDownstreamHandler _lastHandler;
         private int _maxAttempts;
         private StorageHandler _storageHandler;
         private int _workers;
 
-        public PipelineDispatcherBuilder(IUpstreamHandler errrorHandler)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PipelineDispatcherBuilder" /> class.
+        /// </summary>
+        /// <param name="errorHandler">The final upstream handler. Should analyze all upstream messages (i.e. errors etc)</param>
+        /// <exception cref="System.ArgumentNullException">errorHandler</exception>
+        public PipelineDispatcherBuilder(IUpstreamHandler errorHandler)
         {
-            _errrorHandler = errrorHandler;
+            if (errorHandler == null) throw new ArgumentNullException("errorHandler");
+            _errorHandler = errorHandler;
         }
 
         /// <summary>
@@ -118,10 +125,10 @@ namespace Griffin.Decoupled.Commands
             else
                 builder.RegisterDownstream(_lastHandler);
 
-            builder.RegisterUpstream(_errrorHandler);
+            builder.RegisterUpstream(_errorHandler);
 
             var pipeline = builder.Build();
-            pipeline.Send(new Started());
+            pipeline.Start();
             var dispatcher = new PipelineDispatcher(pipeline);
             return dispatcher;
         }

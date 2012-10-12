@@ -3,6 +3,7 @@ using Griffin.Decoupled.DomainEvents;
 using Griffin.Decoupled.DomainEvents.Pipeline;
 using Griffin.Decoupled.DomainEvents.Pipeline.Messages;
 using Griffin.Decoupled.Pipeline;
+using Griffin.Decoupled.Pipeline.Messages;
 using Griffin.Decoupled.Tests.DomainEvents.Helpers;
 using NSubstitute;
 using Xunit;
@@ -16,13 +17,12 @@ namespace Griffin.Decoupled.Tests.DomainEvents.Pipeline
         {
             var container = Substitute.For<IRootContainer>();
             var context = Substitute.For<IDownstreamContext>();
-            var msg = new object();
 
             var handler = new IocHandler(container);
-            handler.HandleDownstream(context, msg);
+            handler.HandleDownstream(context, Substitute.For<StartHandlers>());
 
             container.DidNotReceive().CreateScope();
-            context.DidNotReceive().SendDownstream(msg);
+            context.DidNotReceive().SendDownstream(Arg.Any<StartHandlers>());
         }
 
         [Fact]

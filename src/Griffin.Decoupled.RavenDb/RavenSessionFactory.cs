@@ -14,6 +14,11 @@ namespace Griffin.Decoupled.RavenDb
         private readonly IDocumentStore _documentStore;
         private IUnitOfWorkObserver _observer;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RavenSessionFactory" /> class.
+        /// </summary>
+        /// <param name="documentStore">The document store.</param>
+        /// <exception cref="System.ArgumentNullException">documentStore</exception>
         public RavenSessionFactory(IDocumentStore documentStore)
         {
             if (documentStore == null) throw new ArgumentNullException("documentStore");

@@ -1,6 +1,7 @@
 ﻿using System;
 using Griffin.Decoupled.Commands.Pipeline.Messages;
 using Griffin.Decoupled.Pipeline;
+using Griffin.Decoupled.Pipeline.Messages;
 
 namespace Griffin.Decoupled.Commands
 {
@@ -61,7 +62,7 @@ namespace Griffin.Decoupled.Commands
         /// </summary>
         /// <param name="context">My context</param>
         /// <param name="message">Message received</param>
-        public void HandleUpstream(IUpstreamContext context, object message)
+        public void HandleUpstream(IUpstreamContext context, IUpstreamMessage message)
         {
             Console.WriteLine(message);
         }

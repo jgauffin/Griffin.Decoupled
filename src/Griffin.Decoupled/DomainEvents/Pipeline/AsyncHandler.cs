@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Threading;
 using Griffin.Decoupled.DomainEvents.Pipeline.Messages;
 using Griffin.Decoupled.Pipeline;
+using Griffin.Decoupled.Pipeline.Messages;
 
 namespace Griffin.Decoupled.DomainEvents.Pipeline
 {
@@ -38,7 +39,7 @@ namespace Griffin.Decoupled.DomainEvents.Pipeline
         /// </summary>
         /// <param name="context">my context</param>
         /// <param name="message">Message to send, typically <see cref="DispatchEvent"/>.</param>
-        public void HandleDownstream(IDownstreamContext context, object message)
+        public void HandleDownstream(IDownstreamContext context, IDownstreamMessage message)
         {
             _context = context;
             var msg = message as DispatchEvent;

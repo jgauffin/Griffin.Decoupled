@@ -88,6 +88,10 @@ namespace Griffin.Decoupled.DomainEvents
             return this;
         }
 
+        /// <summary>
+        /// Build the pipeline
+        /// </summary>
+        /// <returns>Constructed pipeline</returns>
         public IDomainEventDispatcher Build()
         {
             if (_inner == null)
@@ -105,7 +109,9 @@ namespace Griffin.Decoupled.DomainEvents
 
             builder.RegisterUpstream(_errorHandler);
 
-            return new EventPipelineDispatcher(builder.Build());
+            var pipeline = builder.Build();
+            pipeline.Start();
+            return new EventPipelineDispatcher(pipeline);
         }
     }
 }

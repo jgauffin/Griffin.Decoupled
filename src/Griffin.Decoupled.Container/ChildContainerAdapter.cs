@@ -11,6 +11,11 @@ namespace Griffin.Decoupled.Container
     {
         private IChildContainer _childContainer;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ChildContainerAdapter" /> class.
+        /// </summary>
+        /// <param name="childContainer">The child container (i.e. scoped container which will clean up scoped services when being disposed).</param>
+        /// <exception cref="System.ArgumentNullException">childContainer</exception>
         public ChildContainerAdapter(IChildContainer childContainer)
         {
             if (childContainer == null) throw new ArgumentNullException("childContainer");

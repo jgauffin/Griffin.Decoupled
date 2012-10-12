@@ -9,6 +9,11 @@ namespace Griffin.Decoupled.RavenDb
     /// </summary>
     public class StoredCommand
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StoredCommand" /> class.
+        /// </summary>
+        /// <param name="msg">The MSG.</param>
+        /// <exception cref="System.ArgumentNullException">msg</exception>
         public StoredCommand(DispatchCommand msg)
         {
             if (msg == null) throw new ArgumentNullException("msg");
@@ -17,11 +22,22 @@ namespace Griffin.Decoupled.RavenDb
             Attempts = msg.Attempts;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StoredCommand" /> class.
+        /// </summary>
         protected StoredCommand()
         {
         }
 
+        /// <summary>
+        /// Gets when we started processing the command
+        /// </summary>
+        /// <remarks>null = not being processed yet</remarks>
         public DateTime? ProcessedAt { get; set; }
+
+        /// <summary>
+        /// Gets the command id
+        /// </summary>
         public Guid Id { get; private set; }
 
         /// <summary>
@@ -34,10 +50,5 @@ namespace Griffin.Decoupled.RavenDb
         /// </summary>
         /// <remarks>Default = 0</remarks>
         public int Attempts { get; set; }
-
-        public static string ToId(Guid guid)
-        {
-            return guid.ToString("D");
-        }
     }
 }

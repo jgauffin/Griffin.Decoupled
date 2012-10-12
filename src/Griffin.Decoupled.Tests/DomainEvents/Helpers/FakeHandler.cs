@@ -24,7 +24,7 @@ namespace Griffin.Decoupled.Tests.DomainEvents.Helpers
         /// Send a message back up the chain, typically an error message
         /// </summary>
         /// <param name="message">Message to send</param>
-        public void SendUpstream(object message)
+        public void SendUpstream(IUpstreamMessage message)
         {
             Message = message;
             _event.Set();
@@ -37,7 +37,7 @@ namespace Griffin.Decoupled.Tests.DomainEvents.Helpers
         /// Send a message towards the command handler
         /// </summary>
         /// <param name="message">Message to forward</param>
-        public void SendDownstream(object message)
+        public void SendDownstream(IDownstreamMessage message)
         {
             Message = message;
             _event.Set();

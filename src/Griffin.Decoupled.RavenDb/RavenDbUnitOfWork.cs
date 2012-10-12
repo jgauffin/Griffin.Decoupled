@@ -15,6 +15,12 @@ namespace Griffin.Decoupled.RavenDb
         private readonly IUnitOfWorkObserver _observer;
         private bool _saved;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RavenDbUnitOfWork" /> class.
+        /// </summary>
+        /// <param name="session">The session.</param>
+        /// <param name="observer">The observer.</param>
+        /// <exception cref="System.ArgumentNullException">session</exception>
         public RavenDbUnitOfWork(IDocumentSession session, IUnitOfWorkObserver observer)
         {
             if (session == null) throw new ArgumentNullException("session");
@@ -45,6 +51,9 @@ namespace Griffin.Decoupled.RavenDb
                 _observer.Released(this, false);
         }
 
+        /// <summary>
+        /// Commit changes
+        /// </summary>
         public void SaveChanges()
         {
             Session.SaveChanges();

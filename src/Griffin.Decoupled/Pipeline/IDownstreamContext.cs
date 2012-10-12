@@ -10,12 +10,12 @@ namespace Griffin.Decoupled.Pipeline
         /// Send a message back up the chain, typically an error message
         /// </summary>
         /// <param name="message">Message to send</param>
-        void SendUpstream(object message);
+        void SendUpstream(IUpstreamMessage message);
 
         /// <summary>
         /// Send a message towards the command handler
         /// </summary>
         /// <param name="message">Message to forward</param>
-        void SendDownstream(object message);
+        void SendDownstream(IDownstreamMessage message);
     }
 }

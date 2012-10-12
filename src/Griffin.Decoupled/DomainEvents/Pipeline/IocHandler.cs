@@ -16,6 +16,10 @@ namespace Griffin.Decoupled.DomainEvents.Pipeline
         private readonly IRootContainer _rootContainer;
         private IDownstreamContext _context;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IocHandler" /> class.
+        /// </summary>
+        /// <param name="rootContainer">The root container (i.e. the IoC container itself).</param>
         public IocHandler(IRootContainer rootContainer)
         {
             _rootContainer = rootContainer;
@@ -29,7 +33,7 @@ namespace Griffin.Decoupled.DomainEvents.Pipeline
         /// </summary>
         /// <param name="context">my context</param>
         /// <param name="message">Message to send, typically <see cref="DispatchCommand"/>.</param>
-        public virtual void HandleDownstream(IDownstreamContext context, object message)
+        public virtual void HandleDownstream(IDownstreamContext context, IDownstreamMessage message)
         {
             _context = context;
             var dispatchMsg = message as DispatchEvent;

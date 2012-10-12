@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Griffin.Decoupled.DomainEvents.Pipeline.Messages;
+using Griffin.Decoupled.Pipeline.Messages;
 
 namespace Griffin.Decoupled.DomainEvents
 {
@@ -16,7 +17,7 @@ namespace Griffin.Decoupled.DomainEvents
     /// <para>Do note that it means that all domain events are removed when they have been processed, no matter
     /// if the processing was successful or not. If you would like to implement event source then simply
     /// create a new downstream handler and use that one to store all events. The playback can be made
-    /// with the help of the <see cref="Started"/> message in the pipeline.</para>
+    /// with the help of the <see cref="StartHandlers"/> message in the pipeline.</para>
     /// </remarks>
     public interface IDomainEventStorage
     {

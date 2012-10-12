@@ -1,12 +1,19 @@
 ﻿using System;
+using Griffin.Decoupled.Pipeline;
 
 namespace Griffin.Decoupled.Commands.Pipeline.Messages
 {
     /// <summary>
     /// A command could not be delivered and we'll therefore give up on it.
     /// </summary>
-    public class CommandAborted
+    public class CommandAborted : IUpstreamMessage
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CommandAborted" /> class.
+        /// </summary>
+        /// <param name="message">The message that was aborted.</param>
+        /// <param name="exception">The exception which aborted the dispatching.</param>
+        /// <exception cref="System.ArgumentNullException">The fields are required</exception>
         public CommandAborted(DispatchCommand message, Exception exception)
         {
             if (message == null) throw new ArgumentNullException("message");

@@ -1,6 +1,7 @@
 ﻿using System;
 using Griffin.Decoupled.DomainEvents.Pipeline.Messages;
 using Griffin.Decoupled.Pipeline;
+using Griffin.Decoupled.Pipeline.Messages;
 
 namespace Griffin.Decoupled.DomainEvents
 {
@@ -25,7 +26,6 @@ namespace Griffin.Decoupled.DomainEvents
         {
             if (pipeline == null) throw new ArgumentNullException("pipeline");
             _pipeline = pipeline;
-            _pipeline.Send(new Started());
         }
 
         #region IDomainEventDispatcher Members

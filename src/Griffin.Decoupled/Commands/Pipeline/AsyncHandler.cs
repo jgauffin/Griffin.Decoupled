@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Threading;
 using Griffin.Decoupled.Commands.Pipeline.Messages;
 using Griffin.Decoupled.Pipeline;
+using Griffin.Decoupled.Pipeline.Messages;
 
 namespace Griffin.Decoupled.Commands.Pipeline
 {
@@ -35,7 +36,7 @@ namespace Griffin.Decoupled.Commands.Pipeline
 
         #region IDownstreamHandler Members
 
-        public void HandleDownstream(IDownstreamContext context, object message)
+        public void HandleDownstream(IDownstreamContext context, IDownstreamMessage message)
         {
             _context = context;
 
@@ -49,7 +50,7 @@ namespace Griffin.Decoupled.Commands.Pipeline
             {
                 Close();
             }
-            if (message is Started)
+            if (message is StartHandlers)
             {
                 StartWorker();
             }

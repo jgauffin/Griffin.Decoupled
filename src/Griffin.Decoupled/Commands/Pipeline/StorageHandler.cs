@@ -1,6 +1,7 @@
 ﻿using System;
 using Griffin.Decoupled.Commands.Pipeline.Messages;
 using Griffin.Decoupled.Pipeline;
+using Griffin.Decoupled.Pipeline.Messages;
 
 namespace Griffin.Decoupled.Commands.Pipeline
 {
@@ -14,8 +15,13 @@ namespace Griffin.Decoupled.Commands.Pipeline
     {
         private readonly ICommandStorage _storage;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StorageHandler" /> class.
+        /// </summary>
+        /// <param name="storage">The storage.</param>
         public StorageHandler(ICommandStorage storage)
         {
+            if (storage == null) throw new ArgumentNullException("storage");
             _storage = storage;
         }
 
@@ -26,14 +32,14 @@ namespace Griffin.Decoupled.Commands.Pipeline
         /// </summary>
         /// <param name="context">my context</param>
         /// <param name="message">Message to send, typically <see cref="DispatchCommand"/>.</param>
-        public void HandleDownstream(IDownstreamContext context, object message)
+        public void HandleDownstream(IDownstreamContext context, IDownstreamMessage message)
         {
             var msg = message as DispatchCommand;
             if (msg != null)
             {
                 _storage.Add(msg);
             }
-            if (message is Started)
+            if (message is StartHandlers)
             {
                 context.SendDownstream(message);
 
@@ -52,12 +58,13 @@ namespace Griffin.Decoupled.Commands.Pipeline
 
         #region IUpstreamHandler Members
 
+        //TODO: Unit test all upstream messages
         /// <summary>
         /// Send a message to the next handler
         /// </summary>
         /// <param name="context">My context</param>
         /// <param name="message">Message received</param>
-        public void HandleUpstream(IUpstreamContext context, object message)
+        public void HandleUpstream(IUpstreamContext context, IUpstreamMessage message)
         {
             // great. let's remove it
             var msg = message as CommandCompleted;
@@ -78,6 +85,8 @@ namespace Griffin.Decoupled.Commands.Pipeline
             {
                 _storage.Update(failed.Message);
             }
+
+            context.SendUpstream(message);
         }
 
         #endregion

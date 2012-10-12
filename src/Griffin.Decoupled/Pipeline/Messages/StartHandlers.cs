@@ -1,10 +1,10 @@
-﻿namespace Griffin.Decoupled.Commands.Pipeline.Messages
+﻿namespace Griffin.Decoupled.Pipeline.Messages
 {
     /// <summary>
     /// Pipeline has been started
     /// </summary>
     /// <remarks>Means that the handlers can initialize any startup work.</remarks>
-    public class Started
+    public class StartHandlers : IDownstreamMessage
     {
     }
 }

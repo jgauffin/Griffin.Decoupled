@@ -36,7 +36,7 @@ namespace Griffin.Decoupled.Commands.Pipeline
         /// </summary>
         /// <param name="context">my context</param>
         /// <param name="message">Message to send, typically <see cref="DispatchCommand"/>.</param>
-        public void HandleDownstream(IDownstreamContext context, object message)
+        public void HandleDownstream(IDownstreamContext context, IDownstreamMessage message)
         {
             var msg = message as DispatchCommand;
             if (msg != null)

@@ -12,6 +12,10 @@ namespace Griffin.Decoupled.RavenDb
     {
         private readonly IDocumentSession _session;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RavenEventStorage" /> class.
+        /// </summary>
+        /// <param name="session">The session.</param>
         public RavenEventStorage(IDocumentSession session)
         {
             _session = session;

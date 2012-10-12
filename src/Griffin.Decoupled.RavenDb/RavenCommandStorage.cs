@@ -15,8 +15,13 @@ namespace Griffin.Decoupled.RavenDb
     {
         private readonly IDocumentStore _documentStore;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RavenCommandStorage" /> class.
+        /// </summary>
+        /// <param name="documentStore">The document store.</param>
         public RavenCommandStorage(IDocumentStore documentStore)
         {
+            if (documentStore == null) throw new ArgumentNullException("documentStore");
             _documentStore = documentStore;
         }
 

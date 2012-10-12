@@ -12,12 +12,12 @@ namespace Griffin.Decoupled.Pipeline
         /// Send a message to the next handler
         /// </summary>
         /// <param name="message">Message to send, most commonly <see cref="DispatchCommand"/>.</param>
-        void SendUpstream(object message);
+        void SendUpstream(IUpstreamMessage message);
 
         /// <summary>
         /// Try to send something down to the command handler again (or to a downstream handler on the way)
         /// </summary>
         /// <param name="message">Message to send</param>
-        void SendDownstream(object message);
+        void SendDownstream(IDownstreamMessage message);
     }
 }

@@ -11,6 +11,6 @@
         /// </summary>
         /// <param name="context">My context</param>
         /// <param name="message">Message received</param>
-        void HandleUpstream(IUpstreamContext context, object message);
+        void HandleUpstream(IUpstreamContext context, IUpstreamMessage message);
     }
 }

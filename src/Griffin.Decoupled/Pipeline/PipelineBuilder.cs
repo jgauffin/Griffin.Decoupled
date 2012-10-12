@@ -46,6 +46,8 @@ namespace Griffin.Decoupled.Pipeline
             var firstUp = new UpstreamContext(_upstreamHandlers[0]);
             firstDown.SetUpstream(firstUp);
             firstUp.SetDownstream(firstDown);
+            pipeline.Add(firstDown);
+            pipeline.Add(firstUp);
 
             ConfigureUpstream(pipeline, firstUp, firstDown);
             ConfigureDownstream(pipeline, firstDown, firstUp);

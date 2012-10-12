@@ -39,7 +39,7 @@ namespace Griffin.Decoupled.Commands.Pipeline
         /// </summary>
         /// <param name="context">My context</param>
         /// <param name="message">Message received</param>
-        public void HandleUpstream(IUpstreamContext context, object message)
+        public void HandleUpstream(IUpstreamContext context, IUpstreamMessage message)
         {
             var msg = message as CommandFailed;
             if (msg != null)

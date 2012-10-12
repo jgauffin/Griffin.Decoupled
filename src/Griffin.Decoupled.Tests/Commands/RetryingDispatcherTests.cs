@@ -28,6 +28,8 @@ namespace Griffin.Decoupled.Tests.Commands
             dispatcher.HandleUpstream(context, msg);
 
             context.Received().SendUpstream(Arg.Any<CommandAborted>());
+            context.DidNotReceive().SendUpstream(Arg.Any<CommandFailed>());
+            context.DidNotReceive().SendDownstream(Arg.Any<DispatchCommand>());
         }
 
         [Fact]
@@ -40,18 +42,20 @@ namespace Griffin.Decoupled.Tests.Commands
             dispatcher.HandleUpstream(context, msg);
 
             context.Received().SendUpstream(Arg.Any<CommandFailed>());
+            context.Received().SendDownstream(Arg.Any<DispatchCommand>());
+            context.DidNotReceive().SendUpstream(Arg.Any<CommandAborted>());
         }
 
         [Fact]
         public void PassThrough()
         {
             var context = Substitute.For<IUpstreamContext>();
-            var state = new DispatchCommand(new FakeCommand(), 3);
+            var state = new CommandCompleted(new DispatchCommand(new FakeCommand(), 3));
             var dispatcher = new RetryingHandler(3);
 
             dispatcher.HandleUpstream(context, state);
 
-            context.Received().SendUpstream(Arg.Any<DispatchCommand>());
+            context.Received().SendUpstream(Arg.Any<CommandCompleted>());
         }
     }
 }

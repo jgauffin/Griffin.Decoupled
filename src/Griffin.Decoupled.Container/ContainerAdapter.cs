@@ -11,6 +11,11 @@ namespace Griffin.Decoupled.Container
     {
         private readonly IParentContainer _container;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ContainerAdapter" /> class.
+        /// </summary>
+        /// <param name="container">The Griffin.Container.</param>
+        /// <exception cref="System.ArgumentNullException">container</exception>
         public ContainerAdapter(IParentContainer container)
         {
             if (container == null) throw new ArgumentNullException("container");

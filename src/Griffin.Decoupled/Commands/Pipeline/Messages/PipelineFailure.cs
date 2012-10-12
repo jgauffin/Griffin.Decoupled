@@ -1,16 +1,27 @@
 ﻿using System;
+using Griffin.Decoupled.Pipeline;
 
 namespace Griffin.Decoupled.Commands.Pipeline.Messages
 {
     /// <summary>
     /// The pipeline itself (one of the handlers) have failed.
     /// </summary>
-    public class PipelineFailure
+    public class PipelineFailure : IUpstreamMessage
     {
-        public PipelineFailure(object handler, object pipelineMessage, string errorMsg, Exception exception)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PipelineFailure" /> class.
+        /// </summary>
+        /// <param name="handler">Up/Down handler which failed.</param>
+        /// <param name="message">Message which caused the failure.</param>
+        /// <param name="errorMsg">Error descrption.</param>
+        /// <param name="exception">Exception which was thrown when the messages was being handled..</param>
+        public PipelineFailure(object handler, object message, string errorMsg, Exception exception)
         {
+            if (handler == null) throw new ArgumentNullException("handler");
+            if (message == null) throw new ArgumentNullException("message");
+            if (errorMsg == null) throw new ArgumentNullException("errorMsg");
             Handler = handler;
-            PipelineMessage = pipelineMessage;
+            Message = message;
             ErrorMsg = errorMsg;
             Exception = exception;
         }
@@ -20,7 +31,10 @@ namespace Griffin.Decoupled.Commands.Pipeline.Messages
         /// </summary>
         public object Handler { get; private set; }
 
-        public object PipelineMessage { get; set; }
+        /// <summary>
+        /// Gets message which cause the exception
+        /// </summary>
+        public object Message { get; set; }
 
         /// <summary>
         /// Gets the pipeline handlers own description of what happened.
@@ -42,7 +56,7 @@ namespace Griffin.Decoupled.Commands.Pipeline.Messages
         public override string ToString()
         {
             return string.Format("'{0}' failed to handle a message '{1}' due to: {2}\r\n{3}", Handler.GetType().FullName,
-                                 PipelineMessage, ErrorMsg, Exception);
+                                 Message, ErrorMsg, Exception);
         }
     }
 }

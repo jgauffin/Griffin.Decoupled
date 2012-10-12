@@ -74,6 +74,7 @@
     <Compile Include="DomainEvents\Pipeline\TransactionalHandlerTests.cs" />
     <Compile Include="DomainEvents\ThreadedUowMapperTests.cs" />
     <Compile Include="IServiceLocator.cs" />
+    <Compile Include="Pipeline\PipelineTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
