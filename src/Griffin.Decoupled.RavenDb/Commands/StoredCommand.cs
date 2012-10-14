@@ -2,7 +2,7 @@ using System;
 using Griffin.Decoupled.Commands;
 using Griffin.Decoupled.Commands.Pipeline.Messages;
 
-namespace Griffin.Decoupled.RavenDb
+namespace Griffin.Decoupled.RavenDb.Commands
 {
     /// <summary>
     /// Document used to save the commands in Raven

@@ -57,6 +57,17 @@ namespace Griffin.Decoupled.Container
             return _childContainer.Resolve<T>();
         }
 
+        /// <summary>
+        /// Get a specific service
+        /// </summary>
+        /// <param name="type">Service to find</param>
+        /// <returns>Implementation</returns>
+        public object Resolve(Type type)
+        {
+            if (type == null) throw new ArgumentNullException("type");
+            return _childContainer.Resolve(type);
+        }
+
         #endregion
     }
 }

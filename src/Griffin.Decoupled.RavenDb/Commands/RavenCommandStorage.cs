@@ -5,7 +5,7 @@ using Griffin.Decoupled.Commands;
 using Griffin.Decoupled.Commands.Pipeline.Messages;
 using Raven.Client;
 
-namespace Griffin.Decoupled.RavenDb
+namespace Griffin.Decoupled.RavenDb.Commands
 {
     /// <summary>
     /// Used to save all commands inside a RavenDb database.

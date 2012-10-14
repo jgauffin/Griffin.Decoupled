@@ -2,6 +2,7 @@
 using System.Linq;
 using Griffin.Decoupled.Commands;
 using Griffin.Decoupled.Commands.Pipeline.Messages;
+using Griffin.Decoupled.RavenDb.Commands;
 using Raven.Client;
 using Raven.Client.Embedded;
 using Xunit;

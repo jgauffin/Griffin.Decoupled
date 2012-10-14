@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Griffin.Decoupled.DomainEvents;
 using Raven.Client;
 
-namespace Griffin.Decoupled.RavenDb
+namespace Griffin.Decoupled.RavenDb.DomainEvents
 {
     /// <summary>
     /// Uses ravenDb to store events.

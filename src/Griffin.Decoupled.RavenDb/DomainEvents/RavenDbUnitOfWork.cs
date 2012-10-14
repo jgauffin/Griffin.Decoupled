@@ -2,10 +2,10 @@ using System;
 using Griffin.Decoupled.DomainEvents;
 using Raven.Client;
 
-namespace Griffin.Decoupled.RavenDb
+namespace Griffin.Decoupled.RavenDb.DomainEvents
 {
     /// <summary>
-    /// RavenDb unit of work
+    /// RavenDb unit of work which notifies the domain event handler
     /// </summary>
     /// <remarks>
     /// <para>Griffin.Decoupled integration: Will invoke the <see cref="IUnitOfWorkObserver"/> for each UoW step.</para>

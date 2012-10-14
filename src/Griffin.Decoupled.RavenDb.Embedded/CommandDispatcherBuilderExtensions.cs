@@ -1,4 +1,5 @@
 ﻿using Griffin.Decoupled.Commands;
+using Griffin.Decoupled.RavenDb.Commands;
 using Raven.Client.Embedded;
 
 namespace Griffin.Decoupled.RavenDb

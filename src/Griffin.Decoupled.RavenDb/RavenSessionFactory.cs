@@ -1,13 +1,15 @@
 ﻿using System;
 using Griffin.Decoupled.DomainEvents;
+using Griffin.Decoupled.RavenDb.DomainEvents;
 using Raven.Client;
 
 namespace Griffin.Decoupled.RavenDb
 {
     /// <summary>
-    /// Implements the required interfaces for allowing the 
+    /// Implements the required interfaces for allowing the domain events to track unit of works (sessions in our case).
     /// </summary>
     /// <remarks>
+    /// 
     /// </remarks>
     public class RavenSessionFactory : IUnitOfWorkAdapter
     {

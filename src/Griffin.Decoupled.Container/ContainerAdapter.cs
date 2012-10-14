@@ -45,6 +45,17 @@ namespace Griffin.Decoupled.Container
         }
 
         /// <summary>
+        /// Get a specific service
+        /// </summary>
+        /// <param name="type">Service to find</param>
+        /// <returns>Implementation</returns>
+        public object Resolve(Type type)
+        {
+            if (type == null) throw new ArgumentNullException("type");
+            return _container.Resolve(type);
+        }
+
+        /// <summary>
         /// Create a new child scope.
         /// </summary>
         /// <returns>A new child scope</returns>

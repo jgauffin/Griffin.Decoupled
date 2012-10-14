@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Griffin.Decoupled.DomainEvents;
 
-namespace Griffin.Decoupled.RavenDb
+namespace Griffin.Decoupled.RavenDb.DomainEvents
 {
     /// <summary>
     /// A batch of domain events (model  used to store all domain events)

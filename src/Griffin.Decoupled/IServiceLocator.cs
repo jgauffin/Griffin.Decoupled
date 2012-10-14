@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Griffin.Decoupled
 {
@@ -20,5 +21,12 @@ namespace Griffin.Decoupled
         /// <typeparam name="T">Service to find</typeparam>
         /// <returns>Implementation</returns>
         T Resolve<T>() where T : class;
+
+        /// <summary>
+        /// Get a specific service
+        /// </summary>
+        /// <param name="type">Service to find</param>
+        /// <returns>Implementation</returns>
+        object Resolve(Type type);
     }
 }
