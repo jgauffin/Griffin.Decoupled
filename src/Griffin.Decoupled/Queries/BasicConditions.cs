@@ -7,12 +7,12 @@ namespace Griffin.Decoupled.Queries
     /// Contains basic restrictions like paging and sorting
     /// </summary>
     /// <typeparam name="TResult">Entity type. Used for the sorting</typeparam>
-    /// <typeparam name="TYourType">Your own class type</typeparam>
+    /// <typeparam name="TModel">The model which will be used when querying</typeparam>
     /// <seealso cref="IQueryResult{T}"/>
-    public class BasicConditions<TYourType, TResult> : IQuery<TResult>
+    public class BasicConditions<TModel, TResult> : IQuery<TResult>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="BasicConditions{TYourType,TResult}" /> class.
+        /// Initializes a new instance of the <see cref="BasicConditions{TModel,TResult}" /> class.
         /// </summary>
         public BasicConditions()
         {
@@ -91,7 +91,7 @@ namespace Griffin.Decoupled.Queries
         /// Property to sort by (ascending)
         /// </summary>
         /// <param name="property">The property.</param>
-        public void SortBy(Expression<Func<TYourType, object>> property)
+        public void SortBy(Expression<Func<TModel, object>> property)
         {
             if (property == null) throw new ArgumentNullException("property");
             var expression = property.GetMemberInfo();
@@ -103,7 +103,7 @@ namespace Griffin.Decoupled.Queries
         /// Property to sort by (descending)
         /// </summary>
         /// <param name="property">The property</param>
-        public void SortByDescending(Expression<Func<TYourType, object>> property)
+        public void SortByDescending(Expression<Func<TModel, object>> property)
         {
             if (property == null) throw new ArgumentNullException("property");
             var expression = property.GetMemberInfo();
@@ -118,10 +118,10 @@ namespace Griffin.Decoupled.Queries
         protected virtual void ValidatePropertyName(string name)
         {
             if (name == null) throw new ArgumentNullException("name");
-            if (typeof (TYourType).GetProperty(name) == null)
+            if (typeof (TModel).GetProperty(name) == null)
             {
                 throw new ArgumentException(string.Format("'{0}' is not a public property of '{1}'.", name,
-                                                          typeof (TYourType).FullName));
+                                                          typeof (TModel).FullName));
             }
         }
     }

@@ -6,42 +6,42 @@ namespace Griffin.Decoupled.RavenDb
     /// <summary>
     /// Base class for all RavenDB root aggregates
     /// </summary>
-    /// <typeparam name="TEntity">Type of enitity/Model</typeparam>
-    public class RavenRootAggregate<TEntity> : IRootAggregate<TEntity, string> where TEntity : class
+    /// <typeparam name="TRootAggregate">Type of enitity/Model</typeparam>
+    public class RavenDataStore<TRootAggregate> : IDataStore<TRootAggregate, string> where TRootAggregate : class
     {
         private readonly IDocumentSession _session;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RavenRootAggregate{TEntity}" /> class.
+        /// Initializes a new instance of the <see cref="RavenDataStore{TRootAggregate}" /> class.
         /// </summary>
         /// <param name="session">The session.</param>
         /// <exception cref="System.ArgumentNullException"></exception>
-        public RavenRootAggregate(IDocumentSession session)
+        public RavenDataStore(IDocumentSession session)
         {
             if (session == null) throw new ArgumentNullException("session");
 
             _session = session;
         }
 
-        #region IRootAggregate<TEntity,string> Members
+        #region RavenDataStore<TEntity,string> Members
 
         /// <summary>
         /// Load the entity from the database.
         /// </summary>
         /// <param name="key">Primary key</param>
         /// <returns>Entity if found; otherwise <c>null</c>.</returns>
-        public TEntity Load(string key)
+        public TRootAggregate Load(string key)
         {
             if (key == null) throw new ArgumentNullException("key");
 
-            return _session.Load<TEntity>(key);
+            return _session.Load<TRootAggregate>(key);
         }
 
         /// <summary>
         /// Create or update.
         /// </summary>
         /// <param name="entity">Entity being saved.</param>
-        public void Save(TEntity entity)
+        public void Save(TRootAggregate entity)
         {
             if (entity == null) throw new ArgumentNullException("entity");
 
@@ -66,7 +66,7 @@ namespace Griffin.Decoupled.RavenDb
         /// Delete the entity
         /// </summary>
         /// <param name="entity">Entity to delete</param>
-        public void Delete(TEntity entity)
+        public void Delete(TRootAggregate entity)
         {
             if (entity == null) throw new ArgumentNullException("entity");
 

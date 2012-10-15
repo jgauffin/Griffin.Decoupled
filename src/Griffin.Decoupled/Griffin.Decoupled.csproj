@@ -61,7 +61,7 @@
     <Compile Include="DomainEvents\Pipeline\Messages\EventFailed.cs" />
     <Compile Include="DomainEvents\Pipeline\Messages\TriggerWorker.cs" />
     <Compile Include="DomainEvents\Pipeline\TransactionalHandler.cs" />
-    <Compile Include="IRootAggregate.cs" />
+    <Compile Include="IDataStore.cs" />
     <Compile Include="NamespaceDoc.cs" />
     <Compile Include="Pipeline\DownstreamContext.cs" />
     <Compile Include="Pipeline\IDownstreamContext.cs" />
