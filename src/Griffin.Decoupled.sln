@@ -20,6 +20,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Griffin.Decoupled.Container
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Griffin.Decoupled.RavenDb.Embedded.Tests", "Griffin.Decoupled.RavenDb.Embedded.Tests\Griffin.Decoupled.RavenDb.Embedded.Tests.csproj", "{5CCA7DBD-86E2-4065-8EB7-0EDDA44ED98A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Griffin.Decoupled.Container.Tests", "Griffin.Decoupled.Container.Tests\Griffin.Decoupled.Container.Tests.csproj", "{C2FC77E1-DA23-4C91-A89D-0D3428B318E2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +52,10 @@ Global
 		{5CCA7DBD-86E2-4065-8EB7-0EDDA44ED98A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5CCA7DBD-86E2-4065-8EB7-0EDDA44ED98A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5CCA7DBD-86E2-4065-8EB7-0EDDA44ED98A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2FC77E1-DA23-4C91-A89D-0D3428B318E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2FC77E1-DA23-4C91-A89D-0D3428B318E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2FC77E1-DA23-4C91-A89D-0D3428B318E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2FC77E1-DA23-4C91-A89D-0D3428B318E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

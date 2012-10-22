@@ -3,7 +3,6 @@ using Griffin.Container;
 using Griffin.Decoupled.Commands;
 using Griffin.Decoupled.Container;
 using Griffin.Decoupled.DomainEvents;
-using IocDispatcher = Griffin.Decoupled.Commands.IocDispatcher;
 
 // In root namespace to that it will show up in intellisense
 
@@ -53,7 +52,7 @@ namespace Griffin.Decoupled
         public static void DispatchCommands(this IParentContainer container)
         {
             if (container == null) throw new ArgumentNullException("container");
-            CommandDispatcher.Assign(new IocDispatcher(new ContainerAdapter(container)));
+            CommandDispatcher.Assign(new Commands.IocDispatcher(new ContainerAdapter(container)));
         }
 
         /// <summary>
@@ -64,6 +63,17 @@ namespace Griffin.Decoupled
         {
             if (container == null) throw new ArgumentNullException("container");
             DomainEvent.Assign(new DomainEvents.IocDispatcher(new ContainerAdapter(container)));
+        }
+
+        /// <summary>
+        /// Use Griffin.Container to execute the queries
+        /// </summary>
+        /// <param name="registrar">Your registrar</param>
+        /// <param name="lifetime">The lifetime that the dispatcher should get.</param>
+        public static void DispatchQueries(this IContainerRegistrar registrar, Lifetime lifetime)
+        {
+            if (registrar == null) throw new ArgumentNullException("registrar");
+            registrar.RegisterService<Queries.IQueryDispatcher>(x=> new QueryDispatcher(x), lifetime);
         }
     }
 }

@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Commands\CommandBase.cs" />
     <Compile Include="Commands\CommandDispatcher.cs" />
+    <Compile Include="Commands\IocScopeEventArgs.cs" />
     <Compile Include="Commands\ISimpleTransaction.cs" />
     <Compile Include="Commands\PipelineDispatcherBuilder.cs" />
     <Compile Include="Commands\IocDispatcher.cs" />

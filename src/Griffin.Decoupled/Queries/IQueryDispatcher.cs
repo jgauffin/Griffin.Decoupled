@@ -6,7 +6,7 @@ namespace Griffin.Decoupled.Queries
     public interface IQueryDispatcher
     {
         /// <summary>
-        /// Execute the query
+        /// Dispatch the query to the correct executer (and invoke the executer)
         /// </summary>
         /// <typeparam name="TResult">Expected result</typeparam>
         /// <param name="query">Query to execute</param>

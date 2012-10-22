@@ -9,7 +9,7 @@ namespace Griffin.Decoupled.Commands
     /// Uses a pipeline to dispatch the messages.
     /// </summary>
     /// <remarks>A pipeline allows us to add several features to the dispatcher in an order manner. Both for failures (upstream) and the command dispatching (downstream).</remarks>
-    public class PipelineDispatcher : ICommandDispatcher, IUpstreamHandler, IDisposable
+    public class PipelineDispatcher : ICommandDispatcher, IDisposable
     {
         private readonly IPipeline _pipeline;
 
@@ -21,7 +21,6 @@ namespace Griffin.Decoupled.Commands
         {
             if (pipeline == null) throw new ArgumentNullException("pipeline");
             _pipeline = pipeline;
-            _pipeline.SetDestination(this);
         }
 
         #region ICommandDispatcher Members
@@ -51,20 +50,6 @@ namespace Griffin.Decoupled.Commands
         public void Dispose()
         {
             _pipeline.Send(new Shutdown());
-        }
-
-        #endregion
-
-        #region IUpstreamHandler Members
-
-        /// <summary>
-        /// Send a message to the next handler
-        /// </summary>
-        /// <param name="context">My context</param>
-        /// <param name="message">Message received</param>
-        public void HandleUpstream(IUpstreamContext context, IUpstreamMessage message)
-        {
-            Console.WriteLine(message);
         }
 
         #endregion

@@ -8,8 +8,8 @@ namespace Griffin.Decoupled.Pipeline
     /// </summary>
     public class PipelineBuilder
     {
-        private readonly List<IDownstreamHandler> _downstreamHandlers = new List<IDownstreamHandler>();
-        private readonly List<IUpstreamHandler> _upstreamHandlers = new List<IUpstreamHandler>();
+        private readonly List<DownstreamContext> _downstreamHandlers = new List<DownstreamContext>();
+        private readonly List<UpstreamContext> _upstreamHandlers = new List<UpstreamContext>();
 
         /// <summary>
         /// Register a upstream handler. 
@@ -21,7 +21,11 @@ namespace Griffin.Decoupled.Pipeline
         {
             if (handler == null) throw new ArgumentNullException("handler");
 
-            _upstreamHandlers.Add(handler);
+            var newContext = new UpstreamContext(handler);
+            if (_upstreamHandlers.Count > 0)
+                _upstreamHandlers[_upstreamHandlers.Count - 1].SetNext(newContext);
+            
+            _upstreamHandlers.Add(newContext);
         }
 
         /// <summary>
@@ -32,7 +36,11 @@ namespace Griffin.Decoupled.Pipeline
         {
             if (handler == null) throw new ArgumentNullException("handler");
 
-            _downstreamHandlers.Add(handler);
+            var newContext = new DownstreamContext(handler);
+            if (_downstreamHandlers.Count > 0)
+                _downstreamHandlers[_downstreamHandlers.Count - 1].SetNext(newContext);
+
+            _downstreamHandlers.Add(newContext);
         }
 
         /// <summary>
@@ -40,47 +48,26 @@ namespace Griffin.Decoupled.Pipeline
         /// </summary>
         public IPipeline Build()
         {
+            if (_upstreamHandlers.Count == 0)
+                throw new InvalidOperationException("There must be at least one upstream handler (which should take care of any errors).");
+            if (_downstreamHandlers.Count == 0)
+                throw new InvalidOperationException("There must be at least one downstream handler.");
+
             var pipeline = new Pipeline();
 
-            var firstDown = new DownstreamContext(_downstreamHandlers[0]);
-            var firstUp = new UpstreamContext(_upstreamHandlers[0]);
-            firstDown.SetUpstream(firstUp);
-            firstUp.SetDownstream(firstDown);
-            pipeline.Add(firstDown);
-            pipeline.Add(firstUp);
-
-            ConfigureUpstream(pipeline, firstUp, firstDown);
-            ConfigureDownstream(pipeline, firstDown, firstUp);
+            foreach (var upstreamHandler in _upstreamHandlers)
+            {
+                upstreamHandler.SetDownstream(_downstreamHandlers[0]);
+                pipeline.Add(upstreamHandler);
+            }
+            foreach (var downstreamHandler in _downstreamHandlers)
+            {
+                downstreamHandler.SetUpstream(_upstreamHandlers[0]);
+                pipeline.Add(downstreamHandler);
+            }
 
             return pipeline;
         }
 
-        private void ConfigureDownstream(Pipeline pipeline, DownstreamContext firstDown, UpstreamContext firstUp)
-        {
-            var lastDown = firstDown;
-            pipeline.Add(lastDown);
-            for (var i = 1; i < _downstreamHandlers.Count; i++)
-            {
-                var ctx = new DownstreamContext(_downstreamHandlers[i]);
-                ctx.SetUpstream(firstUp);
-                lastDown.SetNext(ctx);
-                pipeline.Add(ctx);
-                lastDown = ctx;
-            }
-        }
-
-        private void ConfigureUpstream(Pipeline pipeline, UpstreamContext firstUp, DownstreamContext firstDown)
-        {
-            var lastUp = firstUp;
-            pipeline.Add(firstDown);
-            for (var i = 1; i < _upstreamHandlers.Count; i++)
-            {
-                var ctx = new UpstreamContext(_upstreamHandlers[i]);
-                ctx.SetDownstream(firstDown);
-                lastUp.SetNext(ctx);
-                pipeline.Add(ctx);
-                lastUp = ctx;
-            }
-        }
     }
 }

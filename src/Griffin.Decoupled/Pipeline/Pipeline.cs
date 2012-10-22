@@ -64,36 +64,10 @@ namespace Griffin.Decoupled.Pipeline
         }
 
         /// <summary>
-        /// Set upstream destination
-        /// </summary>
-        /// <param name="handler">Will receive all upstream messages</param>
-        /// <exception cref="System.ArgumentNullException">handler</exception>
-        /// <remarks>Must be the last configured action on the pipeline</remarks>
-        public void SetDestination(IUpstreamHandler handler)
-        {
-            if (handler == null) throw new ArgumentNullException("handler");
-            if (_downstream.Count == 0)
-                throw new InvalidOperationException("You must have set at least one downstream handler before invoking SetDestination().");
-
-            var ctx = new UpstreamContext(handler);
-            ctx.SetNext(_myUpContext);
-            ctx.SetDownstream(_downstream[0]);
-            _upstream.Add(ctx);
-        }
-
-        /// <summary>
         /// MUST be invoked before the pipeline can be used.
         /// </summary>
         public void Start()
         {
-            foreach (var upstreamContext in _upstream)
-            {
-                upstreamContext.SetDownstream(_downstream[0]);
-            }
-            foreach (var downstreamContext in _downstream)
-            {
-                downstreamContext.SetUpstream(_upstream[0]);
-            }
             _fixed = true;
             Send(new StartHandlers());
         }
@@ -140,7 +114,7 @@ namespace Griffin.Decoupled.Pipeline
             if (context == null) throw new ArgumentNullException("context");
             if (_fixed)
                 throw new InvalidOperationException(
-                    "The pipeline may not be modified after Sart() has been called.");
+                    "The pipeline may not be modified after Start() has been called.");
 
             _upstream.Add(context);
         }

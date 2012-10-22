@@ -108,7 +108,6 @@ namespace Griffin.Decoupled.DomainEvents
             builder.RegisterDownstream(_inner);
 
             builder.RegisterUpstream(_errorHandler);
-
             var pipeline = builder.Build();
             pipeline.Start();
             return new EventPipelineDispatcher(pipeline);

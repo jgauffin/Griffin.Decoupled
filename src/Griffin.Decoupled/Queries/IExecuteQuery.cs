@@ -14,6 +14,6 @@ namespace Griffin.Decoupled.Queries
         /// <param name="query">Query to execute</param>
         /// <returns>Result from query. </returns>
         /// <remarks>Collection queries should return an empty result if there aren't any matches. Queries for a single object should return <c>null</c>.</remarks>
-        TResult Handle(TQuery query);
+        TResult Execute(TQuery query);
     }
 }

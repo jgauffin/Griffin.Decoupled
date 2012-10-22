@@ -7,8 +7,11 @@ using System.Text;
 namespace Griffin.Decoupled.Queries
 {
     /// <summary>
-    /// Used to define the queries which is used by the system.
+    /// Queries is a way to abstract away the information that the user (your application user) wants to retrieve.
     /// </summary>
+    /// <remarks>
+    /// <para>The information from each query is typically just a subset (or a denormalized subset) of one/more root aggregates.</para>
+    /// </remarks>
     [CompilerGenerated]
     class NamespaceDoc
     {

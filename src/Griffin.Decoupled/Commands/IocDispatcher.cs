@@ -35,10 +35,25 @@ namespace Griffin.Decoupled.Commands
 
             using (var scope = _inversionOfControlContainer.CreateScope())
             {
+                ScopeStarted(this, new IocScopeEventArgs(scope, command));
                 scope.Resolve<IHandleCommand<T>>().Invoke(command);
+                ScopeSuccessful(this, new IocScopeEventArgs(scope, command));
             }
         }
 
         #endregion
+
+        /// <summary>
+        /// Triggered when we have created a scope
+        /// </summary>
+        /// <remarks>A new scope is created for each invoked command.</remarks>
+        public event EventHandler<IocScopeEventArgs> ScopeStarted = delegate { };
+
+        /// <summary>
+        /// The command has been successfully executed and we are about to shut down the scope
+        /// </summary>
+        /// <remarks>Great event to commit transactions in</remarks>
+        public event EventHandler<IocScopeEventArgs> ScopeSuccessful = delegate { };
+
     }
 }

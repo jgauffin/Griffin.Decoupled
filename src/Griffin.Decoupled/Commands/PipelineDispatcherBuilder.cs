@@ -126,7 +126,6 @@ namespace Griffin.Decoupled.Commands
                 builder.RegisterDownstream(_lastHandler);
 
             builder.RegisterUpstream(_errorHandler);
-
             var pipeline = builder.Build();
             pipeline.Start();
             var dispatcher = new PipelineDispatcher(pipeline);
